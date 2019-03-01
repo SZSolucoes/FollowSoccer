@@ -1,0 +1,35 @@
+{
+  "name": "react-native-webgl",
+  "version": "0.8.0",
+  "summary": "React Native implementation of WebGL",
+  "homepage": "https://github.com/react-community/react-native-webgl",
+  "license": "BSD",
+  "authors": {
+    "name": "Gaëtan Renaudeau",
+    "email": "renaudeau.gaetan@gmail.com"
+  },
+  "source": {
+    "git": "https://github.com/react-community/react-native-webgl.git",
+    "tag": "v0.8.0"
+  },
+  "requires_arc": true,
+  "platforms": {
+    "ios": "10.0"
+  },
+  "pod_target_xcconfig": {
+    "ENABLE_BITCODE": "NO"
+  },
+  "source_files": [
+    "ios/*.{h,m}",
+    "cpp/*.{h,c,cpp,mm}"
+  ],
+  "frameworks": "OpenGLES",
+  "dependencies": {
+    "GPUImage": [
+
+    ],
+    "React": [
+
+    ]
+  }
+}

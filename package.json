@@ -1,0 +1,61 @@
+{
+  "name": "FollowSoccer",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "base-64": "^0.1.0",
+    "firebase": "^5.8.0",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
+    "performance-now": "^2.1.0",
+    "prop-types": "^15.6.2",
+    "react": "16.6.3",
+    "react-native": "0.57.8",
+    "react-native-datepicker": "^1.7.2",
+    "react-native-dropdownalert": "^3.9.1",
+    "react-native-elements": "^0.19.1",
+    "react-native-fast-image": "^5.2.0",
+    "react-native-fcm": "^16.2.4",
+    "react-native-floating-action": "^1.14.1",
+    "react-native-html-parser": "0.0.5",
+    "react-native-image-crop-picker": "^0.22.0",
+    "react-native-image-progress": "^1.1.1",
+    "react-native-image-zoom-viewer": "^2.2.24",
+    "react-native-masked-text": "^1.10.1",
+    "react-native-modal-dropdown": "^0.6.2",
+    "react-native-progress": "^3.5.0",
+    "react-native-router-flux": "^4.0.6",
+    "react-native-share": "^1.1.3",
+    "react-native-simple-dialogs": "^1.0.0",
+    "react-native-status-bar-height": "^2.2.0",
+    "react-native-svg": "^9.0.0",
+    "react-native-svg-charts": "^5.2.0",
+    "react-native-vector-icons": "^6.2.0",
+    "react-native-webgl": "^0.8.0",
+    "react-redux": "^6.0.0",
+    "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0",
+    "rn-fetch-blob": "^0.10.15",
+    "three": "^0.100.0"
+  },
+  "devDependencies": {
+    "babel-jest": "23.6.0",
+    "eslint-config-rallycoding": "^3.2.0",
+    "jest": "23.6.0",
+    "metro-react-native-babel-preset": "0.51.1",
+    "react-test-renderer": "16.6.3"
+  },
+  "jest": {
+    "preset": "react-native"
+  },
+  "rnpm": {
+    "assets": [
+      "./src/assets/fonts/"
+    ]
+  }
+}
