@@ -54,3 +54,6 @@ buck-out/
 
 # Bundle artifact
 *.jsbundle
+android/gradle.properties
+android/app/google-services.json
+src/utils/Firebase.js
