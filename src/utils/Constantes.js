@@ -143,6 +143,10 @@ export const ERROS = {
     endGameJogMissGame: {
         erro: 'Erro #0029',
         mes: 'Falha ao gravar falta de jogadores. Verifique a conexão.'
+    },
+    groupNoMembers: {
+        erro: 'Erro #0030',
+        mes: 'Não há participantes no grupo para o envio de notificação.'
     }
 };
 

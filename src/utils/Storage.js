@@ -44,9 +44,7 @@ export const mappedKeyStorage = (key) => {
         username: 'UID001',
         password: 'UID002',
         userNotifToken: 'UID003',
-        notifAllTopicEnabled: 'UID004',
-        loginAutomaticoEnabled: 'UID005',
-        notifEnquetesEnabled: 'UID006',
+        loginAutomaticoEnabled: 'UID004',
     };
 
     return keys[key];

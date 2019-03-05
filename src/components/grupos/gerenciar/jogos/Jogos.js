@@ -858,7 +858,6 @@ class Jogos extends React.Component {
                                         source={userImg}
                                         onPress={() => { 
                                             Keyboard.dismiss();
-                                            Actions.replace('_perfil');
                                         }}
                                         activeOpacity={0.7}
                                     /> 

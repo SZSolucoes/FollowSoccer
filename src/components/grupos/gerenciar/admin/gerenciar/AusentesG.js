@@ -9,7 +9,7 @@ import {
 import { List, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { colorAppF } from '../../../../../utils/Constantes';
+import { colorAppForeground } from '../../../../../utils/Constantes';
 import Card from '../../../../../tools/elements/Card';
 import ListItem from '../../../../../tools/elements/ListItem';
 //import Campo from '../../../campo/Campo';
@@ -243,7 +243,7 @@ class AusentesG extends React.Component {
 const styles = StyleSheet.create({
     viewP: {
         flex: 1,
-        backgroundColor: colorAppF
+        backgroundColor: colorAppForeground
     },
     text: { 
         fontSize: 28, 
@@ -257,14 +257,16 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
         marginVertical: 15,
         borderRadius: 5,
-        overflow: 'hidden'
+        overflow: 'hidden',
+        backgroundColor: 'white'
     },
     titleContainer: {
         flexDirection: 'row',
         paddingVertical: 10,
         paddingHorizontal: 5,
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        backgroundColor: 'white'
     }
 });
 

@@ -681,8 +681,9 @@ class JogoG extends React.Component {
     }
 
     onSendNotif = (jogo) => {
+        const { grupoSelected } = this.props;
         const funExec = () => {
-            sendReminderJogoPushNotifForAll(jogo.titulo);
+            sendReminderJogoPushNotifForAll(jogo.titulo, grupoSelected);
             showDropdownAlert(
                 'info',
                 'Notificação enviada.',

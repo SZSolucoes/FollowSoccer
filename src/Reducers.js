@@ -12,6 +12,7 @@ import GruposReducer from './components/grupos/GruposReducer';
 import JogoReducer from './components/grupos/gerenciar/jogos/JogoReducer';
 import HistoricoReducer from './components/grupos/gerenciar/jogos/HistoricoReducer';
 import GerenciarReducer from './components/grupos/gerenciar/admin/gerenciar/GerenciarReducer';
+import ImagensJogosReducer from './components/grupos/gerenciar/admin/gerenciar/ImagensJogosReducer';
 
 export default combineReducers({
     SystemEventsReducer,
@@ -24,5 +25,6 @@ export default combineReducers({
     GruposReducer,
     JogoReducer,
     HistoricoReducer,
-    GerenciarReducer
+    GerenciarReducer,
+    ImagensJogosReducer
 });

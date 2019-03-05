@@ -179,7 +179,8 @@ class JogoEdit extends React.Component {
 
             const fileName = b64.encode(new Date().getTime().toString());
             const imgExt = contentTp.slice(contentTp.indexOf('/') + 1);
-            const imgRef = storageRef.child(`grupos/jogos/${fileName}.${imgExt}`);
+            const imgRef = storageRef
+            .child(`grupos/${grupoSelected.key}/jogos/${fileName}.${imgExt}`);
             const dbJogosRef = keyItem ? 
             databaseRef.child(
                 `grupos/${grupoSelected.key}/jogos/${keyItem}`
@@ -256,7 +257,7 @@ class JogoEdit extends React.Component {
                             'Edição realizada com sucesso.'
                         );    
                     } else {
-                        sendCadJogoPushNotifForAll(titulo);
+                        sendCadJogoPushNotifForAll(titulo, grupoSelected);
                         showDropdownAlert(
                             'success', 
                             'Sucesso!', 
@@ -348,7 +349,7 @@ class JogoEdit extends React.Component {
                     visitshirt
                 })
                 .then(() => {
-                    sendCadJogoPushNotifForAll(titulo);
+                    sendCadJogoPushNotifForAll(titulo, grupoSelected);
                     this.setState({ loading: false, isTitValid: false });
                     showDropdownAlert(
                         'success', 

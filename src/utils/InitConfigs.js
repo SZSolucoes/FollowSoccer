@@ -195,41 +195,5 @@ export const initPushNotifs = async (store) => {
         console.error(e);
         AsyncStorage.setItem(mappedKeyStorage('loginAutomaticoEnabled'), 'yes');
     }
-
-    try {
-        const notifAllTopicEnabled = await AsyncStorage.getItem(
-            mappedKeyStorage('notifAllTopicEnabled')
-        );
-        const notifEnquetesEnabled = await AsyncStorage.getItem(
-            mappedKeyStorage('notifEnquetesEnabled')
-        );
-
-        if (notifAllTopicEnabled && notifAllTopicEnabled === 'yes') {
-            FCM.subscribeToTopic('all');
-        } else if (notifAllTopicEnabled && notifAllTopicEnabled === 'no') {
-            FCM.unsubscribeFromTopic('all');
-        } else {
-            FCM.subscribeToTopic('all'); 
-            AsyncStorage.setItem(mappedKeyStorage('notifAllTopicEnabled'), 'yes');
-        }
-
-        if (notifEnquetesEnabled && notifEnquetesEnabled === 'yes') {
-            FCM.subscribeToTopic('enquetes');
-        } else if (notifEnquetesEnabled && notifEnquetesEnabled === 'no') {
-            FCM.unsubscribeFromTopic('enquetes');
-        } else {
-            FCM.subscribeToTopic('enquetes'); 
-            AsyncStorage.setItem(mappedKeyStorage('notifEnquetesEnabled'), 'yes');
-        }
-    } catch (e) {
-        console.error(e);
-        FCM.subscribeToTopic('all'); 
-        FCM.subscribeToTopic('enquetes'); 
-        AsyncStorage.setItem(mappedKeyStorage('notifAllTopicEnabled'), 'yes');
-        AsyncStorage.setItem(mappedKeyStorage('notifEnquetesEnabled'), 'yes');
-    }
-
-    // Push de testes do time de desenvolvimento
-    FCM.subscribeToTopic('devtests');
 };
 

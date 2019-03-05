@@ -40,7 +40,7 @@ import imgSoccerGroup from '../../assets/imgs/soccergroup.jpg';
 
 const floatBtnActions = [
     {
-        text: 'Criar novo grupo',
+        text: 'Novo grupo',
         icon: (
             <Icon
                 raised

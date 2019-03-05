@@ -56,6 +56,10 @@ import JogoG from './components/grupos/gerenciar/admin/gerenciar/JogoG';
 import EscalacaoG from './components/grupos/gerenciar/admin/gerenciar/EscalacaoG';
 import AusentesG from './components/grupos/gerenciar/admin/gerenciar/AusentesG';
 import Gerenciar from './components/grupos/gerenciar/admin/gerenciar/Gerenciar';
+import ImagensJogos from './components/grupos/gerenciar/admin/gerenciar/ImagensJogos';
+import Plus from './components/grupos/gerenciar/plus/Plus';
+import Notifications from './components/grupos/gerenciar/plus/Notifications';
+import Jogadores from './components/grupos/gerenciar/admin/jogadores/Jogadores';
 
 const AnimatedSceneComp = Animated.createAnimatedComponent(AnimatedScene);
 
@@ -132,7 +136,8 @@ class Routes extends React.Component {
         
         if (!('|listLikes|'.includes(Actions.currentScene))) this.cleanModals();
     
-        if ('|gerenciarGrupo|_jogos|_informativos|_perfil|_admin|'.includes(Actions.currentScene)) {
+        if ('|gerenciarGrupo|_jogos|_informativos|_perfil|_plus|_admin|'
+        .includes(Actions.currentScene)) {
             Actions.popTo('_cadastroGrupos');
             return true;
         }
@@ -193,7 +198,7 @@ class Routes extends React.Component {
             payload: false
         });
         store.dispatch({
-            type: 'modifica_showimageview_imagens',
+            type: 'modifica_showimageview_imagensjogos',
             payload: false
         });
     };
@@ -283,7 +288,7 @@ class Routes extends React.Component {
         >
             <TouchableOpacity
                 onPress={() => {
-                    const { jogoSelected } = store.getState().ImagensReducer;
+                    const { jogoSelected } = store.getState().ImagensJogosReducer;
                     Actions.imagens({ jogo: jogoSelected });
                 }}
             >
@@ -521,6 +526,31 @@ class Routes extends React.Component {
                     </View>
                 )} 
             />
+            <Scene 
+                key='plus' 
+                component={Plus} 
+                hideNavBar
+                onEnter={() => this.doTabAnimation(false)}
+                icon={({ focused }) => (
+                    <View>
+                        <Icon
+                            color={focused ? 'white' : 'black'}
+                            name='google-analytics'
+                            type='material-community'
+                        />
+                        { focused && 
+                        <Text
+                            style={{
+                                color: focused ? 'white' : 'black',
+                                fontWeight: 'bold',
+                                fontFamily: 'OpenSans-Regular'
+                            }}
+                        >
+                            Mais
+                        </Text>}
+                    </View>
+                )} 
+            />
         </AnimatedSceneComp>
     );
 
@@ -676,6 +706,33 @@ class Routes extends React.Component {
                     key={'gerenciar'}
                     title={'Gerenciar Jogos'} 
                     component={Gerenciar}
+                    titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'imagens'}
+                    title={'Imagens'}
+                    component={ImagensJogos}
+                    titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'grupoNotificacoes'}
+                    title={'Notificações'} 
+                    component={Notifications}
+                    titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'jogadores'}
+                    title={'Jogadores'} 
+                    component={Jogadores}
                     titleStyle={styles.title}
                     leftButtonTextStyle={styles.btLeft}
                     backButtonTintColor={'white'}

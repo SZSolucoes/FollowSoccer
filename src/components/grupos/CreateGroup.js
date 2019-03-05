@@ -128,7 +128,11 @@ class CreateGroup extends React.Component {
             participantes: { [userLogged.key]: {
                 imgAvatar: userLogged.imgAvatar,
                 key: userLogged.key,
-                nome: userLogged.nome
+                nome: userLogged.nome,
+                jogoNotifCad: 'on',
+                jogoNotifReminder: 'on',
+                enqueteNotif: 'on',
+                muralNotif: 'on'
             } }
         })
         .catch(() => false);
@@ -373,7 +377,7 @@ class CreateGroup extends React.Component {
         >  
             <View>
                 <Card containerStyle={styles.card}>
-                    <FormLabel labelStyle={styles.textLabel}>NOME</FormLabel>
+                    <FormLabel labelStyle={styles.textLabel}>TÍTULO</FormLabel>
                     <FormInput
                         selectTextOnFocus
                         ref={(ref) => { this.inputNome = ref; }}

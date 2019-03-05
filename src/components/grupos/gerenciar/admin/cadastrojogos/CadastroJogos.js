@@ -111,7 +111,7 @@ class CadastroJogos extends React.Component {
     }
 
     componentDidMount = () => {
-        const { grupoSelected } = this.props;
+        const { grupoSelected, userLogged } = this.props;
         this.fbJogosRef = this.fbDatabaseRef.child(`grupos/${grupoSelected.key}/jogos`);
 
         this.fbJogosRef.on('value', snap => {
@@ -120,7 +120,13 @@ class CadastroJogos extends React.Component {
 
                 if (snapVal) {
                     const mapped = _.map(snapVal, (ita, key) => ({ key, ...ita }));
-                    this.setState({ jogos: mapped });
+                    const jogos = _.filter(
+                        mapped, 
+                        itb => itb.endStatus === '0' || 
+                        (userLogged.level === '0' && itb.endStatus === '255')
+                    );
+
+                    this.setState({ jogos });
 
                     return;
                 }
@@ -869,7 +875,8 @@ const mapStateToProps = (state) => ({
     filterStr: state.CadastroJogosReducer.filterStr,
     filterLoad: state.CadastroJogosReducer.filterLoad,
     conInfo: state.LoginReducer.conInfo,
-    grupoSelected: state.GruposReducer.grupoSelected
+    userLogged: state.LoginReducer.userLogged,
+    grupoSelected: state.GruposReducer.grupoSelected,
 });
 
 export default connect(mapStateToProps, {

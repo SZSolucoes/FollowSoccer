@@ -56,7 +56,7 @@ class Admin extends React.Component {
                 <View style={styles.viewLinha}>
                     <TouchableOpacity 
                         style={{ flex: 1 }} 
-                        onPress={() => Actions.usuarios()}
+                        onPress={() => Actions.jogadores()}
                     >
                         <Card 
                             containerStyle={{ flex: 1 }}
@@ -69,7 +69,7 @@ class Admin extends React.Component {
                                     size={34} 
                                 />
                                 <View style={{ marginTop: 10 }} />
-                                <Text style={styles.text}>Usuários</Text>
+                                <Text style={styles.text}>Jogadores</Text>
                             </View>
                         </Card>
                     </TouchableOpacity>
@@ -194,7 +194,8 @@ const styles = StyleSheet.create({
     text: {
         color: 'black',
         fontWeight: '400',
-        alignSelf: 'center'
+        alignSelf: 'center',
+        fontFamily: 'OpenSans-Regular'
     }
 });
 
