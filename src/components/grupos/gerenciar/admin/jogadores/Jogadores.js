@@ -8,16 +8,18 @@ import {
     ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux';
-import { Divider, Badge } from 'react-native-elements';
+import { Divider, Badge, Button } from 'react-native-elements';
 import _ from 'lodash';
 
-import { colorAppPrimary } from '../../../../../utils/Constantes';
+import { colorAppPrimary, colorAppSecondary, colorAppDark, colorAppForeground } from '../../../../../utils/Constantes';
 import ListItem from '../../../../../tools/elements/ListItem';
 import firebase from '../../../../../utils/Firebase';
 import { retrieveUpdUserGroup } from '../../../../../utils/UserUtils';
 import Card from '../../../../../tools/elements/Card';
 
 import imgTeam from '../../../../../assets/imgs/team.png';
+import { normalize } from '../../../../../utils/StrComplex';
+import ShareModal from '../../../../../tools/share/ShareModal';
 
 class Jogadores extends React.Component {
     constructor(props) {
@@ -51,12 +53,42 @@ class Jogadores extends React.Component {
             >
                 <View
                     style={{
-                        flex: 1
+                        flex: 1.5,
+                        overflow: 'scroll'
                     }}
                 >
-                    <Card>
-                        <Text>Deseja convidar um jogador não cadastrado para o grupo ?</Text>
-                    </Card>
+                    <ScrollView
+                        contentContainerStyle={{
+                            flex: 1,
+                            backgroundColor: colorAppForeground
+                        }}
+                    >
+                        <Card>
+                            <Text 
+                                style={{
+                                    fontFamily: 'OpenSans-Regular',
+                                    fontSize: normalize(13),
+                                    color: 'black',
+                                    fontWeight: '400'
+                                }}
+                            >
+                                Deseja convidar um jogador ainda não cadastrado para o grupo ?
+                            </Text>
+                            <Button
+                                backgroundColor='#03A9F4'
+                                buttonStyle={{
+                                    borderRadius: 0,
+                                    marginTop: 10, 
+                                    marginLeft: 0, 
+                                    marginRight: 0, 
+                                    marginBottom: 0
+                                }}
+                                title={'Convidar'}
+                                onPress={() => this.shareModalRef && this.shareModalRef.onOpen()}
+                                fontFamily='OpenSans-SemiBold'
+                            />
+                        </Card>
+                    </ScrollView>
                 </View>
                 <View
                     style={{
@@ -73,7 +105,11 @@ class Jogadores extends React.Component {
                                 source={imgTeam} 
                             /> 
                             <Text 
-                                style={{ fontSize: 16, color: 'black' }}
+                                style={{ 
+                                    fontSize: 16, 
+                                    color: 'black',
+                                    fontFamily: 'OpenSans-Regular'
+                                }}
                             >
                                 Jogadores
                             </Text>
@@ -83,7 +119,10 @@ class Jogadores extends React.Component {
                         </View>
                     </View>
                     <ScrollView
-                        contentContainerStyle={{ flexGrow: 1, padding: 2 }}
+                        contentContainerStyle={{ 
+                            flexGrow: 1, 
+                            padding: 2
+                        }}
                     >
                         {
                             _.map(listUsuarios, (ita, index) => {
@@ -95,6 +134,22 @@ class Jogadores extends React.Component {
                                 const imgAvt = updatedImg ? 
                                 { uri: updatedImg } : { uri: '' };
 
+                                const nome = retrieveUpdUserGroup(
+                                    ita.key, 
+                                    'nome', 
+                                    ita
+                                );
+                                const email = retrieveUpdUserGroup(
+                                    ita.key, 
+                                    'email', 
+                                    ita
+                                );
+                                const posicao = retrieveUpdUserGroup(
+                                    ita.key, 
+                                    'posicao', 
+                                    ita
+                                );
+
                                 return (
                                     <Card
                                         key={index}
@@ -105,11 +160,7 @@ class Jogadores extends React.Component {
                                     >
                                         <ListItem
                                             avatar={imgAvt}
-                                            title={retrieveUpdUserGroup(
-                                                ita.key, 
-                                                'nome', 
-                                                ita
-                                            )}
+                                            title={nome}
                                             titleStyle={{
                                                 fontWeight: '500'
                                             }}
@@ -117,24 +168,35 @@ class Jogadores extends React.Component {
                                                 borderBottomWidth: 0
                                             }}
                                             hideChevron
-                                            avatarProps={{
-                                                width: 50,
-                                                height: 50,
-                                                borderRadius: 50 / 2,
-                                                showEditButton: true,
-                                                editButton: {
-                                                    size: 20,
-                                                    iconName: 'thumb-up',
-                                                    iconType: 'material',
-                                                    iconColor: 'white',
-                                                    underlayColor: colorAppPrimary,
-                                                    style: {
-                                                        backgroundColor: 'green'
-                                                    }
-                                                }
-                                            }}
                                         />
                                         <Divider />
+                                        <View
+                                            style={{ padding: 5 }}
+                                        >
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <Text style={styles.cardTextUsersBold}>
+                                                    {'Email: '} 
+                                                </Text>
+                                                <Text 
+                                                    selectable
+                                                    style={styles.cardTextUsersSemiBold}
+                                                >
+                                                    {email}
+                                                </Text>
+                                            </View>
+                                            <View style={{ marginVertical: 2 }} />
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <Text style={styles.cardTextUsersBold}>
+                                                    {'Posição: '} 
+                                                </Text>
+                                                <Text 
+                                                    selectable
+                                                    style={styles.cardTextUsersSemiBold}
+                                                >
+                                                    {posicao}
+                                                </Text>
+                                            </View>
+                                        </View>
                                     </Card>
                                 );
                             })
@@ -142,6 +204,19 @@ class Jogadores extends React.Component {
                         <View style={{ marginBottom: 50 }} />
                     </ScrollView>
                 </View>
+                <ShareModal
+                    ref={ref => (this.shareModalRef = ref)}
+                    shareOptions={{
+                        title: 'React Native',
+                        message: 'Hola mundo',
+                        url: 'http://facebook.github.io/react-native/',
+                        subject: 'Share Link' //  for email
+                    }}
+                    twitter
+                    facebook
+                    whatsapp
+                    clipboard
+                />
             </View>
         );
     }
@@ -155,6 +230,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: 'white'
+    },
+    cardTextUsersSemiBold: {
+        fontFamily: 'OpenSans-SemiBold',
+    },
+    cardTextUsersBold: {
+        fontFamily: 'OpenSans-Bold',
+        color: '#43484d'
     }
 });
 

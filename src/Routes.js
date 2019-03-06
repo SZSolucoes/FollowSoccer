@@ -60,6 +60,7 @@ import ImagensJogos from './components/grupos/gerenciar/admin/gerenciar/ImagensJ
 import Plus from './components/grupos/gerenciar/plus/Plus';
 import Notifications from './components/grupos/gerenciar/plus/Notifications';
 import Jogadores from './components/grupos/gerenciar/admin/jogadores/Jogadores';
+import SearchBar from './tools/searchbar/SearchBar';
 
 const AnimatedSceneComp = Animated.createAnimatedComponent(AnimatedScene);
 
@@ -736,6 +737,7 @@ class Routes extends React.Component {
                     titleStyle={styles.title}
                     leftButtonTextStyle={styles.btLeft}
                     backButtonTintColor={'white'}
+                    renderRightButton={() => <SearchBar />}
                     //initial
                 />
                 {/*<Scene 
