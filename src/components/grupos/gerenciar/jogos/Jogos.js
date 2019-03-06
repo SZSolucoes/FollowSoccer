@@ -203,7 +203,9 @@ class Jogos extends React.Component {
                         }
                     });
                     
-                    this.firebaseUsersListeners.push(dbParticRef);
+                    this.firebaseUsersListeners.push({ 
+                        listener: dbParticRef, key: element.key
+                    });
                 }
             };
 
@@ -448,7 +450,7 @@ class Jogos extends React.Component {
             for (let index = 0; index < this.firebaseUsersListeners.length; index++) {
                 const element = this.firebaseUsersListeners[index];
                 
-                element.off();
+                if (element.key !== this.props.userLogged.key) element.listener.off();
             }
 
             this.firebaseUsersListeners = [];

@@ -7,6 +7,8 @@ import {
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Text, List } from 'react-native-elements';
+import _ from 'lodash';
+
 import { colorAppSecondary, colorAppForeground } from '../../utils/Constantes';
 import { modifyMenuChoosed, modifyMenuClean } from './MainDrawerMenuActions';
 
@@ -66,10 +68,16 @@ class MainDrawerMenu extends React.Component {
         const { userLogged } = this.props;
         let imgAvt = '';
         let nome = '';
+        let conviteProps = {};
+        const filtredInvites = _.filter(userLogged.convites, ita => typeof ita === 'object');
 
         if (typeof userLogged === 'object') {
             imgAvt = userLogged.imgAvatar ? { uri: userLogged.imgAvatar } : imgAvatar;
             nome = userLogged.nome;
+        }
+
+        if (filtredInvites.length) {
+            conviteProps = { badge: { value: filtredInvites.length } };
         }
 
         return (
@@ -251,6 +259,7 @@ class MainDrawerMenu extends React.Component {
                                     this.props.menuChoosed !== CONVITES &&
                                     this.onMenuItemPress(CONVITES)
                                 )}
+                                {...conviteProps}
                             />
                         </View>
                     </List>

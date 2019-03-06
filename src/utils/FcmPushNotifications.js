@@ -3,7 +3,7 @@ import Axios from 'axios';
 import _ from 'lodash';
 import firebase from './Firebase';
 
-const key = 'AIzaSyCSN342x3TvqVI8h36tFDs1GMTiC4nzjdw';
+const key = '';
 
 export const sendCadJogoPushNotifForAll = (jogo, grupo) => {
     const participantesKeys = [];

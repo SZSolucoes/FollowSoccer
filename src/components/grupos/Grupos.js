@@ -84,7 +84,11 @@ class Grupos extends React.Component {
     }
 
     componentDidMount = () => {
-        if (this.props.userLogged.grupos) this.onInitializeListeners();
+        const { userLogged } = this.props;
+
+        if (userLogged && userLogged.key) {
+            this.onInitializeListeners();
+        }
 
         this.scrollY.addListener(value => {
             if (value.value <= 5) {
@@ -177,7 +181,7 @@ class Grupos extends React.Component {
 
         // ######### UPDATE TOKEN NOTIFICATION ################
         const userNode = this.fbDatabaseRef.child(`usuarios/${userLogged.key}`);
-        
+            
         AsyncStorage.getItem(mappedKeyStorage('userNotifToken')).then((userNotifToken) => {
             const dataAtual = Moment().format('DD/MM/YYYY HH:mm:ss');
             if (userNotifToken) {

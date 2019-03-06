@@ -4,23 +4,28 @@ import {
     Animated,
     TextInput,
     Dimensions,
+    Keyboard,
     TouchableNativeFeedback
 } from 'react-native';
+import { connect } from 'react-redux';
 import { Icon } from 'react-native-elements';
+
+import {
+    modifySearchValue,
+    modifyShowInputText
+} from './SearchBarActions';
 
 const MIN_ICON_WIDTH = 70;
 const MAX_BORDER_RADIUS = 20;
 
-export default class SearchBar extends React.Component {
+class SearchBar extends React.Component {
     constructor(props) {
         super(props);
 
         this.animWidth = new Animated.Value(0);
-        this.visibleInput = false;
 
         this.state = {
-            maxWidth: Dimensions.get('window').width,
-            searchValue: ''
+            maxWidth: Dimensions.get('window').width
         };
     }
 
@@ -30,31 +35,36 @@ export default class SearchBar extends React.Component {
 
     componentWillUnmount = () => {
         Dimensions.removeEventListener('change', this.onChangeDimensions);
+        this.props.modifySearchValue('');
     }
 
     onChangeDimensions = (dims) => {
         this.setState({ maxWidth: dims.window.width });
-        if (this.visibleInput) this.onShowInput();
+        if (this.props.showInputText) this.onShowInput();
     }
 
     onShowInput = () => {
+        this.props.modifyShowInputText(true);
+
         Animated.spring(
             this.animWidth,
             {
                 toValue: this.state.maxWidth,
                 bounciness: 0
             }
-        ).start(() => (this.visibleInput = true));
+        ).start();
     }
 
     onHideInput = () => {
+        this.props.modifyShowInputText(false);
+
         Animated.spring(
             this.animWidth,
             {
                 toValue: 0,
                 bounciness: 0
             }
-        ).start(() => (this.visibleInput = false));
+        ).start(() => Keyboard.dismiss());
     }
 
     render = () => (
@@ -140,9 +150,15 @@ export default class SearchBar extends React.Component {
                 <View style={{ flex: 3 }}>
                     <TextInput
                         placeholder='Buscar Jogador...'
-                        value={this.state.searchValue}
+                        style={{
+                            fontFamily: 'OpenSans-Regular'
+                        }}
+                        selectTextOnFocus
+                        value={this.props.searchValue}
                         onChangeText={
-                            (value) => this.setState({ searchValue: value })
+                            (value) => {
+                                this.props.modifySearchValue(value);
+                            }
                         }
                     />
                 </View>
@@ -153,4 +169,14 @@ export default class SearchBar extends React.Component {
         </Animated.View>
     )
 }
+
+const mapStateToProps = state => ({
+    showInputText: state.SearchBarReducer.showInputText,
+    searchValue: state.SearchBarReducer.searchValue
+});
+
+export default connect(mapStateToProps, {
+    modifySearchValue,
+    modifyShowInputText
+}, null, { forwardRef: true })(SearchBar);
 

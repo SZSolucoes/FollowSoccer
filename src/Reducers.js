@@ -13,6 +13,7 @@ import JogoReducer from './components/grupos/gerenciar/jogos/JogoReducer';
 import HistoricoReducer from './components/grupos/gerenciar/jogos/HistoricoReducer';
 import GerenciarReducer from './components/grupos/gerenciar/admin/gerenciar/GerenciarReducer';
 import ImagensJogosReducer from './components/grupos/gerenciar/admin/gerenciar/ImagensJogosReducer';
+import SearchBarReducer from './tools/searchbar/SearchBarReducer';
 
 export default combineReducers({
     SystemEventsReducer,
@@ -26,5 +27,6 @@ export default combineReducers({
     JogoReducer,
     HistoricoReducer,
     GerenciarReducer,
-    ImagensJogosReducer
+    ImagensJogosReducer,
+    SearchBarReducer
 });
