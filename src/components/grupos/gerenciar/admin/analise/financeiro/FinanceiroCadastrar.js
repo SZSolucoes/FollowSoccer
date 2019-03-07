@@ -78,7 +78,7 @@ class FinanceiroCadastrar extends React.Component {
                 const asyncAlert = await new Promise((resolve) => {
                     Alert.alert(
                         'Aviso',
-                        'Já existe uma receita para a data selecionada!' +
+                        'Já existe uma receita para a data selecionada' +
                         '\nConfirma a alteração do valor ?',
                         [
                             {
@@ -103,18 +103,18 @@ class FinanceiroCadastrar extends React.Component {
                     await dbAnaliseFinaRec.update({
                         valor
                     })
-                    .then(() => showAlert('success', 'Sucesso!', 'Alteração efetuada com sucesso.'))
+                    .then(() => showAlert('success', 'Sucesso', 'Alteração efetuada com sucesso'))
                     .catch(() => showAlert(
                         'danger', 
-                        'Ops!', 
-                        'Ocorreu um erro durante a alteração.'
+                        'Ops', 
+                        'Ocorreu um erro durante a alteração'
                     ));
                 }
             } else if (snap && tipoOpe === 'despesa' && snap.despesa) {
                 const asyncAlert = await new Promise((resolve) => {
                     Alert.alert(
                         'Aviso',
-                        'Já existe uma despesa para a data selecionada!' +
+                        'Já existe uma despesa para a data selecionada' +
                         '\nConfirma a alteração do valor ?',
                         [
                             {
@@ -139,11 +139,11 @@ class FinanceiroCadastrar extends React.Component {
                     await dbAnaliseFinaDes.update({
                         valor
                     })
-                    .then(() => showAlert('success', 'Sucesso!', 'Alteração efetuada com sucesso.'))
+                    .then(() => showAlert('success', 'Sucesso', 'Alteração efetuada com sucesso'))
                     .catch(() => showAlert(
                         'danger', 
-                        'Ops!', 
-                        'Ocorreu um erro durante a alteração.'
+                        'Ops', 
+                        'Ocorreu um erro durante a alteração'
                     ));
                 }
             // Senao existe entao verifica a inclusao
@@ -153,11 +153,11 @@ class FinanceiroCadastrar extends React.Component {
                     valor,
                     dataInclusao: dataAtual
                 })
-                .then(() => showAlert('success', 'Sucesso!', 'Cadastro efetuado com sucesso.'))
+                .then(() => showAlert('success', 'Sucesso', 'Cadastro efetuado com sucesso'))
                 .catch(() => showAlert(
                         'danger', 
-                        'Ops!', 
-                        'Ocorreu um erro durante o cadastro.'
+                        'Ops', 
+                        'Ocorreu um erro durante o cadastro'
                 ));
             } else {
                 const dbAnaliseFinaDes = dbAnaliseFina.child('despesa');
@@ -165,12 +165,12 @@ class FinanceiroCadastrar extends React.Component {
                     valor,
                     dataInclusao: dataAtual
                 })
-                .then(() => showAlert('success', 'Sucesso!', 'Cadastro efetuado com sucesso.'))
+                .then(() => showAlert('success', 'Sucesso', 'Cadastro efetuado com sucesso'))
                 .catch(() => 
                     showAlert(
                         'danger', 
-                        'Ops!', 
-                        'Ocorreu um erro durante a cadastro.'
+                        'Ops', 
+                        'Ocorreu um erro durante a cadastro'
                 ));
             }
             

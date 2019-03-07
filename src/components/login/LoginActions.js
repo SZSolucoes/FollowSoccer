@@ -8,6 +8,7 @@ import { mappedKeyStorage } from '../../utils/Storage';
 import { usuarioAttr } from '../../utils/UserUtils';
 import { showDropdownAlert } from '../../utils/SystemEvents';
 import { ERROS } from '../../utils/Constantes';
+import { startFbListener } from '../../utils/FirebaseListeners';
 
 export const modifyUsername = (value) => ({
     type: 'modify_username_login',
@@ -144,6 +145,8 @@ const onLoginSuccess = (dispatch, params, snapshot, dbUsuarioRef) => {
     
         AsyncStorage.setItem(mappedKeyStorage('username'), params.email);
         AsyncStorage.setItem(mappedKeyStorage('password'), params.password);
+
+        startFbListener('usuario', { email: params.email });
     
         Actions.mainscreen();
     } else {

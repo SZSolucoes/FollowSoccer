@@ -37,7 +37,6 @@ export default class ShareModal extends Component {
     render = () => {
         const {
             visible,
-            shareOptions,
             twitter,
             facebook,
             whatsapp,
@@ -48,7 +47,9 @@ export default class ShareModal extends Component {
             more
         } = this.props;
         
-        if (!shareOptions) return false;
+        if (!this.props.shareOptions) return false;
+
+        const shareOptions = { ...this.props.shareOptions };
 
         return (
             <ShareSheet visible={this.state.visible || visible} onCancel={this.onCancel}>

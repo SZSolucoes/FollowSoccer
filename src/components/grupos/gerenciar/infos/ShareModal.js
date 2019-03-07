@@ -336,8 +336,8 @@ class ShareModal extends React.Component {
                                                     () => 
                                                     showDropdownAlert(
                                                         'success', 
-                                                        'Sucesso!', 
-                                                        'Link copiado para área de transferência.'
+                                                        'Sucesso', 
+                                                        'Link copiado para área de transferência'
                                                     )
                                                     , 500);
                                                 }

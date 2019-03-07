@@ -263,7 +263,7 @@ class Coment extends React.Component {
                                     style={{ fontWeight: 'bold', color: '#707070' }}
                                     onPress={() => checkConInfo(() => {
                                         Alert.alert(
-                                            'Remover!', 
+                                            'Remover', 
                                             'Deseja remover o comentário selecionado ?',
                                             [
                                                 { 

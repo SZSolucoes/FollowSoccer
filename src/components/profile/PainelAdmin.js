@@ -92,7 +92,7 @@ class PainelAdmin extends React.Component {
             .catch(() => false);
 
             if (!(rolledUserLogged && rolledUserTransf)) {
-                Alert.alert('Erro', 'Falha ao desfazer transferência.');
+                Alert.alert('Erro', 'Falha ao desfazer transferência');
             }
         }
     }

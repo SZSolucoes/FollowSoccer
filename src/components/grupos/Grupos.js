@@ -26,7 +26,8 @@ import {
     colorAppForeground, 
     colorAppSecondary, 
     colorAppDark, 
-    colorAppPrimary 
+    colorAppPrimary, 
+    ERROS
 } from '../../utils/Constantes';
 
 import firebase from '../../utils/Firebase';
@@ -37,6 +38,8 @@ import { modificaGrupoSelected } from './GruposActions';
 import { mappedKeyStorage } from '../../utils/Storage';
 
 import imgSoccerGroup from '../../assets/imgs/soccergroup.jpg';
+import ModalCodeGroupInput from '../../tools/modalinput/ModalCodeGroupInput';
+import { showDropdownAlert, checkConInfo } from '../../utils/SystemEvents';
 
 const floatBtnActions = [
     {
@@ -52,14 +55,23 @@ const floatBtnActions = [
         ),
         name: 'bt_creategroup',
         color: colorAppSecondary,
-        position: 1,
+        position: 1
     }, 
-    /* {
-        text: 'Language',
-        icon: null,
-        name: 'bt_language',
+    {
+        text: 'Ingressar por código',
+        icon: (
+            <Icon
+                raised
+                name='qrcode-edit'
+                type='material-community'
+                color={'white'}
+                containerStyle={{ backgroundColor: colorAppSecondary }}
+            />
+        ),
+        name: 'bt_codegroup',
+        color: colorAppSecondary,
         position: 2
-    },  */
+    }
 ];
 
 class Grupos extends React.Component {
@@ -79,7 +91,8 @@ class Grupos extends React.Component {
 
         this.state = {
             groups: [],
-            loading: true
+            loading: true,
+            showModalCodeGroup: false
         };
     }
 
@@ -110,6 +123,82 @@ class Grupos extends React.Component {
 
     componentWillUnmount = () => {
         this.removeFbListeners();
+    }
+
+    onConfirmCodeGroup = (value) => {
+        if (value) {
+            this.fbDatabaseRef
+            .child('grupos')
+            .orderByChild('groupInviteKey')
+            .equalTo(value)
+            .once('value', async snap => {
+                if (snap) {
+                    const snapVal = snap.val();
+                    if (snapVal && typeof snapVal === 'object') {
+                        const snapKey = Object.keys(snapVal);
+                        if (snapKey && snapKey.length) {
+                            const { userLogged } = this.props;
+                            const grupos = _.filter(_.values(userLogged.grupos), ita => !ita.push);
+
+                            let ret = false;
+
+                            if (_.findIndex(grupos, itb => itb.groupKey === snapKey[0]) !== -1) {
+                                showDropdownAlert(
+                                    'warn', 
+                                    'Aviso',
+                                    'Você já ingressou ao grupo informado.'
+                                );
+
+                                return;
+                            }
+                            
+                            
+                            ret = await snap.ref.child(`${snapKey[0]}/participantes`).update({
+                                [userLogged.key]: {
+                                    imgAvatar: userLogged.imgAvatar,
+                                    key: userLogged.key,
+                                    nome: userLogged.nome,
+                                    jogoNotifCad: 'on',
+                                    jogoNotifReminder: 'on',
+                                    enqueteNotif: 'on',
+                                    muralNotif: 'on'
+                                }
+                            }).then(() => true).catch(() => false);
+    
+                            if (ret) {
+                                ret = await this.fbDatabaseRef
+                                .child(`usuarios/${userLogged.key}/grupos`)
+                                .update({
+                                    [snapKey[0]]: { groupKey: snapKey[0] } 
+                                }).then(() => true).catch(() => false);
+                            }
+    
+                            if (ret) {
+                                showDropdownAlert(
+                                    'success',
+                                    'Sucesso',
+                                    `Você ingressou no grupo (${snapVal[snapKey[0]].nome})`
+                                );
+                            } else {
+                                showDropdownAlert(
+                                    'error',
+                                    ERROS.groupCodeInvite.erro,
+                                    ERROS.groupCodeInvite.mes
+                                );
+                            }
+
+                            return;
+                        }
+                    }
+                }
+
+                showDropdownAlert(
+                    'warn', 
+                    'Grupo não localizado',
+                    ''
+                );
+            });
+        }
     }
 
     onInitializeListeners = () => {
@@ -205,6 +294,13 @@ class Grupos extends React.Component {
         switch (btnName) {
             case 'bt_creategroup':
                 Actions.createGroup();
+                break;
+            case 'bt_codegroup':
+                this.setState({ showModalCodeGroup: true });
+                setTimeout(() => {
+                    if (this.modalCodeGroupRef) this.modalCodeGroupRef.onOpenModal();
+                }, 500);
+
                 break;
             default:
         }
@@ -377,9 +473,9 @@ class Grupos extends React.Component {
                                         );
                                     }
                                     this.props.modificaGrupoSelected(item);
-                                    Actions.gerenciarGrupo({
+                                    setTimeout(() => Actions.gerenciarGrupo({
                                         right: rightView
-                                    });
+                                    }), 500);
                                 }}
                             />
                         </View>
@@ -404,7 +500,7 @@ class Grupos extends React.Component {
                 style={styles.mainView}
             >
                 <Animated.FlatList
-                    data={this.state.groups}
+                    data={_.reverse(this.state.groups)}
                     renderItem={this.renderGroup}
                     keyExtractor={(item, index) => index.toString()}
                     ListFooterComponent={(<View style={{ marginVertical: 50 }} />)}
@@ -448,6 +544,17 @@ class Grupos extends React.Component {
                         onPressItem={(name) => this.onChooseOptionFloatBtn(name)}
                     />
                 </Animated.View>
+                <ModalCodeGroupInput
+                    ref={ref => (this.modalCodeGroupRef = ref)}
+                    isDialogVisible={this.state.showModalCodeGroup}
+                    title={'Ingressar por código'}
+                    message={'Informe abaixo o código de acesso ao grupo desejado.'}
+                    submitInput={(value) => checkConInfo(() => this.onConfirmCodeGroup(value))}
+                    closeDialog={() => this.setState({ showModalCodeGroup: false })}
+                    hint={'Código do grupo'}
+                    cancelText={'Cancelar'}
+                    submitText={'Confirmar'}
+                />
             </View>
         )
     )

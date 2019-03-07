@@ -487,7 +487,7 @@ class EscalacaoG extends React.Component {
                                 this.setState({ removePlayer: false });
                                 showDropdownAlert(
                                     'info',
-                                    'Jogador removido da lista de confirmados.',
+                                    'Jogador removido da lista de confirmados',
                                     ''
                                 );
                             })
@@ -657,7 +657,7 @@ class EscalacaoG extends React.Component {
                     showToast === 'true' &&
                     showDropdownAlert(
                         'info',
-                        'Escalação removida.',
+                        'Escalação removida',
                         ''
                     )
                 )
@@ -684,7 +684,7 @@ class EscalacaoG extends React.Component {
                     showToast === 'true' &&
                     showDropdownAlert(
                         'info',
-                        'Escalação removida.',
+                        'Escalação removida',
                         ''
                     )
                 )

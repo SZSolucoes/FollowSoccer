@@ -52,7 +52,9 @@ class SearchBar extends React.Component {
                 toValue: this.state.maxWidth,
                 bounciness: 0
             }
-        ).start();
+        ).start(() => {
+            if (this.searchInputRef) this.searchInputRef.focus();
+        });
     }
 
     onHideInput = () => {
@@ -149,6 +151,8 @@ class SearchBar extends React.Component {
                 </View>
                 <View style={{ flex: 3 }}>
                     <TextInput
+                        ref={ref => (this.searchInputRef = ref)}
+                        autoCapitalize={'none'}
                         placeholder='Buscar Jogador...'
                         style={{
                             fontFamily: 'OpenSans-Regular'

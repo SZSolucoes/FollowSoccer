@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
   title_modal: {
     fontWeight: 'bold',
     fontSize: 20,
+    fontFamily: 'OpenSans-Regular',
     ...Platform.select({
       ios: {
         marginTop: 10,
@@ -138,6 +139,7 @@ const styles = StyleSheet.create({
   },
   message_modal: {
     fontSize: 16,
+    fontFamily: 'OpenSans-Regular',
     ...Platform.select({
       ios: {
         textAlign: 'center',
@@ -152,6 +154,7 @@ const styles = StyleSheet.create({
   input_container: {
     textAlign: 'left',
     fontSize: 16,
+    fontFamily: 'OpenSans-Regular',
     color: 'rgba(0,0,0,0.54)',
     ...Platform.select({
       ios: {
@@ -218,6 +221,7 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: {
         fontSize: 18,
+        fontFamily: 'OpenSans-Regular',
         color: '#2699FF',
         textAlign: 'center',
         borderRightWidth: 5,
@@ -235,6 +239,7 @@ const styles = StyleSheet.create({
   },
   btn_modal_right: {
     fontWeight: 'bold',
+    fontFamily: 'OpenSans-Regular',
     ...Platform.select({
       ios: {
         fontSize: 18,
@@ -250,4 +255,5 @@ const styles = StyleSheet.create({
     }),
   },
 });
+
 export default DialogInput;

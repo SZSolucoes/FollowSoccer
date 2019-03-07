@@ -343,7 +343,7 @@ class JogoG extends React.Component {
                         .then(() => {
                             showDropdownAlert(
                                 'info',
-                                'Gol marcado.',
+                                'Gol marcado',
                                 ''
                             );
                             this.fbDatabaseRef
@@ -419,7 +419,7 @@ class JogoG extends React.Component {
                         .then(() => {
                             showDropdownAlert(
                                 'info',
-                                'Gol removido.',
+                                'Gol removido',
                                 ''
                             );
                             this.fbDatabaseRef
@@ -686,7 +686,7 @@ class JogoG extends React.Component {
             sendReminderJogoPushNotifForAll(jogo.titulo, grupoSelected);
             showDropdownAlert(
                 'info',
-                'Notificação enviada.',
+                'Notificação enviada',
                 ''
             );
         };
@@ -794,7 +794,7 @@ class JogoG extends React.Component {
                     if (isRemove) {
                         showDropdownAlert(
                             'info',
-                            'Substituição removida.',
+                            'Substituição removida',
                             ''
                         );
                         return true;
@@ -807,7 +807,7 @@ class JogoG extends React.Component {
                     .then(() =>
                         showDropdownAlert(
                             'info',
-                            'Substituição efetuada.',
+                            'Substituição efetuada',
                             ''
                         )
                     )
@@ -853,7 +853,7 @@ class JogoG extends React.Component {
                     if (isRemove) {
                         showDropdownAlert(
                             'info',
-                            'Substituição removida.',
+                            'Substituição removida',
                             ''
                         );
                         return true;
@@ -866,7 +866,7 @@ class JogoG extends React.Component {
                     .then(() =>
                         showDropdownAlert(
                             'info',
-                            'Substituição efetuada.',
+                            'Substituição efetuada',
                             ''
                         )
                     )

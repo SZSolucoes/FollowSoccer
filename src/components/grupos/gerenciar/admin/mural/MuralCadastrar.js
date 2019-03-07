@@ -70,13 +70,13 @@ class MuralCadastrar extends React.Component {
             })
             .then(() => {
                 sendMuralPushNotifForTopic();
-                showAlert('success', 'Sucesso!', 'Inclusão efetuada com sucesso.');
+                showAlert('success', 'Sucesso', 'Inclusão efetuada com sucesso');
             })
             .catch(() => 
                 showAlert(
                     'danger', 
-                    'Ops!', 
-                    'Ocorreu um erro durante a inclusão.'
+                    'Ops', 
+                    'Ocorreu um erro durante a inclusão'
             ));
 
             this.setState({ loading: false });

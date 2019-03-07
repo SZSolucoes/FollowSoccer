@@ -66,7 +66,7 @@ class EnqueteEditModal extends React.Component {
             }
     
             if (!newOpts.length || newOpts.length === 1) {
-                Alert.alert('Aviso', 'É necessário informar pelo menos duas opções de enquete.');
+                Alert.alert('Aviso', 'É necessário informar pelo menos duas opções de enquete');
                 return;
             }
     
@@ -86,15 +86,15 @@ class EnqueteEditModal extends React.Component {
 
                 this.props.closeModalToggle();
                 showAlert(
-                    'success', 'Sucesso!', 'Enquete alterada com sucesso.'
+                    'success', 'Sucesso', 'Enquete alterada com sucesso'
                 );
             })
             .catch(() => {
                 this.setState({ loading: false });
                 showAlert(
                     'danger', 
-                    'Ops!', 
-                    'Ocorreu um erro ao alterar a enquete.'
+                    'Ops', 
+                    'Ocorreu um erro ao alterar a enquete'
                 );
             });
         };

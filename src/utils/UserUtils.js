@@ -31,7 +31,7 @@ export const usuarioAttr = {
     infoImgUpdated: 'true', 
     jogosImgUpdated: 'true',
     pwRecover: '',
-    grupos: [{ push: 'push' }],
+    grupos: { push: 'push' },
     convites: { push: 'push' }
 };
 

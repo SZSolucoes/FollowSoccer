@@ -112,7 +112,7 @@ class Info extends React.Component {
         this.props.modificaItemSelected(item);
         this.props.modificaFlagRemoveInfo(true);
         this.props.modificaRemocao(true);
-        showAlert('danger', 'Remover!', 'Deseja remover o informativo selecionado ?');
+        showAlert('danger', 'Remover', 'Deseja remover o informativo selecionado ?');
     }
 
     onChangeSuperState(newState) {

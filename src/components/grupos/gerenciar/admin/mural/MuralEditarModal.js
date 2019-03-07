@@ -88,14 +88,14 @@ class EnqueteEditModal extends React.Component {
                 descricao
             })
             .then(() => {
-                showAlert('success', 'Sucesso!', 'Edição efetuada com sucesso.');
+                showAlert('success', 'Sucesso', 'Edição efetuada com sucesso');
                 return true; 
             })
             .catch(() => {
                 showAlert(
                     'danger', 
-                    'Ops!', 
-                    'Ocorreu um erro durante a edição.'
+                    'Ops', 
+                    'Ocorreu um erro durante a edição'
                 );
 
                 return false;

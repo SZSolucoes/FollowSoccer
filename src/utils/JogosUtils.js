@@ -68,7 +68,7 @@ export const doEndGame = async (
     _.remove(jogadores, (item) => !!item.push);
 
     if (jogadores.length === 0) {
-        Alert.alert('Aviso', 'Não há jogadores escalados para finalizar o jogo.');
+        Alert.alert('Aviso', 'Não há jogadores escalados para finalizar o jogo');
         return false;
     }
 
@@ -346,7 +346,7 @@ const changeStsEndGame = (
         Actions.popTo('gerenciar');
         showDropdownAlert(
             'success',
-            'Jogo finalizado.',
+            'Jogo finalizado',
             ''
         );
     })

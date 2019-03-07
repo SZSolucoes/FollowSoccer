@@ -63,7 +63,7 @@ class EnqueteCadastrar extends React.Component {
         }
 
         if (!newOpts.length || newOpts.length === 1) {
-            Alert.alert('Aviso', 'É necessário informar pelo menos duas opções de enquete.');
+            Alert.alert('Aviso', 'É necessário informar pelo menos duas opções de enquete');
             return;
         }
 
@@ -91,15 +91,15 @@ class EnqueteCadastrar extends React.Component {
                 opts: ['']
             });
             showAlert(
-                'success', 'Sucesso!', 'Cadastro realizado com sucesso.'
+                'success', 'Sucesso', 'Cadastro realizado com sucesso'
             );
         })
         .catch(() => {
             this.setState({ loading: false });
             showAlert(
                 'danger', 
-                'Ops!', 
-                'Ocorreu um erro ao cadastrar a enquete.'
+                'Ops', 
+                'Ocorreu um erro ao cadastrar a enquete'
             );
         });
     }

@@ -244,8 +244,8 @@ class InfoEdit extends React.Component {
 
                 showAlert(
                     'danger', 
-                    'Ops!', 
-                    'Ocorreu um erro ao editar o informativo.'
+                    'Ops', 
+                    'Ocorreu um erro ao editar o informativo'
                 );
 
                 return;
@@ -293,12 +293,12 @@ class InfoEdit extends React.Component {
                 setTimeout(() => {
                     if (keyItem) {
                         showAlert(
-                            'success', 'Sucesso!', 'Edição realizada com sucesso.'
+                            'success', 'Sucesso', 'Edição realizada com sucesso'
                         );
                         onPressBack(true);
                     } else {
                         showAlert(
-                            'success', 'Sucesso!', 'Cadastro realizado com sucesso.'
+                            'success', 'Sucesso', 'Cadastro realizado com sucesso'
                         );
                     }  
                 }, 500);
@@ -316,15 +316,15 @@ class InfoEdit extends React.Component {
                 })
                 .then(() => {
                     this.setState({ loading: false, isTitValid: false });
-                    showAlert('success', 'Sucesso!', 'Edição realizada com sucesso.');
+                    showAlert('success', 'Sucesso', 'Edição realizada com sucesso');
                     onPressBack(true);
                 })
                 .catch(() => {
                     this.setState({ loading: false, isTitValid: false });
                     showAlert(
                         'danger', 
-                        'Ops!', 
-                        'Ocorreu um erro ao editar o informativo.'
+                        'Ops', 
+                        'Ocorreu um erro ao editar o informativo'
                     );
                 });  
             } else {
@@ -344,14 +344,14 @@ class InfoEdit extends React.Component {
                 })
                 .then(() => {
                     this.setState({ loading: false, isTitValid: false });
-                    showAlert('success', 'Sucesso!', 'Cadastro realizado com sucesso.');
+                    showAlert('success', 'Sucesso', 'Cadastro realizado com sucesso');
                 })
                 .catch(() => {
                     this.setState({ loading: false, isTitValid: false });
                     showAlert(
                         'danger', 
-                        'Ops!', 
-                        'Ocorreu um erro ao cadastrar o informativo.'
+                        'Ops', 
+                        'Ocorreu um erro ao cadastrar o informativo'
                     );
                 });  
             }

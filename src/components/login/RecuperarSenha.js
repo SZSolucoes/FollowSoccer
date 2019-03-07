@@ -85,8 +85,8 @@ class RecuperarSenha extends React.Component {
                 if (hasSendMail) {
                     showDropdownAlert(
                         'success', 
-                        'Sucesso!', 
-                        'Foi encaminhado uma nova senha de recuperação para o e-mail informado.',
+                        'Sucesso', 
+                        'Foi encaminhado uma nova senha de recuperação para o e-mail informado',
                         5000
                     );
 

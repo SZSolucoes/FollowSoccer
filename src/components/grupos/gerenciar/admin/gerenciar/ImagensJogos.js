@@ -124,7 +124,7 @@ class ImagensJogos extends React.Component {
                 this.updateProps();
                 showDropdownAlert(
                     'success',
-                    'Imagem removida.',
+                    'Imagem removida',
                     ''
                 );
             })

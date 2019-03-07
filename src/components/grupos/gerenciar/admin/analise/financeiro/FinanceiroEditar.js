@@ -54,7 +54,7 @@ class FinanceiroEditar extends React.Component {
         this.props.modificaItemSelected(item);
         this.props.modificaFlagRemoveAnaliseFina(true);
         this.props.modificaRemocao(true);
-        showAlert('danger', 'Remover!', 'Confirma a remoção ?');
+        showAlert('danger', 'Remover', 'Confirma a remoção ?');
     }
 
     onFilterFinaEdit(listFina, filterStr) {

@@ -62,14 +62,14 @@ class EnqueteEditar extends React.Component {
         this.props.modificaItemSelected(item);
         this.props.modificaFlagRemoveEnquetes(true);
         this.props.modificaRemocao(true);
-        showAlert('danger', 'Remover!', 'Confirma a remoção ?');
+        showAlert('danger', 'Remover', 'Confirma a remoção ?');
     }
 
     onPressEnd(item) {
         this.props.modificaItemSelected(item);
         this.props.modificaFlagEndEnquetes(true);
         this.props.modificaRemocao(true);
-        showAlert('danger', 'Encerrar!', 'Confirma o encerramento da enquete ?');
+        showAlert('danger', 'Encerrar', 'Confirma o encerramento da enquete ?');
     }
 
     onFilterEnqueteEdit(enquetes, filterStr) {

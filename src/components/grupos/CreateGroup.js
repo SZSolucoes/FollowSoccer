@@ -114,6 +114,10 @@ class CreateGroup extends React.Component {
         const dbGruposRef = this.fbDatabaseRef.child('grupos');
         const fbUsuarioRef = this.fbDatabaseRef.child(`usuarios/${userLogged.key}`);
         const dataAtual = Moment().format('DD/MM/YYYY HH:mm:ss');
+        const twofirstKey = userLogged.key.slice(0, 2);
+        const twoLastKey = userLogged.key.slice(-2);
+        const medianKey = new Date().getTime().toString(36);
+        const groupInviteKey = `${twofirstKey}${medianKey}${twoLastKey}`.replace(/=/g, '');
 
         const ret = await dbGruposRef.push({
             nome,
@@ -125,6 +129,8 @@ class CreateGroup extends React.Component {
             userowner: userLogged.key,
             dtcriacao: dataAtual,
             imgbody: '',
+            groupInviteKey,
+            convites: { push: 'push' },
             participantes: { [userLogged.key]: {
                 imgAvatar: userLogged.imgAvatar,
                 key: userLogged.key,
@@ -146,13 +152,13 @@ class CreateGroup extends React.Component {
                 const keyGroup = ret.getKey();
 
                 if (snapVal) {
-                    const newGroup = [...snapVal.grupos, { groupKey: keyGroup }];
+                    const newGroup = { [keyGroup]: { groupKey: keyGroup } };
                     const retA = await fbUsuarioRef.update({
                         grupos: newGroup
                     }).then(() => true).catch(() => false);
 
                     if (retA) {
-                        showDropdownAlert('success', 'Sucesso!', 'Grupo criado com sucesso.');
+                        showDropdownAlert('success', 'Sucesso', 'Grupo criado com sucesso');
                         this.cleanStates();
 
                         return;

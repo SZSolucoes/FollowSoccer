@@ -74,7 +74,7 @@ class MuralEditar extends React.Component {
 
     onPressEditRemove(item) {
         Alert.alert(
-            'Remover!', 
+            'Remover', 
             'Confirma a remoção ?',
             [
                 { text: 'Cancelar', onPress: () => false },

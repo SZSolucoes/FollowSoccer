@@ -112,14 +112,14 @@ class EditPerfil extends React.Component {
                 ), 2000);
             }
             this.setState({ loadingEditP: false, isTelefoneValid: true });
-            showAlert('success', 'Sucesso!', 'Edição realizada com sucesso.');
+            showAlert('success', 'Sucesso', 'Edição realizada com sucesso');
         })
         .catch(() => {
             this.setState({ loadingEditP: false, isTelefoneValid: true });
             showAlert(
                 'danger', 
-                'Ops!', 
-                'Ocorreu um erro ao editar o perfil.'
+                'Ops', 
+                'Ocorreu um erro ao editar o perfil'
             );
         });
     }
@@ -128,12 +128,12 @@ class EditPerfil extends React.Component {
         const { novaSenha, novaSenhaRep, userLogged } = this.state;
 
         if (novaSenha.trim() !== novaSenhaRep.trim()) {
-            Alert.alert('Aviso !', 'As senhas informadas devem ser iguais.');
+            Alert.alert('Aviso', 'As senhas informadas devem ser iguais');
             return;
         }
 
         if (novaSenha.trim().length < 6) {
-            Alert.alert('Aviso !', 'As senhas devem possuir 6 ou mais caracteres.');
+            Alert.alert('Aviso', 'As senhas devem possuir 6 ou mais caracteres');
             return;
         }
 
@@ -152,17 +152,17 @@ class EditPerfil extends React.Component {
                 user.updatePassword(novaSenha).then(() => {
                     this.setState({ loadingSenha: false });
                     AsyncStorage.setItem(mappedKeyStorage('password'), novaSenha);
-                    showAlert('success', 'Sucesso!', 'Senha alterada com sucesso.');
+                    showAlert('success', 'Sucesso', 'Senha alterada com sucesso');
                 }).catch((error) => {
                     this.setState({ loadingSenha: false });
 
                     if (error && error.code && error.code === 'auth/weak-password') {
-                        showAlert('danger', 'Erro!', 'A senha informada é insegura.');
+                        showAlert('danger', 'Erro', 'A senha informada é insegura');
                     } else {
                         showAlert(
                             'danger', 
-                            'Ops!', 
-                            'Ocorreu um erro ao alterar a senha.'
+                            'Ops', 
+                            'Ocorreu um erro ao alterar a senha'
                         );
                     }
                 });
@@ -171,8 +171,8 @@ class EditPerfil extends React.Component {
                 this.setState({ loadingSenha: false });
                 showAlert(
                     'danger', 
-                    'Ops!', 
-                    'Ocorreu um erro ao alterar a senha.'
+                    'Ops', 
+                    'Ocorreu um erro ao alterar a senha'
                 );
             });
         })
@@ -180,8 +180,8 @@ class EditPerfil extends React.Component {
             this.setState({ loadingSenha: false });
             showAlert(
                 'danger', 
-                'Ops!', 
-                'Ocorreu um erro ao alterar a senha.'
+                'Ops', 
+                'Ocorreu um erro ao alterar a senha'
             );
         });
     }

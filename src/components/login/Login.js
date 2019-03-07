@@ -70,8 +70,8 @@ class Login extends React.Component {
         } else {
             showDropdownAlert(
                 'warn', 
-                'Aviso !', 
-                'É necessário informar usuário e senha válidos.'
+                'Aviso', 
+                'É necessário informar usuário e senha válidos'
             );
         }
     }

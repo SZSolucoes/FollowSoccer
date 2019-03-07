@@ -23,6 +23,7 @@ import { checkConInfo } from '../../utils/SystemEvents';
 import { modifyCleanLogin } from '../login/LoginActions';
 
 import ListItem from '../../tools/elements/ListItem';
+import { stopFbListener } from '../../utils/FirebaseListeners';
 
 class Profile extends React.Component {
 
@@ -44,6 +45,8 @@ class Profile extends React.Component {
         AsyncStorage.removeItem(mappedKeyStorage('password'));
 
         this.props.modifyCleanLogin();
+
+        stopFbListener('usuario');
 
         Actions.reset('login');
     }
@@ -150,8 +153,8 @@ class Profile extends React.Component {
                 }
                 showAlert(
                     'danger', 
-                    'Ops!', 
-                    'Falha no upload de imagem.'
+                    'Ops', 
+                    'Falha no upload de imagem'
                 );
                 this.setState({ progress: 1 });
                 setTimeout(() => this.setState({ progress: 0 }), 1500);

@@ -163,12 +163,12 @@ class CadastroJogos extends React.Component {
                     .catch(() => true);
                 }
                 setTimeout(
-                    () => showDropdownAlert('success', 'Sucesso!', 'Jogo removido com sucesso.')
+                    () => showDropdownAlert('success', 'Sucesso', 'Jogo removido com sucesso')
                 , 1000);
             })
             .catch(() => 
                 setTimeout(
-                    () => showDropdownAlert('success', 'Sucesso!', 'Falha ao remover jogo.')
+                    () => showDropdownAlert('success', 'Sucesso', 'Falha ao remover jogo')
                 , 1000)
             );
         };

@@ -107,7 +107,7 @@ class Cadastrar extends React.Component {
             dbUsuariosRef.set({ ...newUser })
             .then(() => {
                 this.setState({ loading: false });
-                showDropdownAlert('success', 'Sucesso!', 'Cadastro realizado com sucesso.');
+                showDropdownAlert('success', 'Sucesso', 'Cadastro realizado com sucesso');
                 Actions.pop();
             })
             .catch(() => {
@@ -147,8 +147,8 @@ class Cadastrar extends React.Component {
                             .then(() => {
                                 showDropdownAlert(
                                     'success', 
-                                    'Sucesso !', 
-                                    'Cadastro realizado com sucesso.'
+                                    'Sucesso', 
+                                    'Cadastro realizado com sucesso'
                                 );
                                 Actions.pop();
                             })

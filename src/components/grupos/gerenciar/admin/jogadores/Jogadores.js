@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React from 'react';
 import {
     ScrollView,
@@ -7,16 +8,21 @@ import {
     StyleSheet,
     ActivityIndicator,
     Alert,
-    TouchableOpacity
+    Keyboard,
+    TouchableOpacity,
+    TouchableWithoutFeedback
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider, Badge, Button, Icon } from 'react-native-elements';
 import _ from 'lodash';
+import Share from 'react-native-share';
 
 import { 
     colorAppPrimary, 
     colorAppForeground, 
-    colorAppSecondary 
+    colorAppSecondary, 
+    ERROS,
+    SHARE_INVITE
 } from '../../../../../utils/Constantes';
 import ListItem from '../../../../../tools/elements/ListItem';
 import firebase from '../../../../../utils/Firebase';
@@ -25,8 +31,8 @@ import Card from '../../../../../tools/elements/Card';
 
 import imgTeam from '../../../../../assets/imgs/team.png';
 import { normalize } from '../../../../../utils/StrComplex';
-import ShareModal from '../../../../../tools/share/ShareModal';
-import { checkConInfo } from '../../../../../utils/SystemEvents';
+//import ShareModal from '../../../../../tools/share/ShareModal';
+import { checkConInfo, showDropdownAlert } from '../../../../../utils/SystemEvents';
 
 class Jogadores extends React.Component {
     constructor(props) {
@@ -35,10 +41,27 @@ class Jogadores extends React.Component {
         this.dbFirebaseRef = firebase.database().ref();
         this.debouncedUpdateList = _.debounce(this.onUpdateListInvites, 800);
 
+        this.viewIngressed = (
+            <View
+                style={{ margin: 5 }}
+            >
+                <Text
+                    style={{
+                        fontFamily: 'OpenSans-SemiBold',
+                        color: 'red',
+                        fontSize: normalize(13)
+                    }}
+                >
+                    Membro do grupo
+                </Text>
+            </View>
+        );
+
         this.state = {
             loadingInvite: false,
             listUsuarios: [],
-            listUsuariosInvite: []
+            listUsuariosInvite: [],
+            noUsers: false
         };
     }
 
@@ -47,57 +70,125 @@ class Jogadores extends React.Component {
 
         if (showInputText && prevProps.searchValue !== searchValue) {
             if (!searchValue.trim()) {
-                this.setState({ loadingInvite: false, listUsuariosInvite: [] });
+                this.setState({ 
+                    loadingInvite: false, 
+                    listUsuariosInvite: [],
+                    noUsers: false
+                });
             }
             this.debouncedUpdateList(searchValue);
         } else if ((prevProps.searchValue !== searchValue) && !!searchValue) {
-            this.setState({ loadingInvite: false, listUsuariosInvite: [] });
+            this.setState({ 
+                loadingInvite: false, 
+                listUsuariosInvite: [],
+                noUsers: false
+            });
         }
     }
 
     onUpdateListInvites = (searchValue) => {
         if (!searchValue.trim()) {
-            this.setState({ loadingInvite: false, listUsuariosInvite: [] });
+            this.setState({ 
+                loadingInvite: false, 
+                listUsuariosInvite: [],
+                noUsers: false
+            });
             return;
         }
 
-        this.setState({ loadingInvite: true, listUsuariosInvite: [] });
-        
+        this.setState({ 
+            loadingInvite: true, 
+            listUsuariosInvite: [],
+            noUsers: false
+        });
+
+        const { grupoSelected, userLogged } = this.props;
+        const convites = _.values(grupoSelected.convites);
+
         this.dbFirebaseRef
         .child('usuarios')
         .once('value', snap => {
             if (snap) {
                 const snapVal = snap.val();
                 if (snapVal) {
-                    const toLowerSearchValue = searchValue.toLowerCase();
+                    const toLowerSearchValue = searchValue.toLowerCase().trim();
                     const mappedUsers = _.map(snapVal, (ita, key) => ({ key, ...ita }));
-                    const filtred = _.filter(mappedUsers, itb => (
-                        (itb.nome && itb.nome.toLowerCase().includes(toLowerSearchValue)) ||
-                        (itb.email && itb.email.toLowerCase().includes(toLowerSearchValue))
+
+                    const filtredByValue = _.filter(mappedUsers, itc => (
+                        (itc.nome && itc.nome.toLowerCase().includes(toLowerSearchValue)) ||
+                        (itc.email && itc.email.toLowerCase().includes(toLowerSearchValue))
                     ));
+
+                    const filtreByParticip = _.filter(filtredByValue, itb => {
+                        if (itb.key === userLogged.key) return false;
+
+                        const findedGrupoConvites = _.findIndex(convites, itba => (
+                            itba.key && (itba.key === itb.key)
+                        ));
+
+                        if (findedGrupoConvites !== -1) return false;
+
+                        return true;
+                    });
 
                     this.setState({ 
                         loadingInvite: false, 
-                        listUsuariosInvite: filtred
+                        listUsuariosInvite: filtreByParticip,
+                        noUsers: filtreByParticip.length === 0
                     });
 
                     return;
                 }
             }
 
-            this.setState({ loadingInvite: false, listUsuariosInvite: [] });
+            this.setState({ loadingInvite: false, listUsuariosInvite: [], noUsers: false });
         });
     }
 
-    onSendInvite = (user) => {
+    onSendInvite = async (user, index) => {
         const { grupoSelected } = this.props;
         const funExec = async () => {
-            this.dbFirebaseRef.child(`usuarios/${user.key}/convites`)
+            let ret = false;
+            
+            ret = await this.dbFirebaseRef.child(`usuarios/${user.key}/convites`)
             .update({
                 [grupoSelected.key]: { groupKey: grupoSelected.key }
             })
-            .then(() => console.log('sucesso'))
-            .catch(() => console.log('deu ruim'));
+            .then(() => true)
+            .catch(() => false);
+
+            if (ret) {
+                ret = await this.dbFirebaseRef
+                .child(`grupos/${grupoSelected.key}/convites`)
+                .update({
+                    [user.key]: { key: user.key }
+                })
+                .then(() => true)
+                .catch(() => false);
+            }
+
+            if (ret) {
+                const splicedList = [...this.state.listUsuariosInvite];
+
+                splicedList.splice(index);
+
+                this.setState({ 
+                    listUsuariosInvite: splicedList,
+                    noUsers: false
+                });
+                
+                showDropdownAlert(
+                    'success',
+                    'Convite enviado',
+                    ''
+                );
+            } else {
+                showDropdownAlert(
+                    'error',
+                    ERROS.groupInvite.erro,
+                    ERROS.groupInvite.mes
+                );
+            }
         };
 
         Alert.alert(
@@ -114,8 +205,32 @@ class Jogadores extends React.Component {
         );
     }
 
+    onRenderRightIconInvite = (
+        listUsuarios,
+        ita,
+        index
+    ) => {
+        const findedPartic = _.findIndex(listUsuarios, itba => (
+            itba.key === ita.key
+        ));
+        
+        if (findedPartic !== -1) return this.viewIngressed;
+
+        return (
+            <TouchableOpacity
+                onPress={() => this.onSendInvite(ita, index)}
+            >
+                <Icon
+                    name='email' 
+                    type='material-community' 
+                    size={30} color={colorAppSecondary} 
+                />  
+            </TouchableOpacity>
+        );
+    }
+
     render = () => {
-        const { grupoSelected, showInputText } = this.props;
+        const { grupoSelected, showInputText, searchValue } = this.props;
 
         const listUsuarios = grupoSelected.participantes ? 
         _.values(grupoSelected.participantes) : [];
@@ -129,7 +244,81 @@ class Jogadores extends React.Component {
                 );
             }
 
-            if (!(this.state.listUsuariosInvite.length > 0)) return false;
+            if (this.state.noUsers && !!searchValue) {
+                return (
+                    <TouchableWithoutFeedback
+                        onPress={() => Keyboard.dismiss()}
+                    >
+                        <View style={{ flex: 1 }}>
+                            <ScrollView
+                                style={{ flex: 1 }}
+                                contentContainerStyle={{
+                                    flexGrow: 1
+                                }}
+                            >
+                                <Card
+                                    title={'Jogador não encontrado'}
+                                    titleStyle={{
+                                        fontFamily: 'OpenSans-Bold',
+                                        fontSize: 16
+                                    }}
+                                >
+                                    <Text 
+                                        style={{
+                                            fontFamily: 'OpenSans-Regular',
+                                            fontSize: normalize(13),
+                                            color: 'black',
+                                            fontWeight: '400',
+                                            textAlign: 'center'
+                                        }}
+                                    >
+                                        Deseja convidar um jogador ainda não cadastrado 
+                                        para participar do grupo ?
+                                    </Text>
+                                    <Button
+                                        backgroundColor='#03A9F4'
+                                        buttonStyle={{
+                                            borderRadius: 0,
+                                            marginTop: 10, 
+                                            marginLeft: 0, 
+                                            marginRight: 0, 
+                                            marginBottom: 0
+                                        }}
+                                        title={'Convidar'}
+                                        onPress={() => {
+                                            Keyboard.dismiss();
+                                            Share.open(
+                                                {
+                                                    title: SHARE_INVITE.shareTitle,
+                                                    message: `${SHARE_INVITE.shareMessage}${grupoSelected.groupInviteKey}\n\n`,
+                                                    url: SHARE_INVITE.fullUrls,
+                                                    subject: SHARE_INVITE.shareSubject
+                                                }
+                                            ).then(() => true).catch(() => false);
+                                        }}
+                                        fontFamily='OpenSans-SemiBold'
+                                    />
+                                </Card>
+                            </ScrollView>
+                            {/* <ShareModal
+                                ref={ref => (this.shareModalRef = ref)}
+                                shareOptions={{
+                                    title: SHARE_INVITE.shareTitle,
+                                    message: `${SHARE_INVITE.shareMessage}${grupoSelected.groupInviteKey}\n`,
+                                    url: SHARE_INVITE.shareUrl,
+                                    subject: SHARE_INVITE.shareSubject
+                                }}
+                                twitter
+                                facebook
+                                messenger
+                                whatsapp
+                                email
+                                clipboard
+                            /> */}
+                        </View>
+                    </TouchableWithoutFeedback>
+                );
+            }
 
             return (
                 <ScrollView
@@ -181,16 +370,10 @@ class Jogadores extends React.Component {
                                         containerStyle={{
                                             borderBottomWidth: 0
                                         }}
-                                        rightIcon={(
-                                            <TouchableOpacity
-                                                onPress={() => this.onSendInvite(ita)}
-                                            >
-                                                <Icon
-                                                    name='email' 
-                                                    type='material-community' 
-                                                    size={30} color={colorAppSecondary} 
-                                                />  
-                                            </TouchableOpacity>
+                                        rightIcon={this.onRenderRightIconInvite(
+                                            listUsuarios,
+                                            ita,
+                                            index
                                         )}
                                     />
                                     <Divider />
@@ -277,7 +460,17 @@ class Jogadores extends React.Component {
                                     marginBottom: 0
                                 }}
                                 title={'Convidar'}
-                                onPress={() => this.shareModalRef && this.shareModalRef.onOpen()}
+                                onPress={() => {
+                                    Keyboard.dismiss();
+                                    Share.open(
+                                        {
+                                            title: SHARE_INVITE.shareTitle,
+                                            message: `${SHARE_INVITE.shareMessage}${grupoSelected.groupInviteKey}\n\n`,
+                                            url: SHARE_INVITE.fullUrls,
+                                            subject: SHARE_INVITE.shareSubject
+                                        }
+                                    ).then(() => true).catch(() => false);
+                                }}
                                 fontFamily='OpenSans-SemiBold'
                             />
                         </Card>
@@ -398,19 +591,21 @@ class Jogadores extends React.Component {
                         <View style={{ marginBottom: 50 }} />
                     </ScrollView>
                 </View>
-                <ShareModal
+                {/* <ShareModal
                     ref={ref => (this.shareModalRef = ref)}
                     shareOptions={{
-                        title: 'React Native',
-                        message: 'Hola mundo',
-                        url: 'http://facebook.github.io/react-native/',
-                        subject: 'Share Link' //  for email
+                        title: SHARE_INVITE.shareTitle,
+                        message: `${SHARE_INVITE.shareMessage}${grupoSelected.groupInviteKey}\n`,
+                        url: SHARE_INVITE.shareUrl,
+                        subject: SHARE_INVITE.shareSubject
                     }}
                     twitter
                     facebook
+                    messenger
                     whatsapp
+                    email
                     clipboard
-                />
+                /> */}
             </View>
         );
     }

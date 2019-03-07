@@ -253,15 +253,15 @@ class JogoEdit extends React.Component {
                         });
                         showDropdownAlert(
                             'success', 
-                            'Sucesso!', 
-                            'Edição realizada com sucesso.'
+                            'Sucesso', 
+                            'Edição realizada com sucesso'
                         );    
                     } else {
                         sendCadJogoPushNotifForAll(titulo, grupoSelected);
                         showDropdownAlert(
                             'success', 
-                            'Sucesso!', 
-                            'Cadastro realizado com sucesso.'
+                            'Sucesso', 
+                            'Cadastro realizado com sucesso'
                         );
                         this.cleanStates();
                     }
@@ -308,8 +308,8 @@ class JogoEdit extends React.Component {
                     });
                     showDropdownAlert(
                         'success', 
-                        'Sucesso!', 
-                        'Edição realizada com sucesso.'
+                        'Sucesso', 
+                        'Edição realizada com sucesso'
                     );
                 })
                 .catch(() => {
@@ -353,8 +353,8 @@ class JogoEdit extends React.Component {
                     this.setState({ loading: false, isTitValid: false });
                     showDropdownAlert(
                         'success', 
-                        'Sucesso!', 
-                        'Cadastro realizado com sucesso.'
+                        'Sucesso', 
+                        'Cadastro realizado com sucesso'
                     );
                     this.cleanStates();
                 })
