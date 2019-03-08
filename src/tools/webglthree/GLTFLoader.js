@@ -54,7 +54,7 @@ THREE.GLTFLoader = ( function () {
 
 				} else {
 
-					console.error( e );
+					console.log( e );
 
 				}
 

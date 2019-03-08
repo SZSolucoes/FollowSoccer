@@ -3348,7 +3348,7 @@ THREE.ColladaLoader.prototype = {
 
 				} else {
 
-					console.error( 'THREE.ColladaLoader: Unable to find root bone of skeleton with ID:', skeleton );
+					console.log( 'THREE.ColladaLoader: Unable to find root bone of skeleton with ID:', skeleton );
 
 				}
 

@@ -195,6 +195,18 @@ export const ERROS = {
     groupCodeInvite: {
         erro: 'Erro #0032',
         mes: 'Falha ao ingressar no grupo. Verifique a conexão.'
+    },
+    groupInviteReject: {
+        erro: 'Erro #0033',
+        mes: 'Falha ao recusar convite. Verifique a conexão.'
+    },
+    groupPlayersRemove: {
+        erro: 'Erro #0034',
+        mes: 'Falha ao remover jogador. Verifique a conexão.'
+    },
+    groupExit: {
+        erro: 'Erro #0035',
+        mes: 'Falha ao sair do grupo. Verifique a conexão.'
     }
 };
 

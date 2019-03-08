@@ -174,6 +174,10 @@ class Grupos extends React.Component {
                             }
     
                             if (ret) {
+                                this.fbDatabaseRef
+                                .child(`usuarios/${userLogged.key}/convites/${snapKey[0]}`)
+                                .remove();
+                                
                                 showDropdownAlert(
                                     'success',
                                     'Sucesso',

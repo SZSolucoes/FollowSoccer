@@ -2256,7 +2256,7 @@ THREE.FBXLoader = ( function () {
 
 			if ( THREE.NURBSCurve === undefined ) {
 
-				console.error( 'THREE.FBXLoader: The loader relies on THREE.NURBSCurve for any nurbs present in the model. Nurbs will show up as empty geometry.' );
+				console.log( 'THREE.FBXLoader: The loader relies on THREE.NURBSCurve for any nurbs present in the model. Nurbs will show up as empty geometry.' );
 				return new THREE.BufferGeometry();
 
 			}
@@ -2265,7 +2265,7 @@ THREE.FBXLoader = ( function () {
 
 			if ( isNaN( order ) ) {
 
-				console.error( 'THREE.FBXLoader: Invalid Order %s given for geometry ID: %s', geoNode.Order, geoNode.id );
+				console.log( 'THREE.FBXLoader: Invalid Order %s given for geometry ID: %s', geoNode.Order, geoNode.id );
 				return new THREE.BufferGeometry();
 
 			}
@@ -3533,7 +3533,7 @@ THREE.FBXLoader = ( function () {
 
 					if ( typeof Zlib === 'undefined' ) {
 
-						console.error( 'THREE.FBXLoader: External library Inflate.min.js required, obtain or import from https://github.com/imaya/zlib.js' );
+						console.log( 'THREE.FBXLoader: External library Inflate.min.js required, obtain or import from https://github.com/imaya/zlib.js' );
 
 					}
 

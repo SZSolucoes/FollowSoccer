@@ -61,6 +61,7 @@ import Plus from './components/grupos/gerenciar/plus/Plus';
 import Notifications from './components/grupos/gerenciar/plus/Notifications';
 import Jogadores from './components/grupos/gerenciar/admin/jogadores/Jogadores';
 import SearchBar from './tools/searchbar/SearchBar';
+import Convites from './components/convites/Convites';
 
 const AnimatedSceneComp = Animated.createAnimatedComponent(AnimatedScene);
 
@@ -451,8 +452,8 @@ class Routes extends React.Component {
             />
             <Scene 
                 key='convites'
-                title={'Yellow'}
-                component={() => <View style={{ flex: 1, backgroundColor: 'yellow' }} />}
+                title={'Convites'}
+                component={Convites}
                 titleStyle={styles.title}
             />
         </Scene>

@@ -205,6 +205,57 @@ class Jogadores extends React.Component {
         );
     }
 
+    onRemovePlayer = (item) => {
+        try {
+            const asyncFunExec = async () => {
+                const { grupoSelected } = this.props;
+                let ret = false;
+
+                ret = await this.dbFirebaseRef
+                .child(`grupos/${grupoSelected.key}/participantes/${item.key}`)
+                .remove().then(() => true).catch(() => false);
+
+                if (ret) {
+                    ret = await this.dbFirebaseRef
+                    .child(`usuarios/${item.key}/grupos/${grupoSelected.key}`)
+                    .remove().then(() => true).catch(() => false);
+                }
+    
+                if (ret) {
+                    showDropdownAlert(
+                        'success',
+                        'Sucesso',
+                        'Jogador removido do grupo'
+                    );
+                } else {
+                    showDropdownAlert(
+                        'error',
+                        ERROS.groupPlayersRemove.erro,
+                        ERROS.groupPlayersRemove.mes
+                    );
+                }
+            };
+
+            Alert.alert(
+                'Aviso',
+                `Confirma a remoção do jogador:\n(${item.nome}) ?`,
+                [
+                    {
+                        text: 'Sim',
+                        onPress: () => checkConInfo(() => asyncFunExec())
+                    },
+                    {
+                        text: 'Cancelar',
+                        onPress: () => false,
+                    },
+                ],
+              { cancelable: true },
+            );
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
     onRenderRightIconInvite = (
         listUsuarios,
         ita,
@@ -229,11 +280,35 @@ class Jogadores extends React.Component {
         );
     }
 
-    render = () => {
-        const { grupoSelected, showInputText, searchValue } = this.props;
+    onRederRightIconPlayers = (
+        ita,
+        index,
+        userKey
+    ) => (
+        ita.key !== userKey ?
+        (
+            <TouchableOpacity
+                onPress={() => this.onRemovePlayer(ita, index)}
+            >
+                <Icon
+                    name='delete' 
+                    type='material-community' 
+                    size={30} color={'red'} 
+                />  
+            </TouchableOpacity>
+        )  
+        :
+        (<View />)
+    )
 
-        const listUsuarios = grupoSelected.participantes ? 
+    render = () => {
+        const { grupoSelected, showInputText, searchValue, userLogged } = this.props;
+        let userKey = '';
+
+        let listUsuarios = grupoSelected.participantes ? 
         _.values(grupoSelected.participantes) : [];
+
+        listUsuarios = _.orderBy(listUsuarios, ['nome'], ['asc']);
 
         if (showInputText) {
             if (this.state.loadingInvite) {
@@ -320,6 +395,8 @@ class Jogadores extends React.Component {
                 );
             }
 
+            const listUsuariosInvite = _.orderBy(this.state.listUsuariosInvite, ['nome'], ['asc']);
+            
             return (
                 <ScrollView
                     contentContainerStyle={{ 
@@ -328,7 +405,7 @@ class Jogadores extends React.Component {
                     }}
                 >
                     {
-                        _.map(this.state.listUsuariosInvite, (ita, index) => {
+                        _.map(listUsuariosInvite, (ita, index) => {
                             const updatedImg = retrieveUpdUserGroup(
                                 ita.key, 
                                 'imgAvatar', 
@@ -420,6 +497,10 @@ class Jogadores extends React.Component {
                 </View>
             );
         } 
+
+        if (userLogged && userLogged.key) {
+            userKey = userLogged.key;
+        }
 
         return (
             <View
@@ -554,7 +635,11 @@ class Jogadores extends React.Component {
                                             containerStyle={{
                                                 borderBottomWidth: 0
                                             }}
-                                            hideChevron
+                                            rightIcon={this.onRederRightIconPlayers(
+                                                ita,
+                                                index,
+                                                userKey
+                                            )}
                                         />
                                         <Divider />
                                         <View

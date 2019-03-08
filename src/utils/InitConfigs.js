@@ -43,7 +43,7 @@ export const initConfigs = (store) => {
                         mappedKeyStorage('loginAutomaticoEnabled')
                     );
                 } catch (e) {
-                    console.error(e);
+                    console.log(e);
 
                     AsyncStorage.setItem(
                         mappedKeyStorage('loginAutomaticoEnabled'), 
@@ -104,7 +104,7 @@ export const initPushNotifs = async (store) => {
             }
         });
     } catch (e) {
-        console.error(e);
+        console.log(e);
     }
 
     try {
@@ -123,7 +123,7 @@ export const initPushNotifs = async (store) => {
             }
         }
     } catch (e) {
-        console.error(e);
+        console.log(e);
     }
 
     FCM.on(FCMEvent.Notification, notif => {
@@ -192,7 +192,7 @@ export const initPushNotifs = async (store) => {
             AsyncStorage.setItem(mappedKeyStorage('loginAutomaticoEnabled'), 'yes');
         }
     } catch (e) {
-        console.error(e);
+        console.log(e);
         AsyncStorage.setItem(mappedKeyStorage('loginAutomaticoEnabled'), 'yes');
     }
 };
