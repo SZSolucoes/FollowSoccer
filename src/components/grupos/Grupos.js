@@ -146,7 +146,7 @@ class Grupos extends React.Component {
                                 showDropdownAlert(
                                     'warn', 
                                     'Aviso',
-                                    'Você já ingressou ao grupo informado.'
+                                    'Você já ingressou no grupo informado.'
                                 );
 
                                 return;
@@ -172,9 +172,13 @@ class Grupos extends React.Component {
                                     [snapKey[0]]: { groupKey: snapKey[0] } 
                                 }).then(() => true).catch(() => false);
                             }
-    
+
                             if (ret) {
-                                this.fbDatabaseRef
+                                await this.fbDatabaseRef
+                                .child(`grupos/${snapKey[0]}/convites/${userLogged.key}`)
+                                .remove().then(() => true).catch(() => false);
+
+                                await this.fbDatabaseRef
                                 .child(`usuarios/${userLogged.key}/convites/${snapKey[0]}`)
                                 .remove();
                                 
@@ -303,7 +307,7 @@ class Grupos extends React.Component {
                 this.setState({ showModalCodeGroup: true });
                 setTimeout(() => {
                     if (this.modalCodeGroupRef) this.modalCodeGroupRef.onOpenModal();
-                }, 500);
+                }, 200);
 
                 break;
             default:
@@ -326,6 +330,19 @@ class Grupos extends React.Component {
                 bounciness: 0
             }).start(() => { this.inAnimation = false; });
         }
+    }
+
+    dataSourceControl = (grupos, filter) => {
+        let newGroups = _.reverse(grupos);
+        
+        if (filter.trim()) {
+            const toLowerSearchValue = filter.trim().toLowerCase();
+            newGroups = _.filter(newGroups, ita =>
+                ita.nome && ita.nome.toLowerCase().includes(toLowerSearchValue)
+            );
+        }
+
+        return newGroups;
     }
 
     removeFbListeners = () => {
@@ -504,7 +521,7 @@ class Grupos extends React.Component {
                 style={styles.mainView}
             >
                 <Animated.FlatList
-                    data={_.reverse(this.state.groups)}
+                    data={this.dataSourceControl(this.state.groups, this.props.searchValue)}
                     renderItem={this.renderGroup}
                     keyExtractor={(item, index) => index.toString()}
                     ListFooterComponent={(<View style={{ marginVertical: 50 }} />)}
@@ -572,7 +589,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-    userLogged: state.LoginReducer.userLogged
+    userLogged: state.LoginReducer.userLogged,
+    showInputText: state.SearchBarReducer.showInputText,
+    searchValue: state.SearchBarReducer.searchValue
 });
 
 export default connect(mapStateToProps, {

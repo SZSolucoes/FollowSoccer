@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Icon } from 'react-native-elements';
+import PropTypes from 'prop-types';
 
 import {
     modifySearchValue,
@@ -31,10 +32,13 @@ class SearchBar extends React.Component {
 
     componentDidMount = () => {
         Dimensions.addEventListener('change', this.onChangeDimensions);
+        this.props.modifyShowInputText(false);
+        this.props.modifySearchValue('');
     }
 
     componentWillUnmount = () => {
         Dimensions.removeEventListener('change', this.onChangeDimensions);
+        this.props.modifyShowInputText(false);
         this.props.modifySearchValue('');
     }
 
@@ -92,9 +96,12 @@ class SearchBar extends React.Component {
             >
                 <Icon
                     iconStyle={{ marginHorizontal: 5 }}
-                    name='account-plus'
+                    name={
+                        this.props.searchValue.trim() && this.props.iconNameWithValue ?
+                        this.props.iconNameWithValue : this.props.iconName
+                    }
                     color={'white'}
-                    type='material-community' 
+                    type='material-community'
                     size={28}
                 />
             </TouchableNativeFeedback>
@@ -153,7 +160,7 @@ class SearchBar extends React.Component {
                     <TextInput
                         ref={ref => (this.searchInputRef = ref)}
                         autoCapitalize={'none'}
-                        placeholder='Buscar Jogador...'
+                        placeholder={this.props.inputPlaceHolder}
                         style={{
                             fontFamily: 'OpenSans-Regular'
                         }}
@@ -173,6 +180,18 @@ class SearchBar extends React.Component {
         </Animated.View>
     )
 }
+
+SearchBar.defaultProps = {
+    inputPlaceHolder: 'Buscar...',
+    iconName: 'magnify',
+    iconNameWithValue: ''
+};
+
+SearchBar.propTypes = {
+    inputPlaceHolder: PropTypes.string,
+    iconName: PropTypes.string,
+    iconNameWithValue: PropTypes.string
+};
 
 const mapStateToProps = state => ({
     showInputText: state.SearchBarReducer.showInputText,

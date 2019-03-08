@@ -29,17 +29,17 @@ import FastImage from 'react-native-fast-image';
 import { Dialog } from 'react-native-simple-dialogs';
 import * as Progress from 'react-native-progress';
 
-import firebase from '../../../Firebase';
-import { showAlert } from '../../../utils/store';
-import { colorAppF, colorAppS } from '../../../utils/constantes';
-import { checkPerfil } from '../../../utils/userUtils';
-import { checkConInfo } from '../../../utils/jogosUtils';
-import { doActiveRNFetchBlob } from '../../../utils/utilsTools';
-import Card from '../../tools/Card';
+import firebase from '../../../../../utils/Firebase';
+import { colorAppF, colorAppS, ERROS } from '../../../../../utils/Constantes';
+import { doActiveRNFetchBlob } from '../../../../../utils/UtilsTools';
+import { checkConInfo, showDropdownAlert } from '../../../../../utils/SystemEvents';
+import Card from '../../../../../tools/elements/Card';
 
 class InfoEdit extends React.Component {
     constructor(props) {
         super(props);
+
+        this.dbFirebaseRef = firebase.database().ref();
 
         this.state = {
             isTitValid: props.isTitValid ? props.isTitValid : false,
@@ -56,13 +56,9 @@ class InfoEdit extends React.Component {
             uploadModalPerc: 0,
             uploadModalText: 'Enviando imagem...'
         };
-
-        this.onPressSelectImg = this.onPressSelectImg.bind(this);
-        this.onPressConfirmar = this.onPressConfirmar.bind(this);
-        this.renderImages = this.renderImages.bind(this);
     }
 
-    onPressSelectImg() {
+    onPressSelectImg = () => {
         ImagePicker.openPicker({
             width: 600,
             height: 400,
@@ -110,13 +106,13 @@ class InfoEdit extends React.Component {
           }).catch(() => false);
     }
 
-    async onPressConfirmar() {
+    onPressConfirmar = async () => {
         this.setState({ loading: true });
 
         const { 
             titulo, descricao, linkExt, scrollView, imgsArticleUri 
         } = this.state;
-        const { keyItem, userLogged, userLevel, onPressBack } = this.props;
+        const { keyItem, userLogged, userLevel, onPressBack, grupoSelected } = this.props;
         const protocol = linkExt.substr(0, 4);
         let linkArticle = linkExt;
         let dataStr = '';
@@ -146,7 +142,7 @@ class InfoEdit extends React.Component {
         // Upload de imagem e dados
         if (imgsArticleUri && imgsArticleUri.length) {
             const storageRef = firebase.storage().ref();
-            const databaseRef = firebase.database().ref();
+            const databaseRef = this.dbFirebaseRef;
             const imgsUrl = _.filter(
                 imgsArticleUri, imgurl => imgurl.isUri === 'true' && !imgurl.isRem
             );
@@ -179,7 +175,10 @@ class InfoEdit extends React.Component {
             doActiveRNFetchBlob(true);
             
             const dbInfosRef = keyItem ? 
-            databaseRef.child(`informativos/${keyItem}`) : databaseRef.child('informativos');
+            databaseRef
+            .child(`grupos/${grupoSelected.key}/informativos/${keyItem}`) 
+            : 
+            databaseRef.child(`grupos/${grupoSelected.key}/informativos`);
 
             // TRATAMENTO DE UPLOAD DE IMAGENS
             const asyncFun = async (element) => {
@@ -190,7 +189,8 @@ class InfoEdit extends React.Component {
                     const imgExt = element.contentType.slice(
                         element.contentType.indexOf('/') + 1
                     );
-                    const imgRef = storageRef.child(`informativos/${fileName}.${imgExt}`);
+                    const imgRef = storageRef
+                    .child(`grupos/${grupoSelected.key}/informativos/${fileName}.${imgExt}`);
                     const metadata = {
                         contentType: element.contentType
                     };
@@ -242,10 +242,10 @@ class InfoEdit extends React.Component {
 
                 doActiveRNFetchBlob(false);
 
-                showAlert(
-                    'danger', 
-                    'Ops', 
-                    'Ocorreu um erro ao editar o informativo'
+                showDropdownAlert(
+                    'error',
+                    ERROS.informativosEdit.erro,
+                    ERROS.informativosEdit.mes
                 );
 
                 return;
@@ -271,7 +271,6 @@ class InfoEdit extends React.Component {
                     linkArticle,
                     emailUser: userLogged.email,
                     nomeUser: userLogged.nome,
-                    perfilUser: checkPerfil(userLogged.tipoPerfil),
                     userLevel,
                     imgAvatar: userLogged.imgAvatar,
                     listComents: [{ push: 'push' }],
@@ -292,21 +291,28 @@ class InfoEdit extends React.Component {
     
                 setTimeout(() => {
                     if (keyItem) {
-                        showAlert(
-                            'success', 'Sucesso', 'Edição realizada com sucesso'
+                        showDropdownAlert(
+                            'success',
+                            'Sucesso',
+                            'Edição realizada com sucesso'
                         );
                         onPressBack(true);
                     } else {
-                        showAlert(
-                            'success', 'Sucesso', 'Cadastro realizado com sucesso'
+                        showDropdownAlert(
+                            'success',
+                            'Sucesso',
+                            'Cadastro realizado com sucesso'
                         );
                     }  
                 }, 500);
             }, 2000);
         } else {
-            const databaseRef = firebase.database().ref();
+            const databaseRef = this.dbFirebaseRef;
             const dbInfosRef = keyItem ? 
-            databaseRef.child(`informativos/${keyItem}`) : databaseRef.child('informativos');
+            databaseRef
+            .child(`grupos/${grupoSelected.key}/informativos/${keyItem}`) 
+            : 
+            databaseRef.child(`grupos/${grupoSelected.key}/informativos`);
 
             if (keyItem) {
                 dbInfosRef.update({
@@ -316,15 +322,19 @@ class InfoEdit extends React.Component {
                 })
                 .then(() => {
                     this.setState({ loading: false, isTitValid: false });
-                    showAlert('success', 'Sucesso', 'Edição realizada com sucesso');
+                    showDropdownAlert(
+                        'success',
+                        'Sucesso',
+                        'Edição realizada com sucesso'
+                    );
                     onPressBack(true);
                 })
                 .catch(() => {
                     this.setState({ loading: false, isTitValid: false });
-                    showAlert(
-                        'danger', 
-                        'Ops', 
-                        'Ocorreu um erro ao editar o informativo'
+                    showDropdownAlert(
+                        'error',
+                        ERROS.informativosEdit.erro,
+                        ERROS.informativosEdit.mes
                     );
                 });  
             } else {
@@ -335,7 +345,6 @@ class InfoEdit extends React.Component {
                     linkArticle,
                     emailUser: userLogged.email,
                     nomeUser: userLogged.nome,
-                    perfilUser: checkPerfil(userLogged.tipoPerfil),
                     userLevel,
                     imgAvatar: userLogged.imgAvatar,
                     listComents: [{ push: 'push' }],
@@ -344,21 +353,38 @@ class InfoEdit extends React.Component {
                 })
                 .then(() => {
                     this.setState({ loading: false, isTitValid: false });
-                    showAlert('success', 'Sucesso', 'Cadastro realizado com sucesso');
+                    showDropdownAlert(
+                        'success',
+                        'Sucesso',
+                        'Cadastro realizado com sucesso'
+                    );
+                    this.clearFields();
                 })
                 .catch(() => {
                     this.setState({ loading: false, isTitValid: false });
-                    showAlert(
-                        'danger', 
-                        'Ops', 
-                        'Ocorreu um erro ao cadastrar o informativo'
+                    showDropdownAlert(
+                        'error',
+                        ERROS.informativosCad.erro,
+                        ERROS.informativosCad.mes
                     );
                 });  
             }
         }
     }
+
+    clearFields = () => {
+        this.setState({
+            isTitValid: false,
+            contentType: '',
+            imgsArticleUri: [],
+            titulo: '',
+            descricao: '',
+            linkExt: '',
+            loading: false
+        });
+    }
     
-    renderImages() {
+    renderImages = () => {
         const viewsImages = _.map(this.state.imgsArticleUri, (data, index) => {
             if (!data.isRem) {
                 return (
@@ -420,7 +446,7 @@ class InfoEdit extends React.Component {
         return viewsImages;
     }
 
-    render() {
+    render = () => {
         const imagesForView = this.state.imgsArticleUri.map(
             (item) => ({ url: item.data })
         );
@@ -570,15 +596,7 @@ class InfoEdit extends React.Component {
                                     loading: this.props.loading ? this.props.loading : false
                                 });
                             } else {
-                                this.setState({
-                                    isTitValid: false,
-                                    contentType: '',
-                                    imgsArticleUri: [],
-                                    titulo: '',
-                                    descricao: '',
-                                    linkExt: '',
-                                    loading: false
-                                });
+                                this.clearFields();
                             }
                         }}
                     />
@@ -696,7 +714,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => ({
     userLogged: state.LoginReducer.userLogged,
-    userLevel: state.LoginReducer.userLevel
+    userLevel: state.LoginReducer.userLevel,
+    grupoSelected: state.GruposReducer.grupoSelected
 });
 
 export default connect(mapStateToProps, {})(InfoEdit);

@@ -1,10 +1,11 @@
 import React from 'react';
 import { 
     View,
+    Text,
+    Alert,
     ScrollView, 
     StyleSheet,
     TouchableOpacity,
-    Text,
     ActivityIndicator
 } from 'react-native';
 
@@ -18,29 +19,27 @@ import {
 import _ from 'lodash';
 import InfoEdit from './InfoEdit';
 
-import { colorAppS, colorAppF } from '../../../utils/constantes';
-import { checkConInfo } from '../../../utils/jogosUtils';
-import { showAlert } from '../../../utils/store';
-import { limitDotText } from '../../../utils/strComplex';
-import ListItem from '../../tools/ListItem';
-import Card from '../../tools/Card';
-import firebase from '../../../Firebase';
-import imgAvatar from '../../../imgs/perfiluserimg.png';
+import { colorAppSecondary, colorAppForeground, ERROS } from '../../../../../utils/Constantes';
+import { limitDotText } from '../../../../../utils/StrComplex';
+import ListItem from '../../../../../tools/elements/ListItem';
+import Card from '../../../../../tools/elements/Card';
+import firebase from '../../../../../utils/Firebase';
 import {
     modificaFilterLoad,
     modificaFilterStr,
     modificaItemSelected,
     modificaFlagRemoveInfo,
     modificaClean
-} from '../../../actions/InfoActions';
-import { modificaRemocao } from '../../../actions/AlertSclActions';
-import { store } from '../../../App';
+} from './InfoActions';
+import { store } from '../../../../../App';
+import { checkConInfo, showDropdownAlert } from '../../../../../utils/SystemEvents';
 
 class Info extends React.Component {
-
     constructor(props) {
         super(props);
 
+        this.dbFirebaseRef = firebase.database().ref();
+        
         this.state = {
             dropWidth: 0,
             modalOpt: 'Cadastrar',
@@ -54,23 +53,13 @@ class Info extends React.Component {
         };
 
         this.scrollView = null;
-
-        this.renderEditar = this.renderEditar.bind(this);
-        this.renderSwitchType = this.renderSwitchType.bind(this);
-        this.onPressBack = this.onPressBack.bind(this);
-        this.onPressEditRemove = this.onPressEditRemove.bind(this);
-        this.onChangeSuperState = this.onChangeSuperState.bind(this);
-        this.renderListInfosEdit = this.renderListInfosEdit.bind(this);
-        this.onFilterInfosEdit = this.onFilterInfosEdit.bind(this);
-        this.renderBasedFilterOrNot = this.renderBasedFilterOrNot.bind(this);
-        this.renderIcons = this.renderIcons.bind(this);
     }
 
-    componentWillUnmount() {
+    componentWillUnmount = () => {
         this.props.modificaClean();
     }
 
-    onPressBack(refresh = false) {
+    onPressBack = (refresh = false) => {
         this.scrollView.scrollTo({
             y: 0,
             duration: 0,
@@ -83,7 +72,7 @@ class Info extends React.Component {
                 idxMdl: 1,
                 refresh: true
             });
-            firebase.database().ref().child('informativos').once('value', snap => {
+            this.dbFirebaseRef.child('informativos').once('value', snap => {
                 let snapVal = null;
                 if (snap) {
                     snapVal = snap.val();
@@ -108,18 +97,71 @@ class Info extends React.Component {
         }
     }
 
-    onPressEditRemove(item) {
-        this.props.modificaItemSelected(item);
-        this.props.modificaFlagRemoveInfo(true);
-        this.props.modificaRemocao(true);
-        showAlert('danger', 'Remover', 'Deseja remover o informativo selecionado ?');
+    onPressEditRemove = (item) => {
+        try {
+            const asyncFunExec = async () => {
+                const { grupoSelected } = this.props;
+        
+                const dbItemRef = this.dbFirebaseRef
+                .child(`grupos/${grupoSelected.key}/informativos/${item.key}`);
+        
+                dbItemRef.remove()
+                .then(() => {
+                    if (item.imgsArticle && item.imgsArticle.length) {
+                        for (let index = 0; index < item.imgsArticle.length; index++) {
+                            const element = item.imgsArticle[index];
+        
+                            if (element && element.data) {
+                                firebase.storage().refFromURL(element.data).delete()
+                                .then(() => true)
+                                .catch(() => true);
+                            }
+                        }
+                    }
+                    setTimeout(
+                        () => showDropdownAlert(
+                            'success',
+                            'Sucesso',
+                            'Informativo removido com sucesso'
+                        )
+                    , 1000);
+                })
+                .catch(() => 
+                    setTimeout(
+                        () => showDropdownAlert(
+                            'error',
+                            ERROS.informativosRemove.erro,
+                            ERROS.informativosRemove.mes
+                        )
+                    , 1000)
+                );
+            };
+            
+            Alert.alert(
+                'Aviso',
+                'Confirma a remoção do informativo selecionado ?',
+                [
+                    {
+                        text: 'Sim',
+                        onPress: () => checkConInfo(() => asyncFunExec())
+                    },
+                    {
+                        text: 'Cancelar',
+                        onPress: () => false,
+                    },
+                ],
+              { cancelable: true },
+            );
+        } catch (e) {
+            console.log(e);
+        }
     }
 
-    onChangeSuperState(newState) {
+    onChangeSuperState = (newState) => {
         this.setState({ ...newState });
     }
 
-    onFilterInfosEdit(infos, filterStr) {
+    onFilterInfosEdit = (infos, filterStr) => {
         const lowerFilter = filterStr.toLowerCase();
         return _.filter(infos, (usuario) => (
                 (usuario.descPost && usuario.descPost.toLowerCase().includes(lowerFilter)) ||
@@ -130,74 +172,72 @@ class Info extends React.Component {
         ));
     }
 
-    renderIcons(item) {
-        return (
+    renderIcons = (item) => (
+        <View 
+            style={{ 
+                flex: 1, 
+                flexDirection: 'row', 
+                alignItems: 'center',
+                justifyContent: 'flex-end' 
+            }}
+        >
             <View 
                 style={{ 
                     flex: 1, 
-                    flexDirection: 'row', 
                     alignItems: 'center',
-                    justifyContent: 'flex-end' 
+                    justifyContent: 'flex-end'
                 }}
             >
-                <View 
-                    style={{ 
-                        flex: 1, 
-                        alignItems: 'center',
-                        justifyContent: 'flex-end'
+                <TouchableOpacity
+                    onPress={() => {
+                        this.scrollView.scrollTo({
+                            y: 0,
+                            duration: 0,
+                            animated: false
+                        });
+                        this.setState({ 
+                            modalOpt: 'Em Edição', 
+                            itemEdit: item 
+                        });
                     }}
                 >
-                    <TouchableOpacity
-                        onPress={() => {
-                            this.scrollView.scrollTo({
-                                y: 0,
-                                duration: 0,
-                                animated: false
-                            });
-                            this.setState({ 
-                                modalOpt: 'Em Edição', 
-                                itemEdit: item 
-                            });
-                        }}
-                    >
-                        <Icon
-                            name='square-edit-outline' 
-                            type='material-community' 
-                            size={34} color='green' 
-                        />   
-                    </TouchableOpacity>
-                </View>
-                <View 
-                    style={{ 
-                        flex: 1, 
-                        alignItems: 'center',
-                        justifyContent: 'flex-end'
-                    }}
-                >
-                    <TouchableOpacity
-                        onPress={() => checkConInfo(
-                            () => this.onPressEditRemove(item)
-                        )}
-                    >
-                        <Icon
-                            name='delete' 
-                            type='material-community' 
-                            size={34} color='red' 
-                        />
-                    </TouchableOpacity>
-                </View>
+                    <Icon
+                        name='square-edit-outline' 
+                        type='material-community' 
+                        size={34} color='green' 
+                    />   
+                </TouchableOpacity>
             </View>
-        );
-    }
+            <View 
+                style={{ 
+                    flex: 1, 
+                    alignItems: 'center',
+                    justifyContent: 'flex-end'
+                }}
+            >
+                <TouchableOpacity
+                    onPress={() => checkConInfo(
+                        () => this.onPressEditRemove(item)
+                    )}
+                >
+                    <Icon
+                        name='delete' 
+                        type='material-community' 
+                        size={34} color='red' 
+                    />
+                </TouchableOpacity>
+            </View>
+        </View>
+    )
 
-    renderListInfosEdit(infos) {
+    renderListInfosEdit = (infos) => {
         const reverseInfos = _.reverse([...infos]);
         let infosView = null;
 
         if (infos.length) {
             infosView = (
                 reverseInfos.map((item, index) => {
-                    const imgAvt = item.imgAvatar ? { uri: item.imgAvatar } : imgAvatar;
+                    const imgAvt = item.imgAvatar ? { uri: item.imgAvatar } : { uri: '' };
                     const nomeUser = item.nomeUser ? item.nomeUser : 'Patinhas';
                     const perfilUser = item.perfilUser ? item.perfilUser : 'Administrador';
                     return (
@@ -251,7 +291,7 @@ class Info extends React.Component {
         return infosView;
     }
 
-    renderBasedFilterOrNot() {
+    renderBasedFilterOrNot = () => {
         const { listInfos, filterStr } = this.props;
         let infosView = null;
         if (listInfos) {
@@ -266,43 +306,41 @@ class Info extends React.Component {
         return infosView;
     }
 
-    renderEditar() {
-        return (
-            <View>
-                <Card containerStyle={styles.card}>
-                    <SearchBar
-                        round
-                        lightTheme
-                        autoCapitalize={'none'}
-                        autoCorrect={false}
-                        clearIcon={!!this.props.filterStr}
-                        showLoadingIcon={
-                            this.props.listInfos &&
-                            this.props.listInfos.length > 0 && 
-                            this.props.filterLoad
-                        }
-                        containerStyle={{ 
-                            backgroundColor: 'transparent',
-                            borderTopWidth: 0, 
-                            borderBottomWidth: 0
-                        }}
-                        searchIcon={{ size: 26 }}
-                        value={this.props.filterStr}
-                        onChangeText={(value) => {
-                            this.props.modificaFilterStr(value);
-                            this.props.modificaFilterLoad(true);
-                        }}
-                        onClear={() => this.props.modificaFilterStr('')}
-                        placeholder='Buscar informativo...' 
-                    />
-                    { this.renderBasedFilterOrNot() }
-                </Card>
-                <View style={{ marginBottom: 30 }} />
-            </View>
-        );
-    }
+    renderEditar = () => (
+        <View>
+            <Card containerStyle={styles.card}>
+                <SearchBar
+                    round
+                    lightTheme
+                    autoCapitalize={'none'}
+                    autoCorrect={false}
+                    clearIcon={!!this.props.filterStr}
+                    showLoadingIcon={
+                        this.props.listInfos &&
+                        this.props.listInfos.length > 0 && 
+                        this.props.filterLoad
+                    }
+                    containerStyle={{ 
+                        backgroundColor: 'transparent',
+                        borderTopWidth: 0, 
+                        borderBottomWidth: 0
+                    }}
+                    searchIcon={{ size: 26 }}
+                    value={this.props.filterStr}
+                    onChangeText={(value) => {
+                        this.props.modificaFilterStr(value);
+                        this.props.modificaFilterLoad(true);
+                    }}
+                    onClear={() => this.props.modificaFilterStr('')}
+                    placeholder='Buscar informativo...' 
+                />
+                { this.renderBasedFilterOrNot() }
+            </Card>
+            <View style={{ marginBottom: 30 }} />
+        </View>
+    )
 
-    renderSwitchType(modalOpt) {
+    renderSwitchType = (modalOpt) => {
         const filtred = _.filter(this.state.itemEdit.imgsArticle, item => !item.push);
         
         switch (modalOpt) {
@@ -344,7 +382,7 @@ class Info extends React.Component {
         }
     }
 
-    render() {
+    render = () => {
         const buttonsGroup = ['Cadastrar', 'Editar'];
         return (
             <View style={styles.viewPrinc}>
@@ -406,12 +444,12 @@ class Info extends React.Component {
                                     }}
                                     buttonStyle={{
                                         backgroundColor: 'transparent',
-                                        borderColor: colorAppS,
+                                        borderColor: colorAppSecondary,
                                         borderWidth: 2,
                                     }}
                                     selectedButtonStyle={{
-                                        backgroundColor: colorAppS,
-                                        borderColor: colorAppS,
+                                        backgroundColor: colorAppSecondary,
+                                        borderColor: colorAppSecondary,
                                         borderWidth: 2,
                                     }}
                                     selectedTextStyle={{
@@ -463,7 +501,7 @@ class Info extends React.Component {
                     style={{
                         marginHorizontal: 15,
                         height: 2,
-                        backgroundColor: colorAppS,
+                        backgroundColor: colorAppSecondary,
                     }}
                 />
                 <ScrollView 
@@ -478,7 +516,7 @@ class Info extends React.Component {
                             <View
                                 style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
                             >
-                                <ActivityIndicator size='large' color={colorAppS} />
+                                <ActivityIndicator size='large' color={colorAppSecondary} />
                             </View>
                         )
                         :
@@ -493,7 +531,7 @@ class Info extends React.Component {
 const styles = StyleSheet.create({
     viewPrinc: {
         flex: 1,
-        backgroundColor: colorAppF
+        backgroundColor: colorAppForeground
     },
     card: {
         paddingHorizontal: 10,
@@ -528,7 +566,8 @@ const mapStateToProps = (state) => ({
     listInfos: state.InfoReducer.listInfos,
     filterStr: state.InfoReducer.filterStr,
     filterLoad: state.InfoReducer.filterLoad,
-    conInfo: state.LoginReducer.conInfo
+    conInfo: state.LoginReducer.conInfo,
+    grupoSelected: state.GerenciarReducer.grupoSelected
 });
 
 export default connect(mapStateToProps, {
@@ -536,6 +575,5 @@ export default connect(mapStateToProps, {
     modificaFilterStr,
     modificaItemSelected,
     modificaFlagRemoveInfo,
-    modificaClean,
-    modificaRemocao
+    modificaClean
 })(Info);

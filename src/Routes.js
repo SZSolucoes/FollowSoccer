@@ -62,6 +62,7 @@ import Notifications from './components/grupos/gerenciar/plus/Notifications';
 import Jogadores from './components/grupos/gerenciar/admin/jogadores/Jogadores';
 import SearchBar from './tools/searchbar/SearchBar';
 import Convites from './components/convites/Convites';
+import Info from './components/grupos/gerenciar/admin/informativos/Info';
 
 const AnimatedSceneComp = Animated.createAnimatedComponent(AnimatedScene);
 
@@ -436,6 +437,14 @@ class Routes extends React.Component {
                 title={'Grupos'}
                 component={Grupos}
                 titleStyle={styles.title}
+                renderRightButton={
+                    () => 
+                    <SearchBar 
+                        inputPlaceHolder={'Filtrar grupo...'}
+                        iconName={'filter-outline'}
+                        iconNameWithValue={'filter'}
+                    />
+                }
                 inital
             />
             <Scene 
@@ -738,7 +747,22 @@ class Routes extends React.Component {
                     titleStyle={styles.title}
                     leftButtonTextStyle={styles.btLeft}
                     backButtonTintColor={'white'}
-                    renderRightButton={() => <SearchBar />}
+                    renderRightButton={
+                        () => 
+                        <SearchBar
+                            inputPlaceHolder={'Buscar jogador...'}
+                            iconName={'account-plus'}
+                        />
+                    }
+                    //initial
+                />
+                <Scene 
+                    key={'cadastroInfos'}
+                    title={'Informativos'} 
+                    component={Info}
+                    titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
                     //initial
                 />
                 {/*<Scene 

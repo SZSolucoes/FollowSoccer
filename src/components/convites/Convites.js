@@ -90,13 +90,13 @@ class Convites extends React.Component {
                 if (ret) {
                     ret = await this.dbFirebaseRef
                         .child(`grupos/${item.key}/convites/${userLogged.key}`)
-                        .remove();
+                        .remove().then(() => true).catch(() => false);
                 }
 
                 if (ret) {
                     ret = await this.dbFirebaseRef
                     .child(`usuarios/${userLogged.key}/convites/${item.key}`)
-                    .remove();
+                    .remove().then(() => true).catch(() => false);
                 }
         
                 if (ret) {
@@ -121,13 +121,13 @@ class Convites extends React.Component {
                 'Confirma a ação de aceitar o convite ?',
                 [
                     {
-                        text: 'Sim',
-                        onPress: () => checkConInfo(() => asyncFunExec())
-                    },
-                    {
                         text: 'Cancelar',
                         onPress: () => false,
                     },
+                    {
+                        text: 'Sim',
+                        onPress: () => checkConInfo(() => asyncFunExec())
+                    }
                 ],
               { cancelable: true },
             );
@@ -159,7 +159,7 @@ class Convites extends React.Component {
                 if (ret) {
                     showDropdownAlert(
                         'info',
-                        'Convite foi recusado',
+                        'Convite recusado',
                         ''
                     );
                 } else {

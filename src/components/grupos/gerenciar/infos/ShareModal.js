@@ -20,7 +20,7 @@ import {
 import { colorAppPrimary, ERROS } from '../../../../utils/Constantes';
 
 import Avatar from '../../../../tools/elements/Avatar';
-import { showDropdownAlert } from '../../../../utils/SystemEvents';
+import { showDropdownAlert, checkConInfo } from '../../../../utils/SystemEvents';
 
 class ShareModal extends React.Component {
 
@@ -70,11 +70,7 @@ class ShareModal extends React.Component {
         });
     }
 
-    async onShareImagesFile(cachedImg, articleImg) {
-        if (cachedImg !== articleImg) {
-            return cachedImg;
-        } 
-            
+    async onShareImagesFile(cachedImg) {
         const fs = RNFetchBlob.fs;
         let imagePath = null;
         let contentType = '';
@@ -82,7 +78,7 @@ class ShareModal extends React.Component {
         return await RNFetchBlob.config({
             fileCache: true
         })
-        .fetch('GET', articleImg)
+        .fetch('GET', cachedImg)
         .then(res => {
             imagePath = res.path();
             contentType = res.info().headers['content-type'];
@@ -109,15 +105,15 @@ class ShareModal extends React.Component {
         try {
             for (let index = 0; index < imgsArticle.length; index++) {
                 const element = imgsArticle[index];
-                locateCachedImgsUri.push({ uri: element.data });
+                locateCachedImgsUri.push(element.data);
             }
     
             if (locateCachedImgsUri.length === imgsArticle.length) {
                 for (let index = 0; index < locateCachedImgsUri.length; index++) {
                     const cachedB64OrUrl = locateCachedImgsUri[index];
-                    const articleB64OrUrl = imgsArticle[index];
     
-                    const ret = await this.onShareImagesFile(cachedB64OrUrl, articleB64OrUrl);
+                    const ret = await this.onShareImagesFile(cachedB64OrUrl);
+
                     if (ret) {
                         shareImageBase64.urls.push(ret);
                     } else {
@@ -133,6 +129,8 @@ class ShareModal extends React.Component {
                         return;
                     }
                 }
+
+                console.log(shareImageBase64);
     
                 Share.open(shareImageBase64)
                 .then(() => {
@@ -292,7 +290,9 @@ class ShareModal extends React.Component {
                                             style={{ flex: 1 }}
                                             onPress={
                                                 () => this.state.enablePress && 
-                                                this.onShareImage(itemShareSelected)
+                                                checkConInfo(() =>
+                                                    this.onShareImage(itemShareSelected)
+                                                )
                                             }
                                         >
                                             <View

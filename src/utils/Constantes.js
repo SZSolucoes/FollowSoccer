@@ -207,6 +207,18 @@ export const ERROS = {
     groupExit: {
         erro: 'Erro #0035',
         mes: 'Falha ao sair do grupo. Verifique a conexão.'
+    },
+    informativosRemove: {
+        erro: 'Erro #0036',
+        mes: 'Falha ao remover informativo. Verifique a conexão.'
+    },
+    informativosEdit: {
+        erro: 'Erro #0037',
+        mes: 'Ocorreu um erro ao editar o informativo. Verifique a conexão.'
+    },
+    informativosCad: {
+        erro: 'Erro #0038',
+        mes: 'Ocorreu um erro ao cadastrar o informativo. Verifique a conexão.'
     }
 };
 
