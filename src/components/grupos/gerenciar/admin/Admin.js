@@ -75,16 +75,20 @@ class Admin extends React.Component {
                     </TouchableOpacity>
                     <TouchableOpacity 
                         style={{ flex: 1 }} 
-                        onPress={() => Actions.analise()}
+                        onPress={
+                            () => Actions.financeiroAdmin(
+                                { onBack: () => Actions.popTo('ownerMenuAdmin') }
+                            )
+                        }
                     >
                         <Card 
                             containerStyle={{ flex: 1 }}
                             wrapperStyle={{ flex: 1 }}
                         >
                             <View style={styles.viewIconText}>
-                                <Icon name='finance' type='material-community' size={34} />
+                                <Icon name='cash-multiple' type='material-community' size={34} />
                                 <View style={{ marginTop: 10 }} />
-                                <Text style={styles.text}>Análise</Text>
+                                <Text style={styles.text}>Financeiro</Text>
                             </View>
                         </Card>
                     </TouchableOpacity>
@@ -127,7 +131,7 @@ class Admin extends React.Component {
                         style={{ flex: 1 }} 
                         onPress={
                             () => Actions.muralAdmin(
-                                { onBack: () => Actions.popTo('_admin') }
+                                { onBack: () => Actions.popTo('ownerMenuAdmin') }
                             )
                         }
                     >
@@ -146,7 +150,7 @@ class Admin extends React.Component {
                         style={{ flex: 1 }} 
                         onPress={
                             () => Actions.adminEnquetes(
-                                { onBack: () => Actions.popTo('_admin') }
+                                { onBack: () => Actions.popTo('ownerMenuAdmin') }
                             )
                         }
                     >

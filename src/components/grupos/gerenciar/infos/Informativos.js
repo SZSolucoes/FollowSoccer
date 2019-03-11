@@ -21,6 +21,7 @@ import { Icon } from 'react-native-elements';
 import ModalDropdown from 'react-native-modal-dropdown';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import FastImage from 'react-native-fast-image';
 import InfoActionsBar from './InfoActionsBar';
 import Coment from './Coment';
 import { 
@@ -327,12 +328,11 @@ class Informativos extends React.Component {
                 <TouchableWithoutFeedback
                     onPress={() => this.onPressImage(imgsUri, 0)}
                 >
-                    <Image
-                        resizeMode="cover"
+                    <FastImage
+                        resizeMode={FastImage.resizeMode.cover}
                         style={{ 
                             width: null, 
                             height: 200,
-                            borderWidth: 1,
                             borderRadius: 2
                         }}
                         source={imgsUri[0]}
@@ -348,12 +348,11 @@ class Informativos extends React.Component {
                         <TouchableWithoutFeedback
                             onPress={() => this.onPressImage(imgsUri, 0)}
                         >
-                            <Image
-                                resizeMode="cover"
+                            <FastImage
+                                resizeMode={FastImage.resizeMode.cover}
                                 style={{ 
                                     width: null, 
                                     height: 200,
-                                    borderWidth: 1,
                                     borderRadius: 2,
                                     marginRight: 5
                                 }}
@@ -365,12 +364,11 @@ class Informativos extends React.Component {
                         <TouchableWithoutFeedback
                             onPress={() => this.onPressImage(imgsUri, 1)}
                         >
-                            <Image
-                                resizeMode="cover"
+                            <FastImage
+                                resizeMode={FastImage.resizeMode.cover}
                                 style={{ 
                                     width: null, 
                                     height: 200,
-                                    borderWidth: 1,
                                     borderRadius: 2
                                 }}
                                 source={imgsUri[1]}
@@ -379,7 +377,7 @@ class Informativos extends React.Component {
                     </View>
                 </View>
             );
-        } else if (lenImages === 555) {
+        } else if (lenImages === 3) {
             return (
                 <View
                     style={{ flexDirection: 'row' }}
@@ -388,12 +386,11 @@ class Informativos extends React.Component {
                         <TouchableWithoutFeedback
                             onPress={() => this.onPressImage(imgsUri, 0)}
                         >
-                            <Image
-                                resizeMode="cover"
+                            <FastImage
+                                resizeMode={FastImage.resizeMode.cover}
                                 style={{ 
                                     width: null, 
                                     height: 200,
-                                    borderWidth: 1,
                                     borderRadius: 2
                                 }}
                                 source={imgsUri[0]}
@@ -405,14 +402,13 @@ class Informativos extends React.Component {
                             <TouchableWithoutFeedback
                                 onPress={() => this.onPressImage(imgsUri, 1)}
                             >
-                                <Image
-                                    resizeMode="cover"
+                                <FastImage
+                                    resizeMode={FastImage.resizeMode.cover}
                                     style={{ 
                                         width: null, 
-                                        height: 95,
-                                        borderWidth: 1,
+                                        height: 98,
                                         borderRadius: 2,
-                                        marginLeft: 5
+                                        marginLeft: 2
                                     }}
                                     source={imgsUri[1]}
                                 />
@@ -422,15 +418,14 @@ class Informativos extends React.Component {
                             <TouchableWithoutFeedback
                                 onPress={() => this.onPressImage(imgsUri, 2)}
                             >
-                                <Image
-                                    resizeMode="cover"
+                                <FastImage
+                                    resizeMode={FastImage.resizeMode.cover}
                                     style={{ 
                                         width: null, 
-                                        height: 95,
-                                        borderWidth: 1,
+                                        height: 98,
                                         borderRadius: 2,
-                                        marginLeft: 5,
-                                        marginTop: 5
+                                        marginLeft: 2,
+                                        marginTop: 1
                                     }}
                                     source={imgsUri[2]}
                                 />
@@ -449,12 +444,11 @@ class Informativos extends React.Component {
                     <TouchableWithoutFeedback
                         onPress={() => this.onPressImage(imgsUri, 0)}
                     >
-                        <Image
-                            resizeMode="cover"
+                        <FastImage
+                            resizeMode={FastImage.resizeMode.cover}
                             style={{ 
                                 width: null, 
                                 height: 200,
-                                borderWidth: 1,
                                 borderRadius: 2
                             }}
                             source={imgsUri[0]}
@@ -466,14 +460,13 @@ class Informativos extends React.Component {
                         <TouchableWithoutFeedback
                             onPress={() => this.onPressImage(imgsUri, 1)}
                         >
-                            <Image
-                                resizeMode="cover"
+                            <FastImage
+                                resizeMode={FastImage.resizeMode.cover}
                                 style={{ 
                                     width: null, 
-                                    height: 95,
-                                    borderWidth: 1,
+                                    height: 98,
                                     borderRadius: 2,
-                                    marginLeft: 5
+                                    marginLeft: 2
                                 }}
                                 source={imgsUri[1]}
                             />
@@ -492,8 +485,9 @@ class Informativos extends React.Component {
                                     bottom: 0,
                                     zIndex: 10,
                                     flex: 1,
-                                    marginLeft: 5,
-                                    marginTop: 5,
+                                    borderRadius: 2,
+                                    marginLeft: 2,
+                                    marginTop: 1,
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     backgroundColor: 'rgba(0,0,0,0.4)'
@@ -510,15 +504,14 @@ class Informativos extends React.Component {
                                 </Text>
                             </View>
                         </TouchableWithoutFeedback>
-                        <Image
-                            resizeMode="cover"
+                        <FastImage
+                            resizeMode={FastImage.resizeMode.cover}
                             style={{ 
                                 width: null, 
-                                height: 95,
-                                borderWidth: 1,
+                                height: 98,
                                 borderRadius: 2,
-                                marginLeft: 5,
-                                marginTop: 5
+                                marginLeft: 2,
+                                marginTop: 1
                             }}
                             source={imgsUri[2]}
                         />
@@ -657,7 +650,11 @@ class Informativos extends React.Component {
                     index={this.props.imagesForViewIndex}
                     isVisible={this.props.showImageView}
                     enableSwipeDown
+                    pageAnimateTime={600}
+                    enablePreload
                     footerContainerStyle={{ flex: 1, left: 0, right: 0 }}
+                    renderImage={(props) => <FastImage {...props} />}
+                    loadingRender={() => <ActivityIndicator />}
                     renderFooter={() => (
                         <View 
                             style={{ 
@@ -676,7 +673,7 @@ class Informativos extends React.Component {
                                         flexDirection: 'row',
                                         alignItems: 'center', 
                                         justifyContent: 'center',
-                                        paddingVertical: 10
+                                        paddingVertical: 15
                                     }}
                                 >
                                     <Text
@@ -684,7 +681,7 @@ class Informativos extends React.Component {
                                             fontFamily: 'OpenSans-Bold', 
                                             color: 'white',
                                             textAlign: 'center',
-                                            fontSize: 14
+                                            fontSize: 16
                                         }}
                                     >
                                         Fechar

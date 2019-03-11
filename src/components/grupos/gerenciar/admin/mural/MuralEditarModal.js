@@ -4,7 +4,8 @@ import {
     StyleSheet,
     Platform,
     ScrollView,
-    Keyboard
+    Keyboard,
+    TouchableWithoutFeedback
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -16,21 +17,16 @@ import {
 } from 'react-native-elements';
 import _ from 'lodash';
 
-import {
-    modificaItemEditModal,
-    modificaTituloEditModal,
-    modificaOptsEditModal
-} from '../../../actions/EnquetesActions';
-
-import firebase from '../../../Firebase';
-import { showAlert } from '../../../utils/store';
-import { colorAppF } from '../../../utils/constantes';
-import { checkConInfo } from '../../../utils/jogosUtils';
-import Card from '../../tools/Card';
+import firebase from '../../../../../utils/Firebase';
+import { colorAppF, ERROS } from '../../../../../utils/Constantes';
+import Card from '../../../../../tools/elements/Card';
+import { checkConInfo, showDropdownAlert } from '../../../../../utils/SystemEvents';
 
 class EnqueteEditModal extends React.Component {
     constructor(props) {
         super(props);
+
+        this.dbFirebaseRef = firebase.database().ref();
 
         this.state = {
             isTituloNotValid: false,
@@ -46,7 +42,7 @@ class EnqueteEditModal extends React.Component {
         setTimeout(() => this.setState({ inputWidth: 'auto' }), 100);
       }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate = (prevProps, prevState) => {
         const { itemSelected } = this.props;
         const { titulo, descricao } = this.state;
         const stateEqual = _.isEqual(prevState, this.state);
@@ -67,7 +63,7 @@ class EnqueteEditModal extends React.Component {
         Keyboard.dismiss();
 
         const { titulo, descricao } = this.state;
-        const { itemSelected, closeModalToggle } = this.props;
+        const { itemSelected, closeModalToggle, grupoSelected } = this.props;
 
         const tituloNotValid = !titulo.trim();
         const descriNotValid = !descricao.trim();
@@ -79,8 +75,9 @@ class EnqueteEditModal extends React.Component {
 
         this.setState({ loading: true, isTituloNotValid: false, isDescriNotValid: false });
 
-        const databaseRef = firebase.database().ref();
-        const dbMuralItem = databaseRef.child(`mural/${itemSelected.key}`);
+        const databaseRef = this.dbFirebaseRef;
+        const dbMuralItem = databaseRef
+        .child(`grupos/${grupoSelected.key}/mural/${itemSelected.key}`);
 
         const asyncFun = async () => {
             const ret = await dbMuralItem.update({
@@ -88,14 +85,19 @@ class EnqueteEditModal extends React.Component {
                 descricao
             })
             .then(() => {
-                showAlert('success', 'Sucesso', 'Edição efetuada com sucesso');
+                showDropdownAlert(
+                    'success',
+                    'Sucesso',
+                    'Edição efetuada com sucesso'
+                );
+
                 return true; 
             })
             .catch(() => {
-                showAlert(
-                    'danger', 
-                    'Ops', 
-                    'Ocorreu um erro durante a edição'
+                showDropdownAlert(
+                    'error',
+                    ERROS.muralEdit.erro,
+                    ERROS.muralEdit.mes
                 );
 
                 return false;
@@ -112,13 +114,14 @@ class EnqueteEditModal extends React.Component {
         asyncFun();
     }
 
-    render() {
-        return (
-            <ScrollView 
-                style={{ flex: 1 }} 
-                ref={(ref) => { this.scrollView = ref; }}
-                keyboardShouldPersistTaps={'handled'}
-            >
+    render = () => (
+        <ScrollView 
+            style={{ flex: 1 }} 
+            ref={(ref) => { this.scrollView = ref; }}
+            keyboardShouldPersistTaps={'handled'}
+        >
+            <TouchableWithoutFeedback>
+
                 <View>
                     <Card containerStyle={styles.card}>
                         <FormLabel labelStyle={styles.text}>TÍTULO</FormLabel>
@@ -195,9 +198,9 @@ class EnqueteEditModal extends React.Component {
                     </Card>
                     <View style={{ marginBottom: 100 }} />
                 </View>
-            </ScrollView>
-        );
-    }
+            </TouchableWithoutFeedback>
+        </ScrollView>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -272,14 +275,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-    userLogged: state.LoginReducer.userLogged,
-    itemEditModal: state.EnquetesReducer.itemEditModal,
-    titulo: state.EnquetesReducer.titulo,
-    opts: state.EnquetesReducer.opts
+    grupoSelected: state.GruposReducer.grupoSelected
 });
 
 export default connect(mapStateToProps, {
-    modificaItemEditModal,
-    modificaTituloEditModal,
-    modificaOptsEditModal
 })(EnqueteEditModal);

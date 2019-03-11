@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React from 'react';
 import { Router, Scene, Actions, ActionConst } from 'react-native-router-flux';
 import { 
@@ -63,6 +64,10 @@ import Jogadores from './components/grupos/gerenciar/admin/jogadores/Jogadores';
 import SearchBar from './tools/searchbar/SearchBar';
 import Convites from './components/convites/Convites';
 import Info from './components/grupos/gerenciar/admin/informativos/Info';
+import MuralCadastrar from './components/grupos/gerenciar/admin/mural/MuralCadastrar';
+import MuralEditar from './components/grupos/gerenciar/admin/mural/MuralEditar';
+import FinanceiroCadastrar from './components/grupos/gerenciar/admin/financeiro/FinanceiroCadastrar';
+import FinanceiroEditar from './components/grupos/gerenciar/admin/financeiro/FinanceiroEditar';
 
 const AnimatedSceneComp = Animated.createAnimatedComponent(AnimatedScene);
 
@@ -139,7 +144,7 @@ class Routes extends React.Component {
         
         if (!('|listLikes|'.includes(Actions.currentScene))) this.cleanModals();
     
-        if ('|gerenciarGrupo|_jogos|_informativos|_perfil|_plus|_admin|'
+        if ('|gerenciarGrupo|_jogos|_informativos|_perfil|_plus|'
         .includes(Actions.currentScene)) {
             Actions.popTo('_cadastroGrupos');
             return true;
@@ -173,14 +178,17 @@ class Routes extends React.Component {
         }
     
         if ('|_financeiroCadastrar|_financeiroEditar|'.includes(Actions.currentScene)) {
-            Actions.popTo('analise');
+            Actions.popTo('ownerMenuAdmin');
             return true;
         }
     
-        if ('|_enqueteCadastrar|_enqueteEditar|'.includes(
-            Actions.currentScene)
-            ) {
-            Actions.popTo('_admin');
+        if ('|_muralCadastrar|_muralEditar|'.includes(Actions.currentScene)) {
+            Actions.popTo('ownerMenuAdmin');
+            return true;
+        }
+        
+        if ('|_enqueteCadastrar|_enqueteEditar|'.includes(Actions.currentScene)) {
+            Actions.popTo('ownerMenuAdmin');
             return true;
         }
     
@@ -647,6 +655,74 @@ class Routes extends React.Component {
         </Scene>
     )
 
+    renderMuralAdmin = () => (
+        <Scene 
+            key={'muralAdmin'}
+            tabs
+            showLabel
+            tabBarPosition={'top'}
+            lazy={false}
+            swipeEnabled
+            title={'Mural'}
+            titleStyle={styles.title}
+            leftButtonTextStyle={styles.btLeft}
+            backButtonTintColor={'white'}
+            tabBarStyle={{ backgroundColor: colorAppSecondary }}
+            labelStyle={{ fontSize: normalize(12), fontWeight: 'bold' }}
+            //renderRightButton={() => this.rightButtonGerenciarTab()}
+        >
+            <Scene 
+                key={'muralCadastrar'}
+                hideNavBar 
+                component={MuralCadastrar}
+                initial
+                tabBarLabel={'Incluir'}
+                activeTintColor={'white'}
+            />
+            <Scene 
+                key={'muralEditar'}
+                hideNavBar 
+                component={MuralEditar}
+                tabBarLabel={'Visualizar'}
+                activeTintColor={'white'}
+            />
+        </Scene>
+    )
+
+    renderFinanceiroAdmin = () => (
+        <Scene 
+            key={'financeiroAdmin'}
+            tabs
+            showLabel
+            tabBarPosition={'top'}
+            lazy={false}
+            swipeEnabled
+            title={'Financeiro'} 
+            titleStyle={styles.title}
+            leftButtonTextStyle={styles.btLeft}
+            backButtonTintColor={'white'}
+            tabBarStyle={{ backgroundColor: colorAppSecondary }}
+            labelStyle={{ fontSize: normalize(12), fontWeight: 'bold' }}
+            //renderRightButton={() => this.rightButtonGerenciarTab()}
+        >
+            <Scene 
+                key={'financeiroCadastrar'}
+                hideNavBar 
+                component={FinanceiroCadastrar}
+                initial
+                tabBarLabel={'Incluir'}
+                activeTintColor={'white'}
+            />
+            <Scene 
+                key={'financeiroEditar'}
+                hideNavBar 
+                component={FinanceiroEditar}
+                tabBarLabel={'Visualizar'}
+                activeTintColor={'white'}
+            />
+        </Scene>
+    )
+
     renderRouter = () => (
         <Router>
             <Scene 
@@ -665,6 +741,8 @@ class Routes extends React.Component {
                 {this.renderGerenciarGrupoTabs()}
                 {this.renderJogoTabBar()}
                 {this.renderJogoGerenciarTabBar()}
+                {this.renderMuralAdmin()}
+                {this.renderFinanceiroAdmin()}
                 <Scene 
                     key='cadastrar'
                     title={'Cadastrar'}

@@ -219,6 +219,30 @@ export const ERROS = {
     informativosCad: {
         erro: 'Erro #0038',
         mes: 'Ocorreu um erro ao cadastrar o informativo. Verifique a conexão.'
+    },
+    muralCad: {
+        erro: 'Erro #0039',
+        mes: 'Ocorreu um erro ao publicar no mural. Verifique a conexão.'
+    },
+    muralRemove: {
+        erro: 'Erro #0040',
+        mes: 'Falha ao remover publicação. Verifique a conexão.'
+    },
+    muralEdit: {
+        erro: 'Erro #0040',
+        mes: 'Falha ao editar publicação. Verifique a conexão.'
+    },
+    financeiroCad: {
+        erro: 'Erro #0041',
+        mes: 'Ocorreu um erro durante a inclusão. Verifique a conexão.'
+    },
+    financeiroEdit: {
+        erro: 'Erro #0042',
+        mes: 'Ocorreu um erro durante a edição. Verifique a conexão.'
+    },
+    financeiroRemove: {
+        erro: 'Erro #0043',
+        mes: 'Ocorreu um erro durante a remoção. Verifique a conexão.'
     }
 };
 

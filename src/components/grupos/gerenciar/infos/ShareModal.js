@@ -130,8 +130,6 @@ class ShareModal extends React.Component {
                     }
                 }
 
-                console.log(shareImageBase64);
-    
                 Share.open(shareImageBase64)
                 .then(() => {
                     this.setState({ enablePress: true });
