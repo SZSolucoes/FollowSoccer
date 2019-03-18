@@ -338,7 +338,16 @@ class Jogo extends React.Component {
                                     { timeText[1] }
                                 </Text>
                                 <Text>
-                                    { retrieveUpdUserGroup(golsCasa[i].key, 'nome', golsCasa[i]) }
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -349,7 +358,16 @@ class Jogo extends React.Component {
                                     { timeText[0] }
                                 </Text>
                                 <Text>
-                                    { retrieveUpdUserGroup(golsCasa[i].key, 'nome', golsCasa[i]) }
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -398,7 +416,16 @@ class Jogo extends React.Component {
                                     { timeTextCasa[1] }
                                 </Text>
                                 <Text>
-                                    { retrieveUpdUserGroup(golsCasa[i].key, 'nome', golsCasa[i]) }
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -409,7 +436,16 @@ class Jogo extends React.Component {
                                     { timeTextCasa[0] }
                                 </Text>
                                 <Text>
-                                    { retrieveUpdUserGroup(golsCasa[i].key, 'nome', golsCasa[i]) }
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -422,7 +458,16 @@ class Jogo extends React.Component {
                                     { timeTextVisit[1] }
                                 </Text>
                                 <Text>
-                                    { retrieveUpdUserGroup(golsVisit[i].key, 'nome', golsVisit[i]) }
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -433,7 +478,16 @@ class Jogo extends React.Component {
                                     { timeTextVisit[0] }
                                 </Text>
                                 <Text>
-                                    { retrieveUpdUserGroup(golsVisit[i].key, 'nome', golsVisit[i]) }
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -510,7 +564,16 @@ class Jogo extends React.Component {
                                     { timeText[1] }
                                 </Text>
                                 <Text>
-                                    { retrieveUpdUserGroup(golsVisit[i].key, 'nome', golsVisit[i]) }
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -521,7 +584,16 @@ class Jogo extends React.Component {
                                     { timeText[0] }
                                 </Text>
                                 <Text>
-                                    { retrieveUpdUserGroup(golsVisit[i].key, 'nome', golsVisit[i]) }
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -576,7 +648,16 @@ class Jogo extends React.Component {
                                     { timeTextVisit[1] }
                                 </Text>
                                 <Text>
-                                    { retrieveUpdUserGroup(golsVisit[i].key, 'nome', golsVisit[i]) }
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -587,7 +668,16 @@ class Jogo extends React.Component {
                                     { timeTextVisit[0] }
                                 </Text>
                                 <Text>
-                                    { retrieveUpdUserGroup(golsVisit[i].key, 'nome', golsVisit[i]) }
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -600,7 +690,16 @@ class Jogo extends React.Component {
                                     { timeTextCasa[1] }
                                 </Text>
                                 <Text>
-                                    { retrieveUpdUserGroup(golsCasa[i].key, 'nome', golsCasa[i]) }
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -611,7 +710,16 @@ class Jogo extends React.Component {
                                     { timeTextCasa[0] }
                                 </Text>
                                 <Text>
-                                    { retrieveUpdUserGroup(golsCasa[i].key, 'nome', golsCasa[i]) }
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )
+                                    }
                                 </Text>
                             </Text>
                         );

@@ -5,8 +5,9 @@ import {
     Platform,
     ScrollView,
     Alert,
+    Keyboard,
     TouchableOpacity,
-    Keyboard
+    TouchableWithoutFeedback
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -23,14 +24,13 @@ import {
     modificaItemEditModal,
     modificaTituloEditModal,
     modificaOptsEditModal
-} from '../../../actions/EnquetesActions';
+} from './EnquetesActions';
 
-import firebase from '../../../Firebase';
-import { showAlert } from '../../../utils/store';
-import { colorAppF, colorAppS } from '../../../utils/constantes';
-import { checkConInfo } from '../../../utils/jogosUtils';
-import { sendEnquetePushNotifForTopic } from '../../../utils/fcmPushNotifications';
-import Card from '../../tools/Card';
+import firebase from '../../../../../utils/Firebase';
+import { colorAppForeground, colorAppSecondary, ERROS } from '../../../../../utils/Constantes';
+import { checkConInfo, showDropdownAlert } from '../../../../../utils/SystemEvents';
+import { sendEnquetePushNotifForTopic } from '../../../../../utils/FcmPushNotifications';
+import Card from '../../../../../tools/elements/Card';
 
 class EnqueteEditModal extends React.Component {
     constructor(props) {
@@ -39,20 +39,39 @@ class EnqueteEditModal extends React.Component {
         this.state = {
             loading: false,
             isTituloNotValid: false,
+            titulo: props.itemSelected ? props.itemSelected.titulo : '',
+            opts: props.itemSelected ? props.itemSelected.opcoes : [''],
             inputWidth: '99%'
         };
-
-        this.onPressConfirmar = this.onPressConfirmar.bind(this);
-        this.renderOpts = this.renderOpts.bind(this);
     }
 
     componentDidMount = () => {
         setTimeout(() => this.setState({ inputWidth: 'auto' }), 100);
     }
 
-    onPressConfirmar() {
+    componentDidUpdate = (prevProps, prevState) => {
+        const { itemSelected } = this.props;
+        const { titulo, opts } = this.state;
+        const stateEqual = _.isEqual(prevState, this.state);
+
+        if (itemSelected &&
+            stateEqual && 
+            ((titulo !== itemSelected.titulo) || 
+            (!_.isEqual(opts, itemSelected.opcoes)))) {
+                // eslint-disable-next-line react/no-did-update-set-state
+                this.setState({
+                    titulo: this.props.itemSelected.titulo,
+                    opts: this.props.itemSelected.opcoes
+                });
+        }
+    }
+
+    onPressConfirmar = () => {
+        Keyboard.dismiss();
+
         const funExec = () => {
-            const { opts, titulo, itemEditModal } = this.props;
+            const { itemSelected, grupoSelected } = this.props;
+            const { opts, titulo } = this.state;
             const newOpts = _.filter(opts, op => op.trim() !== '');
             const newTitulo = titulo.trim();
 
@@ -73,7 +92,8 @@ class EnqueteEditModal extends React.Component {
             this.setState({ loading: true });
     
             const databaseRef = firebase.database().ref();
-            const dbEnqueteRef = databaseRef.child(`enquetes/${itemEditModal.key}`);
+            const dbEnqueteRef = databaseRef
+            .child(`grupos/${grupoSelected.key}/enquetes/${itemSelected.key}`);
     
             dbEnqueteRef.update({
                 titulo: newTitulo,
@@ -82,19 +102,21 @@ class EnqueteEditModal extends React.Component {
                 status: '1'
             })
             .then(() => {
-                sendEnquetePushNotifForTopic();
+                sendEnquetePushNotifForTopic(grupoSelected);
 
                 this.props.closeModalToggle();
-                showAlert(
-                    'success', 'Sucesso', 'Enquete alterada com sucesso'
+                showDropdownAlert(
+                    'success', 
+                    'Sucesso', 
+                    'Enquete alterada com sucesso'
                 );
             })
             .catch(() => {
                 this.setState({ loading: false });
-                showAlert(
-                    'danger', 
-                    'Ops', 
-                    'Ocorreu um erro ao alterar a enquete'
+                showDropdownAlert(
+                    'error', 
+                    ERROS.enqueteEdit.erro, 
+                    ERROS.enqueteEdit.mes
                 );
             });
         };
@@ -115,10 +137,10 @@ class EnqueteEditModal extends React.Component {
         );
     }
 
-    renderOpts() {
+    renderOpts = () => {
         let optsViews = null;
 
-        optsViews = _.map(this.props.opts, (opt, index) => {
+        optsViews = _.map(this.state.opts, (opt, index) => {
             if (index > 0) {
                 return (
                     <View key={index} style={{ marginTop: 10 }}>
@@ -134,18 +156,18 @@ class EnqueteEditModal extends React.Component {
                             underlineColorAndroid={'transparent'}
                             multiline
                             onChangeText={value => {
-                                const newOpts = [...this.props.opts];
+                                const newOpts = [...this.state.opts];
                                 newOpts[index] = value;
-                                this.props.modificaOptsEditModal(newOpts);
+                                this.setState({ opts: newOpts });
                             }}
                         />
                         <TouchableOpacity 
                             style={styles.add}
                             onPress={() => {
                                 Keyboard.dismiss();
-                                const newOpts = [...this.props.opts];
+                                const newOpts = [...this.state.opts];
                                 newOpts.splice(index, 1);
-                                this.props.modificaOptsEditModal(newOpts);
+                                this.setState({ opts: newOpts });
                             }}
                         >
                             <Icon
@@ -172,24 +194,24 @@ class EnqueteEditModal extends React.Component {
                         underlineColorAndroid={'transparent'}
                         multiline
                         onChangeText={value => {
-                            const newOpts = [...this.props.opts];
+                            const newOpts = [...this.state.opts];
                             newOpts[index] = value;
-                            this.props.modificaOptsEditModal(newOpts);
+                            this.setState({ opts: newOpts });
                         }}
                     />
                     <TouchableOpacity 
                         style={styles.add}
                         onPress={() => {
                             Keyboard.dismiss();
-                            const newOpts = [...this.props.opts];
+                            const newOpts = [...this.state.opts];
                             newOpts.push('');
-                            this.props.modificaOptsEditModal(newOpts);
+                            this.setState({ opts: newOpts });
                         }}
                     >
                         <Icon
                             name='plus-circle' 
                             type='material-community' 
-                            size={26} color={colorAppS} 
+                            size={26} color={colorAppSecondary} 
                         />
                     </TouchableOpacity>
                 </View>
@@ -199,13 +221,13 @@ class EnqueteEditModal extends React.Component {
         return optsViews;
     }
 
-    render() {
-        return (
-            <ScrollView 
-                style={{ flex: 1 }} 
-                ref={(ref) => { this.scrollView = ref; }}
-                keyboardShouldPersistTaps={'handled'}
-            >
+    render = () => (
+        <ScrollView 
+            style={{ flex: 1 }} 
+            ref={(ref) => { this.scrollView = ref; }}
+            keyboardShouldPersistTaps={'handled'}
+        >
+            <TouchableWithoutFeedback>
                 <View>
                     <Card containerStyle={styles.card}>
                         <FormLabel labelStyle={styles.text}>TÍTULO</FormLabel>
@@ -218,10 +240,10 @@ class EnqueteEditModal extends React.Component {
                             inputStyle={[styles.text, styles.inputMargem, {
                                 width: this.state.inputWidth
                             }]} 
-                            value={this.props.titulo}
+                            value={this.state.titulo}
                             underlineColorAndroid={'transparent'}
                             multiline
-                            onChangeText={value => this.props.modificaTituloEditModal(value)}
+                            onChangeText={value => this.setState({ titulo: value })}
                         />
                         { 
                             this.state.isTituloNotValid &&
@@ -246,30 +268,26 @@ class EnqueteEditModal extends React.Component {
                             buttonStyle={{ width: '100%', marginVertical: 10 }}
                             onPress={() => {
                                 Keyboard.dismiss();
-                                this.props.modificaTituloEditModal(
-                                    this.props.itemEditModal.titulo
-                                ); 
-                                this.props.modificaOptsEditModal(
-                                    this.props.itemEditModal.opcoes
-                                ); 
                                 this.setState({
                                     loading: false,
-                                    isTituloNotValid: false
+                                    isTituloNotValid: false,
+                                    titulo: this.props.itemSelected.titulo,
+                                    opts: this.props.itemSelected.opcoes,
                                 });
                             }}
                         />
                     </Card>
                     <View style={{ marginBottom: 50 }} />
                 </View>
-            </ScrollView>
-        );
-    }
+            </TouchableWithoutFeedback>
+        </ScrollView>
+    )
 }
 
 const styles = StyleSheet.create({
     viewPrinc: {
         flex: 1,
-        backgroundColor: colorAppF
+        backgroundColor: colorAppForeground
     },
     text: {
         fontSize: 14,
@@ -338,7 +356,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => ({
     userLogged: state.LoginReducer.userLogged,
-    itemEditModal: state.EnquetesReducer.itemEditModal,
+    grupoSelected: state.GruposReducer.grupoSelected,
     titulo: state.EnquetesReducer.titulo,
     opts: state.EnquetesReducer.opts
 });

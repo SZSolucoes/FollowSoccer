@@ -112,16 +112,20 @@ class Admin extends React.Component {
                     </TouchableOpacity>
                     <TouchableOpacity 
                         style={{ flex: 1 }} 
-                        onPress={() => Actions.historico()}
+                        onPress={
+                            () => Actions.adminEnquetes(
+                                { onBack: () => Actions.popTo('ownerMenuAdmin') }
+                            )
+                        }
                     >
                         <Card 
                             containerStyle={{ flex: 1 }}
                             wrapperStyle={{ flex: 1 }}
                         >
                             <View style={styles.viewIconText}>
-                                <Icon name='history' type='material-community' size={34} />
+                                <Icon name='poll' type='material-community' size={34} />
                                 <View style={{ marginTop: 10 }} />
-                                <Text style={styles.text}>Histórico</Text>
+                                <Text style={styles.text}>Enquetes</Text>
                             </View>
                         </Card>
                     </TouchableOpacity>
@@ -146,25 +150,14 @@ class Admin extends React.Component {
                             </View>
                         </Card>
                     </TouchableOpacity>
-                    <TouchableOpacity 
+                    <View 
                         style={{ flex: 1 }} 
                         onPress={
                             () => Actions.adminEnquetes(
                                 { onBack: () => Actions.popTo('ownerMenuAdmin') }
                             )
                         }
-                    >
-                        <Card 
-                            containerStyle={{ flex: 1 }}
-                            wrapperStyle={{ flex: 1 }}
-                        >
-                            <View style={styles.viewIconText}>
-                                <Icon name='poll' type='material-community' size={34} />
-                                <View style={{ marginTop: 10 }} />
-                                <Text style={styles.text}>Enquetes</Text>
-                            </View>
-                        </Card>
-                    </TouchableOpacity>
+                    />
                 </View>
                 <View style={{ marginBottom: 100 }} />
             </ScrollView>

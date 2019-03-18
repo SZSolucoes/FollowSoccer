@@ -68,6 +68,8 @@ import MuralCadastrar from './components/grupos/gerenciar/admin/mural/MuralCadas
 import MuralEditar from './components/grupos/gerenciar/admin/mural/MuralEditar';
 import FinanceiroCadastrar from './components/grupos/gerenciar/admin/financeiro/FinanceiroCadastrar';
 import FinanceiroEditar from './components/grupos/gerenciar/admin/financeiro/FinanceiroEditar';
+import EnqueteCadastrar from './components/grupos/gerenciar/admin/enquetes/EnqueteCadastrar';
+import EnqueteEditar from './components/grupos/gerenciar/admin/enquetes/EnqueteEditar';
 
 const AnimatedSceneComp = Animated.createAnimatedComponent(AnimatedScene);
 
@@ -723,6 +725,40 @@ class Routes extends React.Component {
         </Scene>
     )
 
+    renderEnquetesAdmin = () => (
+        <Scene 
+            key={'adminEnquetes'}
+            tabs
+            showLabel
+            tabBarPosition={'top'}
+            lazy={false}
+            swipeEnabled
+            title={'Enquetes'} 
+            titleStyle={styles.title}
+            leftButtonTextStyle={styles.btLeft}
+            backButtonTintColor={'white'}
+            tabBarStyle={{ backgroundColor: colorAppSecondary }}
+            labelStyle={{ fontSize: normalize(12), fontWeight: 'bold' }}
+            //renderRightButton={() => this.rightButtonGerenciarTab()}
+        >
+            <Scene 
+                key={'enqueteCadastrar'}
+                hideNavBar 
+                component={EnqueteCadastrar}
+                initial
+                tabBarLabel={'Incluir'}
+                activeTintColor={'white'}
+            />
+            <Scene 
+                key={'enqueteEditar'}
+                hideNavBar 
+                component={EnqueteEditar}
+                tabBarLabel={'Visualizar'}
+                activeTintColor={'white'}
+            />
+        </Scene>
+    )
+
     renderRouter = () => (
         <Router>
             <Scene 
@@ -743,6 +779,7 @@ class Routes extends React.Component {
                 {this.renderJogoGerenciarTabBar()}
                 {this.renderMuralAdmin()}
                 {this.renderFinanceiroAdmin()}
+                {this.renderEnquetesAdmin()}
                 <Scene 
                     key='cadastrar'
                     title={'Cadastrar'}

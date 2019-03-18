@@ -301,22 +301,70 @@ class JogoG extends React.Component {
     }
 
     onPressPlayerGol = (jogador, jogo) => {
-        const { grupoSelected } = this.props;
         const jogadorNome = retrieveUpdUserGroup(
             jogador.key, 'nome', jogador
         );
-        const gols = [
-            ...jogo.gols, 
-            {
-                key: jogador.key, 
-                side: jogador.side,
-                nome: jogadorNome,
-                time: this.timerRef.getTimer().toString(),
-                indexKey: jogo.gols.length.toString()
+
+        const funExec = (isContraSide = false) => {
+            const { grupoSelected } = this.props;
+            const isContraNode = isContraSide ? { isContra: 'yes' } : {};
+
+            let side = jogador.side;
+            if (isContraSide) side = isContraSide;
+
+            const gols = [
+                ...jogo.gols, 
+                {
+                    key: jogador.key,
+                    side,
+                    nome: jogadorNome,
+                    time: this.timerRef.getTimer().toString(),
+                    indexKey: jogo.gols.length.toString(),
+                    ...isContraNode
+                }
+            ];
+            const placarCasa = parseInt(jogo.placarCasa, 10) + 1;
+            const placarVisit = parseInt(jogo.placarVisit, 10) + 1;
+    
+            let payload = {};
+            if (side === 'casa') {
+                payload = { gols, placarCasa };
+            } else {
+                payload = { gols, placarVisit };
             }
-        ];
-        const placarCasa = parseInt(jogo.placarCasa, 10) + 1;
-        const placarVisit = parseInt(jogo.placarVisit, 10) + 1;
+            this.fbDatabaseRef
+            .child(`grupos/${grupoSelected.key}/jogos/${jogo.key}`)
+            .update({
+                ...payload
+            })
+            .then(() => {
+                showDropdownAlert(
+                    'info',
+                    'Gol marcado',
+                    ''
+                );
+
+                if (!isContraSide) {
+                    this.fbDatabaseRef
+                    .child(`usuarios/${jogador.key}/gols`).once('value', (snapshot) => {
+                        const golsPlus = parseInt(snapshot.val(), 10) + 1;
+                        this.fbDatabaseRef
+                        .child(`usuarios/${jogador.key}`).update({
+                            gols: golsPlus.toString(),
+                        })
+                        .then(() => true)
+                        .catch(() => true);
+                    });
+                }
+            })
+            .catch(() => 
+                showDropdownAlert(
+                    'error',
+                    ERROS.jogoGMarcarGol.erro,
+                    ERROS.jogoGMarcarGol.mes
+                )
+            );
+        };
 
         Alert.alert(
             'Aviso',
@@ -326,45 +374,14 @@ class JogoG extends React.Component {
                     onPress: () => true, 
                     style: 'cancel' 
                 },
+                { text: 'Contra',
+                    onPress: () => checkConInfo(() => funExec(
+                        jogador.side === 'casa' ? 'visit' : 'casa'
+                    ))
+                },
                 { 
                     text: 'Ok', 
-                    onPress: () => checkConInfo(() => {
-                        let payload = {};
-                        if (jogador.side === 'casa') {
-                            payload = { gols, placarCasa };
-                        } else {
-                            payload = { gols, placarVisit };
-                        }
-                        this.fbDatabaseRef
-                        .child(`grupos/${grupoSelected.key}/jogos/${jogo.key}`)
-                        .update({
-                            ...payload
-                        })
-                        .then(() => {
-                            showDropdownAlert(
-                                'info',
-                                'Gol marcado',
-                                ''
-                            );
-                            this.fbDatabaseRef
-                            .child(`usuarios/${jogador.key}/gols`).once('value', (snapshot) => {
-                                const golsPlus = parseInt(snapshot.val(), 10) + 1;
-                                this.fbDatabaseRef
-                                .child(`usuarios/${jogador.key}`).update({
-                                    gols: golsPlus.toString(),
-                                })
-                                .then(() => true)
-                                .catch(() => true);
-                            });
-                        })
-                        .catch(() => 
-                            showDropdownAlert(
-                                'error',
-                                ERROS.jogoGMarcarGol.erro,
-                                ERROS.jogoGMarcarGol.mes
-                            )
-                        );
-                    })
+                    onPress: () => checkConInfo(() => funExec())
                 }
             ]
         );
@@ -374,25 +391,67 @@ class JogoG extends React.Component {
     () => checkConInfo(() => this.onPressRemoveGol(jogador, jogo))
 
     onPressRemoveGol = (jogador, jogo) => {
-        const { grupoSelected } = this.props;
-        const gols = [
-            ...jogo.gols
-        ];
         const jogadorNome = retrieveUpdUserGroup(
             jogador.key, 'nome', jogador
         );
-        let i = 0;
-        
-        gols.splice(parseInt(jogador.indexKey, 10), 1);
 
-        for (i = 0; i < gols.length; i++) {
-            if (!gols[i].push) {
-                gols[i].indexKey = i.toString();
+        const funExec = () => {
+            const { grupoSelected } = this.props;
+            const gols = [
+                ...jogo.gols
+            ];
+            let i = 0;
+            
+            gols.splice(parseInt(jogador.indexKey, 10), 1);
+    
+            for (i = 0; i < gols.length; i++) {
+                if (!gols[i].push) {
+                    gols[i].indexKey = i.toString();
+                }
             }
-        }
+    
+            const placarCasa = parseInt(jogo.placarCasa, 10) - 1;
+            const placarVisit = parseInt(jogo.placarVisit, 10) - 1;
+    
+            let payload = {};
+            if (jogador.side === 'casa') {
+                payload = { gols, placarCasa };
+            } else {
+                payload = { gols, placarVisit };
+            }
+            this.fbDatabaseRef
+            .child(`grupos/${grupoSelected.key}/jogos/${jogo.key}`)
+            .update({
+                ...payload
+            })
+            .then(() => {
+                showDropdownAlert(
+                    'info',
+                    'Gol removido',
+                    ''
+                );
 
-        const placarCasa = parseInt(jogo.placarCasa, 10) - 1;
-        const placarVisit = parseInt(jogo.placarVisit, 10) - 1;
+                if (!jogador.isContra) {
+                    this.fbDatabaseRef
+                    .child(`usuarios/${jogador.key}/gols`).once('value', (snapshot) => {
+                        const golsLess = parseInt(snapshot.val(), 10) - 1;
+                        this.fbDatabaseRef
+                        .child(`usuarios/${jogador.key}`).update({
+                            gols: golsLess.toString()
+                        })
+                        .then(() => true)
+                        .catch(() => true);
+                    });
+                }
+            })
+            .catch(() => 
+                showDropdownAlert(
+                    'error',
+                    ERROS.jogoGRemoverGol.erro,
+                    ERROS.jogoGRemoverGol.mes
+                )
+            );
+        };
 
         Alert.alert(
             'Aviso',
@@ -404,43 +463,7 @@ class JogoG extends React.Component {
                 },
                 { 
                     text: 'Ok', 
-                    onPress: () => checkConInfo(() => {
-                        let payload = {};
-                        if (jogador.side === 'casa') {
-                            payload = { gols, placarCasa };
-                        } else {
-                            payload = { gols, placarVisit };
-                        }
-                        this.fbDatabaseRef
-                        .child(`grupos/${grupoSelected.key}/jogos/${jogo.key}`)
-                        .update({
-                            ...payload
-                        })
-                        .then(() => {
-                            showDropdownAlert(
-                                'info',
-                                'Gol removido',
-                                ''
-                            );
-                            this.fbDatabaseRef
-                            .child(`usuarios/${jogador.key}/gols`).once('value', (snapshot) => {
-                                const golsLess = parseInt(snapshot.val(), 10) - 1;
-                                this.fbDatabaseRef
-                                .child(`usuarios/${jogador.key}`).update({
-                                    gols: golsLess.toString()
-                                })
-                                .then(() => true)
-                                .catch(() => true);
-                            });
-                        })
-                        .catch(() => 
-                            showDropdownAlert(
-                                'error',
-                                ERROS.jogoGRemoverGol.erro,
-                                ERROS.jogoGRemoverGol.mes
-                            )
-                        );
-                    })
+                    onPress: () => checkConInfo(() => funExec())
                 }
             ]
         );
@@ -1206,7 +1229,12 @@ class JogoG extends React.Component {
                                     { timeText[1] }
                                 </Text>
                                 <Text>
-                                    {
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
                                         retrieveUpdUserGroup(
                                             golsCasa[i].key, 'nome', golsCasa[i]
                                         )
@@ -1221,7 +1249,12 @@ class JogoG extends React.Component {
                                     { timeText[0] }
                                 </Text>
                                 <Text>
-                                    {
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
                                         retrieveUpdUserGroup(
                                             golsCasa[i].key, 'nome', golsCasa[i]
                                         )
@@ -1274,7 +1307,12 @@ class JogoG extends React.Component {
                                     { timeTextCasa[1] }
                                 </Text>
                                 <Text>
-                                    {
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
                                         retrieveUpdUserGroup(
                                             golsCasa[i].key, 'nome', golsCasa[i]
                                         )
@@ -1289,7 +1327,12 @@ class JogoG extends React.Component {
                                     { timeTextCasa[0] }
                                 </Text>
                                 <Text>
-                                    {
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
                                         retrieveUpdUserGroup(
                                             golsCasa[i].key, 'nome', golsCasa[i]
                                         )
@@ -1306,7 +1349,12 @@ class JogoG extends React.Component {
                                     { timeTextVisit[1] }
                                 </Text>
                                 <Text>
-                                    {
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
                                         retrieveUpdUserGroup(
                                             golsVisit[i].key, 'nome', golsVisit[i]
                                         )
@@ -1321,7 +1369,12 @@ class JogoG extends React.Component {
                                     { timeTextVisit[0] }
                                 </Text>
                                 <Text>
-                                    {
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
                                         retrieveUpdUserGroup(
                                             golsVisit[i].key, 'nome', golsVisit[i]
                                         )
@@ -1404,7 +1457,12 @@ class JogoG extends React.Component {
                                     { timeText[1] }
                                 </Text>
                                 <Text>
-                                    {
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
                                         retrieveUpdUserGroup(
                                             golsVisit[i].key, 'nome', golsVisit[i]
                                         )
@@ -1419,7 +1477,12 @@ class JogoG extends React.Component {
                                     { timeText[0] }
                                 </Text>
                                 <Text>
-                                    {
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
                                         retrieveUpdUserGroup(
                                             golsVisit[i].key, 'nome', golsVisit[i]
                                         )
@@ -1480,7 +1543,12 @@ class JogoG extends React.Component {
                                     { timeTextVisit[1] }
                                 </Text>
                                 <Text>
-                                    {
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
                                         retrieveUpdUserGroup(
                                             golsVisit[i].key, 'nome', golsVisit[i]
                                         )
@@ -1495,7 +1563,12 @@ class JogoG extends React.Component {
                                     { timeTextVisit[0] }
                                 </Text>
                                 <Text>
-                                    {
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
                                         retrieveUpdUserGroup(
                                             golsVisit[i].key, 'nome', golsVisit[i]
                                         )
@@ -1512,7 +1585,12 @@ class JogoG extends React.Component {
                                     { timeTextCasa[1] }
                                 </Text>
                                 <Text>
-                                    {
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
                                         retrieveUpdUserGroup(
                                             golsCasa[i].key, 'nome', golsCasa[i]
                                         )
@@ -1527,7 +1605,12 @@ class JogoG extends React.Component {
                                     { timeTextCasa[0] }
                                 </Text>
                                 <Text>
-                                    {
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
                                         retrieveUpdUserGroup(
                                             golsCasa[i].key, 'nome', golsCasa[i]
                                         )

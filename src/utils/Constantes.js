@@ -243,6 +243,14 @@ export const ERROS = {
     financeiroRemove: {
         erro: 'Erro #0043',
         mes: 'Ocorreu um erro durante a remoção. Verifique a conexão.'
+    },
+    enqueteCad: {
+        erro: 'Erro #0044',
+        mes: 'Ocorreu um erro ao criar a enquete. Verifique a conexão.'
+    },
+    enqueteEdit: {
+        erro: 'Erro #0045',
+        mes: 'Ocorreu um erro ao alterar a enquete. Verifique a conexão.'
     }
 };
 

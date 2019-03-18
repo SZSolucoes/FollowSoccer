@@ -11,73 +11,87 @@ import {
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { List } from 'react-native-elements';
-import { colorAppF, colorAppP, shirtColors } from '../../../utils/constantes';
-import { getPosIndex } from '../../../utils/jogosUtils';
-import { limitDotText, formattedSeconds, formatJogoSeconds } from '../../../utils/strComplex';
-import ListItem from '../../tools/ListItem';
-import Card from '../../tools/Card';
-import { modificaJogoSelected } from '../../../actions/ImagensActions';
+import { colorAppForeground, colorAppPrimary, shirtColors } from '../../../../../utils/Constantes';
+import { getPosIndex } from '../../../../../utils/JogosUtils';
+import { limitDotText, formattedSeconds, formatJogoSeconds } from '../../../../../utils/StrComplex';
+import firebase from '../../../../../utils/Firebase';
+import { modificaJogoSelected } from '../gerenciar/ImagensJogosActions';
+import Card from '../../../../../tools/elements/Card';
+import ListItem from '../../../../../tools/elements/ListItem';
 
-import imgBola from '../../../imgs/bolaanim.png';
-import imgYellowCard from '../../../imgs/yellowcard.png';
-import imgRedCard from '../../../imgs/redcard.png';
-import imgCartoes from '../../../imgs/cards.png';
-import imgAvatar from '../../../imgs/perfiluserimg.png';
-import imgInOut from '../../../imgs/inout.png';
+import imgBola from '../../../../../assets/imgs/bolaanim.png';
+import imgYellowCard from '../../../../../assets/imgs/yellowcard.png';
+import imgRedCard from '../../../../../assets/imgs/redcard.png';
+import imgCartoes from '../../../../../assets/imgs/cards.png';
+import imgInOut from '../../../../../assets/imgs/inout.png';
+import { retrieveUpdUserGroup } from '../../../../../utils/UserUtils';
 
 class JogoH extends React.Component {
-
     constructor(props) {
         super(props);
 
         this.intervalIncrementer = null;
-
-        this.renderCardPlacar = this.renderCardPlacar.bind(this);
-        this.renderGoals = this.renderGoals.bind(this);
-        this.renderCartoes = this.renderCartoes.bind(this);
-        this.renderSubs = this.renderSubs.bind(this);
-        this.textJogoProgress = this.textJogoProgress.bind(this);
-        this.textPlacar = this.textPlacar.bind(this);
-        this.renderGolJogador = this.renderGolJogador.bind(this);
-        this.renderCartaoJogador = this.renderCartaoJogador.bind(this);
-        this.renderEscalados = this.renderEscalados.bind(this);
-        this.renderIcons = this.renderIcons.bind(this);
+        this.fbJogoRef = null;
+        this.fbDatabaseRef = firebase.database().ref();
 
         this.state = {
-            seconds: 0
+            seconds: 0,
+            jogo: {}
         };
     }
 
-    componentDidMount() {
-        const { listJogos, itemSelected } = this.props;
-        const jogo = _.filter(listJogos, (item) => item.key === itemSelected)[0];
-        const currentTime = parseInt(jogo.currentTime, 10);
-        this.setState({ seconds: currentTime });
-        if (jogo.status === '1') {
-            this.intervalIncrementer = setInterval(() =>
-                this.setState({
-                    seconds: this.state.seconds + 1
-                })
-            , 1000);
-        }
-        this.props.modificaJogoSelected(jogo);
-    }
+    componentDidMount = () => {
+        const { itemSelected, grupoSelected } = this.props;
+        const listJogos = grupoSelected.jogos ?
+        _.map(grupoSelected.jogos, (ita, key) => ({ key, ...ita })) : [];
 
-    shouldComponentUpdate(nextProps, nextStates) {
-        const { listJogos, itemSelected } = this.props;
+        const jogo = _.find(listJogos, (item) => item.key === itemSelected);
 
-        if (nextProps.listJogos) {
-            const nj = _.filter(nextProps.listJogos, (item) => item.key === itemSelected)[0];
-                
-            if (!nj) {
-                return false;
+        if (jogo) {
+            const currentTime = parseInt(jogo.currentTime, 10);
+    
+            this.setState({ seconds: currentTime });
+            if (jogo.status === '1') {
+                this.intervalIncrementer = setInterval(() =>
+                    this.setState({
+                        seconds: this.state.seconds + 1
+                    })
+                , 1000);
             }
         }
+        
+        this.props.modificaJogoSelected(jogo);
 
-        if (nextProps !== this.props) {
+        // LISTENER PARA ATUALIZACAO DO JOGO
+        this.fbJogoRef = this.fbDatabaseRef
+        .child(`grupos/${grupoSelected.key}/jogos/${itemSelected}`);
+
+        this.fbJogoRef.on('value', snap => {
+            if (snap) {
+                const snapVal = snap.val();
+
+                if (snapVal) {
+                    this.setState({ jogo: { key: snap.key, ...snapVal } });
+
+                    return;
+                }
+            }
+
+            this.setState({ jogo: {} });
+        });
+    }
+
+    shouldComponentUpdate = (nextProps, nextStates) => { 
+        if (!nextStates.jogo) {
+            return false;
+        }
+
+        const isJogoEqual = _.isEqual(nextStates.jogo, this.state.jogo);
+
+        if (!isJogoEqual) {
             setTimeout(() => {
-                const jogo = _.filter(listJogos, (item) => item.key === itemSelected)[0];
-                const nj = _.filter(nextProps.listJogos, (item) => item.key === itemSelected)[0];
+                const { jogo } = this.state;
+                const nj = nextStates.jogo;
                 
                 if (!nj) {
                     return false;
@@ -108,13 +122,15 @@ class JogoH extends React.Component {
         return nextProps !== this.props || nextStates !== this.state;
     }
 
-    componentWillUnmount() {  
+    componentWillUnmount = () => {  
         if (this.intervalIncrementer) {
             clearInterval(this.intervalIncrementer);
         }
+        this.props.modificaClean();
+        if (this.fbJogoRef) this.fbJogoRef.off();
     }
 
-    textJogoProgress(jogo) {
+    textJogoProgress = (jogo) => {
         switch (jogo.status) {
             case '0':
                 return 'Em espera';
@@ -129,150 +145,144 @@ class JogoH extends React.Component {
         }
     }
 
-    textPlacar(jogo) {
-        return `${jogo.placarCasa} - ${jogo.placarVisit}`;
-    }
+    textPlacar = (jogo) => `${jogo.placarCasa} - ${jogo.placarVisit}`
 
-    renderCardPlacar(jogo) {
-        return (
-            <Card
-                containerStyle={styles.card}
-            >
-                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    <View style={styles.topViewPlacar} />
-                    <View style={{ position: 'absolute', alignSelf: 'center' }}>
-                        <Text style={{ color: 'white', fontWeight: 'bold' }}>
-                            { limitDotText(jogo.titulo, 25) }
-                        </Text>
-                    </View>
-                </View>
-                <View style={{ marginTop: 20 }} />
-                <View style={styles.viewPlacar}>
-                    <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1.1 }}>
-                        <Image 
-                            style={{ height: 80, width: 70 }}
-                            resizeMode={'stretch'}
-                            source={
-                                shirtColors[jogo.homeshirt] || shirtColors.white
-                            }
-                        />
-                        <Text
-                            style={{
-                                fontWeight: '500',
-                                fontSize: 14,
-                                textAlign: 'center'
-                            }}
-                        >
-                            { jogo.timeCasa ? jogo.timeCasa.trim() : 'Casa' }
-                        </Text>
-                    </View>
-                    <View 
-                        style={{
-                            paddingHorizontal: 5,
-                            alignItems: 'center', 
-                            justifyContent: 'center',
-                            borderWidth: 1,
-                            borderRadius: 3,
-                            flex: 0.8
-                        }}
-                    >
-                            <View
-                                style={{ 
-                                    alignItems: 'center',
-                                    justifyContent: 'center' 
-                                }}
-                            >
-                                <View style={{ marginBottom: 10 }}>
-                                    <Text
-                                        style={{ 
-                                            fontSize: 14,
-                                            textAlign: 'center', 
-                                            fontWeight: 'bold', 
-                                            color: 'red' 
-                                        }}
-                                    >
-                                        { this.textJogoProgress(jogo) }
-                                    </Text>
-                                </View>
-                                <View>
-                                    <Text
-                                        style={{ 
-                                            fontSize: 26, 
-                                            fontWeight: 'bold', 
-                                            color: 'black' 
-                                        }}
-                                    >
-                                        { this.textPlacar(jogo) }
-                                    </Text>
-                                </View>
-                                <View style={{ marginTop: 10 }}>
-                                    <Text
-                                        style={{ fontSize: 16, fontWeight: '500' }}
-                                    >
-                                    { formattedSeconds(this.state.seconds) }
-                                    </Text>
-                                </View>
-                            </View>
-                    </View>
-                    <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1.1 }}>
-                        <Image 
-                            style={{ height: 80, width: 70 }}
-                            resizeMode={'stretch'}
-                            source={
-                                shirtColors[jogo.visitshirt] || shirtColors.blue
-                            }
-                        />
-                        <Text
-                            style={{
-                                fontWeight: '500',
-                                fontSize: 14,
-                                textAlign: 'center'
-                            }}
-                            
-                        >
-                            { jogo.timeVisit ? jogo.timeVisit.trim() : 'Visitantes' }
-                        </Text>
-                    </View>
-                </View>
-                <View style={{ marginBottom: 20 }} />
-            </Card>
-        );
-    }
-
-    renderGoals(jogo) {
-        return (
-            <View>
-                <View style={{ padding: 5 }}>
-                    <View style={{ margin: 5 }}>
-                        <Text
-                            style={{ 
-                                color: 'black', 
-                                fontWeight: 'bold',
-                                fontSize: 16 
-                            }}
-                        >
-                            Gols
-                        </Text>
-                    </View>
-                    <View style={styles.cardEffect}>
-                        <List 
-                            containerStyle={{
-                                marginTop: 0,
-                                paddingHorizontal: 5,
-                                paddingVertical: 10,
-                                borderTopWidth: 0,
-                                borderBottomWidth: 0
-                            }}
-                        >
-                            { this.renderGolJogador(jogo.gols) }
-                        </List>
-                    </View>
+    renderCardPlacar = (jogo) => (
+        <Card
+            containerStyle={styles.card}
+        >
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <View style={styles.topViewPlacar} />
+                <View style={{ position: 'absolute', alignSelf: 'center' }}>
+                    <Text style={{ color: 'white', fontWeight: 'bold' }}>
+                        { limitDotText(jogo.titulo, 25) }
+                    </Text>
                 </View>
             </View>
-        );
-    }
+            <View style={{ marginTop: 20 }} />
+            <View style={styles.viewPlacar}>
+                <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1.1 }}>
+                    <Image 
+                        style={{ height: 80, width: 70 }}
+                        resizeMode={'stretch'}
+                        source={
+                            shirtColors[jogo.homeshirt] || shirtColors.white
+                        } 
+                    />
+                    <Text
+                        style={{
+                            fontWeight: '500',
+                            fontSize: 14,
+                            textAlign: 'center'
+                        }}
+                    >
+                        { jogo.timeCasa ? jogo.timeCasa.trim() : 'Casa' }
+                    </Text>
+                </View>
+                <View 
+                    style={{
+                        paddingHorizontal: 5,
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                        flex: 0.8
+                    }}
+                >
+                        <View
+                            style={{ 
+                                alignItems: 'center',
+                                justifyContent: 'center' 
+                            }}
+                        >
+                            <View style={{ marginBottom: 10 }}>
+                                <Text
+                                    style={{ 
+                                        fontSize: 14,
+                                        textAlign: 'center',
+                                        fontWeight: 'bold', 
+                                        color: 'red' 
+                                    }}
+                                >
+                                    { this.textJogoProgress(jogo) }
+                                </Text>
+                            </View>
+                            <View>
+                                <Text
+                                    style={{ 
+                                        fontSize: 26, 
+                                        fontWeight: 'bold', 
+                                        color: 'black' 
+                                    }}
+                                >
+                                    { this.textPlacar(jogo) }
+                                </Text>
+                            </View>
+                            <View style={{ marginTop: 10 }}>
+                                <Text
+                                    style={{ fontSize: 16, fontWeight: '500' }}
+                                >
+                                { formattedSeconds(this.state.seconds) }
+                                </Text>
+                            </View>
+                        </View>
+                </View>
+                <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1.1 }}>
+                    <Image 
+                        style={{ height: 80, width: 70 }}
+                        resizeMode={'stretch'}
+                        source={
+                            shirtColors[jogo.visitshirt] || shirtColors.blue
+                        }
+                    />
+                    <Text
+                        style={{
+                            fontWeight: '500',
+                            fontSize: 14,
+                            textAlign: 'center'
+                        }}
+                        
+                    >
+                        { jogo.timeVisit ? jogo.timeVisit.trim() : 'Visitantes' }
+                    </Text>
+                </View>
+            </View>
+            <View style={{ marginBottom: 20 }} />
+        </Card>
+    )
 
-    renderGolJogador(gols/*, jogo*/) {
+    renderGoals = (jogo) => (
+        <View>
+            <View style={{ padding: 5 }}>
+                <View style={{ margin: 5 }}>
+                    <Text
+                        style={{ 
+                            color: 'black', 
+                            fontWeight: 'bold',
+                            fontSize: 16 
+                        }}
+                    >
+                        Gols
+                    </Text>
+                </View>
+                <View style={styles.cardEffect}>
+                    <List 
+                        containerStyle={{
+                            marginTop: 0,
+                            paddingHorizontal: 5,
+                            paddingVertical: 10,
+                            borderTopWidth: 0,
+                            borderBottomWidth: 0
+                        }}
+                    >
+                        { this.renderGolJogador(jogo.gols) }
+                    </List>
+                </View>
+            </View>
+        </View>
+    )
+
+    renderGolJogador = (gols/*, jogo*/) => {
         const golsCasa = _.filter(gols, (item) => item.side && item.side === 'casa').sort(
             (a, b) => {
                 const aTime = parseInt(a.time, 10);
@@ -328,7 +338,16 @@ class JogoH extends React.Component {
                                     { timeText[1] }
                                 </Text>
                                 <Text>
-                                    { golsCasa[i].nome }
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -339,7 +358,16 @@ class JogoH extends React.Component {
                                     { timeText[0] }
                                 </Text>
                                 <Text>
-                                    { golsCasa[i].nome }
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -388,7 +416,16 @@ class JogoH extends React.Component {
                                     { timeTextCasa[1] }
                                 </Text>
                                 <Text>
-                                    { golsCasa[i].nome }
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -399,7 +436,16 @@ class JogoH extends React.Component {
                                     { timeTextCasa[0] }
                                 </Text>
                                 <Text>
-                                    { golsCasa[i].nome }
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -412,7 +458,16 @@ class JogoH extends React.Component {
                                     { timeTextVisit[1] }
                                 </Text>
                                 <Text>
-                                    { golsVisit[i].nome }
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -423,7 +478,16 @@ class JogoH extends React.Component {
                                     { timeTextVisit[0] }
                                 </Text>
                                 <Text>
-                                    { golsVisit[i].nome }
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -500,7 +564,16 @@ class JogoH extends React.Component {
                                     { timeText[1] }
                                 </Text>
                                 <Text>
-                                    { golsVisit[i].nome }
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -511,7 +584,16 @@ class JogoH extends React.Component {
                                     { timeText[0] }
                                 </Text>
                                 <Text>
-                                    { golsVisit[i].nome }
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -566,7 +648,16 @@ class JogoH extends React.Component {
                                     { timeTextVisit[1] }
                                 </Text>
                                 <Text>
-                                    { golsVisit[i].nome }
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -577,7 +668,16 @@ class JogoH extends React.Component {
                                     { timeTextVisit[0] }
                                 </Text>
                                 <Text>
-                                    { golsVisit[i].nome }
+                                    { 
+                                        golsVisit[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsVisit[i].key, 'nome', golsVisit[i]
+                                        )
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -590,7 +690,16 @@ class JogoH extends React.Component {
                                     { timeTextCasa[1] }
                                 </Text>
                                 <Text>
-                                    { golsCasa[i].nome }
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -601,7 +710,16 @@ class JogoH extends React.Component {
                                     { timeTextCasa[0] }
                                 </Text>
                                 <Text>
-                                    { golsCasa[i].nome }
+                                    { 
+                                        golsCasa[i].isContra ?
+                                        `${retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )} ( Contra )`
+                                        :
+                                        retrieveUpdUserGroup(
+                                            golsCasa[i].key, 'nome', golsCasa[i]
+                                        )
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -670,40 +788,38 @@ class JogoH extends React.Component {
         return viewsGols;
     }
 
-    renderCartoes(jogo) {
-        return (
-            <View>
-                <View style={{ padding: 5 }}>
-                    <View style={{ margin: 5 }}>
-                        <Text
-                            style={{ 
-                                color: 'black', 
-                                fontWeight: 'bold',
-                                fontSize: 16 
-                            }}
-                        >
-                            Cartões
-                        </Text>
-                    </View>
-                    <View style={styles.cardEffect}>
-                        <List 
-                            containerStyle={{ 
-                                marginTop: 0,
-                                paddingHorizontal: 5,
-                                paddingVertical: 10,
-                                borderTopWidth: 0,
-                                borderBottomWidth: 0
-                            }}
-                        >
-                            { this.renderCartaoJogador(jogo.cartoes) }
-                        </List>
-                    </View>
+    renderCartoes = (jogo) => (
+        <View>
+            <View style={{ padding: 5 }}>
+                <View style={{ margin: 5 }}>
+                    <Text
+                        style={{ 
+                            color: 'black', 
+                            fontWeight: 'bold',
+                            fontSize: 16 
+                        }}
+                    >
+                        Cartões
+                    </Text>
+                </View>
+                <View style={styles.cardEffect}>
+                    <List 
+                        containerStyle={{ 
+                            marginTop: 0,
+                            paddingHorizontal: 5,
+                            paddingVertical: 10,
+                            borderTopWidth: 0,
+                            borderBottomWidth: 0
+                        }}
+                    >
+                        { this.renderCartaoJogador(jogo.cartoes) }
+                    </List>
                 </View>
             </View>
-        );
-    }
+        </View>
+    )
 
-    renderCartaoJogador(cartoes/*, jogo*/) {
+    renderCartaoJogador = (cartoes/*, jogo*/) => {
         const cartoesCasa = _.filter(cartoes, (item) => item.side && item.side === 'casa').sort(
             (a, b) => {
                 const aTime = parseInt(a.time, 10);
@@ -759,7 +875,11 @@ class JogoH extends React.Component {
                                     { timeText[1] }
                                 </Text>
                                 <Text>
-                                    { cartoesCasa[i].nome }
+                                    { 
+                                        retrieveUpdUserGroup(
+                                            cartoesCasa[i].key, 'nome', cartoesCasa[i]
+                                        ) 
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -770,7 +890,11 @@ class JogoH extends React.Component {
                                     { timeText[0] }
                                 </Text>
                                 <Text>
-                                    { cartoesCasa[i].nome }
+                                    { 
+                                        retrieveUpdUserGroup(
+                                            cartoesCasa[i].key, 'nome', cartoesCasa[i]
+                                        ) 
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -827,7 +951,11 @@ class JogoH extends React.Component {
                                     { timeTextCasa[1] }
                                 </Text>
                                 <Text>
-                                    { cartoesCasa[i].nome }
+                                    { 
+                                        retrieveUpdUserGroup(
+                                            cartoesCasa[i].key, 'nome', cartoesCasa[i]
+                                        ) 
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -838,7 +966,11 @@ class JogoH extends React.Component {
                                     { timeTextCasa[0] }
                                 </Text>
                                 <Text>
-                                    { cartoesCasa[i].nome }
+                                    { 
+                                        retrieveUpdUserGroup(
+                                            cartoesCasa[i].key, 'nome', cartoesCasa[i]
+                                        ) 
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -851,7 +983,11 @@ class JogoH extends React.Component {
                                     { timeTextVisit[1] }
                                 </Text>
                                 <Text>
-                                    { cartoesVisit[i].nome }
+                                    { 
+                                        retrieveUpdUserGroup(
+                                            cartoesVisit[i].key, 'nome', cartoesVisit[i]
+                                        ) 
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -862,7 +998,11 @@ class JogoH extends React.Component {
                                     { timeTextVisit[0] }
                                 </Text>
                                 <Text>
-                                    { cartoesVisit[i].nome }
+                                    { 
+                                        retrieveUpdUserGroup(
+                                            cartoesVisit[i].key, 'nome', cartoesVisit[i]
+                                        ) 
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -955,7 +1095,11 @@ class JogoH extends React.Component {
                                     { timeText[1] }
                                 </Text>
                                 <Text>
-                                    { cartoesVisit[i].nome }
+                                    { 
+                                        retrieveUpdUserGroup(
+                                            cartoesVisit[i].key, 'nome', cartoesVisit[i]
+                                        ) 
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -966,7 +1110,11 @@ class JogoH extends React.Component {
                                     { timeText[0] }
                                 </Text>
                                 <Text>
-                                    { cartoesVisit[i].nome }
+                                    { 
+                                        retrieveUpdUserGroup(
+                                            cartoesVisit[i].key, 'nome', cartoesVisit[i]
+                                        ) 
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -1029,7 +1177,11 @@ class JogoH extends React.Component {
                                     { timeTextVisit[1] }
                                 </Text>
                                 <Text>
-                                    { cartoesVisit[i].nome }
+                                    { 
+                                        retrieveUpdUserGroup(
+                                            cartoesVisit[i].key, 'nome', cartoesVisit[i]
+                                        ) 
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -1040,7 +1192,11 @@ class JogoH extends React.Component {
                                     { timeTextVisit[0] }
                                 </Text>
                                 <Text>
-                                    { cartoesVisit[i].nome }
+                                    { 
+                                        retrieveUpdUserGroup(
+                                            cartoesVisit[i].key, 'nome', cartoesVisit[i]
+                                        ) 
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -1053,7 +1209,11 @@ class JogoH extends React.Component {
                                     { timeTextCasa[1] }
                                 </Text>
                                 <Text>
-                                    { cartoesCasa[i].nome }
+                                    { 
+                                        retrieveUpdUserGroup(
+                                            cartoesCasa[i].key, 'nome', cartoesCasa[i]
+                                        ) 
+                                    }
                                 </Text>
                             </Text> 
                         );
@@ -1064,7 +1224,11 @@ class JogoH extends React.Component {
                                     { timeTextCasa[0] }
                                 </Text>
                                 <Text>
-                                    { cartoesCasa[i].nome }
+                                    { 
+                                        retrieveUpdUserGroup(
+                                            cartoesCasa[i].key, 'nome', cartoesCasa[i]
+                                        ) 
+                                    }
                                 </Text>
                             </Text>
                         );
@@ -1149,40 +1313,38 @@ class JogoH extends React.Component {
         return viewCartoes;
     }
 
-    renderSubs(jogo) {
-        return (
-            <View>
-                <View style={{ padding: 5 }}>
-                    <View style={{ margin: 5 }}>
-                        <Text
-                            style={{ 
-                                color: 'black', 
-                                fontWeight: 'bold',
-                                fontSize: 16 
-                            }}
-                        >
-                            Substituições
-                        </Text>
-                    </View>
-                    <View style={styles.cardEffect}>
-                        <List 
-                            containerStyle={{ 
-                                marginTop: 0,
-                                paddingHorizontal: 5,
-                                paddingVertical: 10,
-                                borderTopWidth: 0,
-                                borderBottomWidth: 0
-                            }}
-                        >
-                            { this.renderSubsJogador(jogo.subs) }
-                        </List>
-                    </View>
+    renderSubs = (jogo) => (
+        <View>
+            <View style={{ padding: 5 }}>
+                <View style={{ margin: 5 }}>
+                    <Text
+                        style={{ 
+                            color: 'black', 
+                            fontWeight: 'bold',
+                            fontSize: 16 
+                        }}
+                    >
+                        Substituições
+                    </Text>
+                </View>
+                <View style={styles.cardEffect}>
+                    <List 
+                        containerStyle={{ 
+                            marginTop: 0,
+                            paddingHorizontal: 5,
+                            paddingVertical: 10,
+                            borderTopWidth: 0,
+                            borderBottomWidth: 0
+                        }}
+                    >
+                        { this.renderSubsJogador(jogo.subs) }
+                    </List>
                 </View>
             </View>
-        );
-    }
+        </View>
+    )
 
-    renderSubsJogador(subs/*, jogo*/) {
+    renderSubsJogador = (subs/*, jogo*/) => {
         const subsCasa = _.filter(subs, (item) => item.side && item.side === 'casa').sort(
             (a, b) => {
                 const aTime = parseInt(a.time, 10);
@@ -1283,10 +1445,22 @@ class JogoH extends React.Component {
                                         { timeText }
                                         <View>
                                             <Text style={styles.textOut}>
-                                                { subsCasa[i].jogadorOut.nome }
+                                                { 
+                                                    retrieveUpdUserGroup(
+                                                        subsCasa[i].jogadorOut.key, 
+                                                        'nome', 
+                                                        subsCasa[i].jogadorOut
+                                                    ) 
+                                                }
                                             </Text>
                                             <Text style={styles.textIn}>
-                                                { subsCasa[i].jogadorIn.nome }
+                                                { 
+                                                    retrieveUpdUserGroup(
+                                                        subsCasa[i].jogadorIn.key, 
+                                                        'nome', 
+                                                        subsCasa[i].jogadorIn
+                                                    ) 
+                                                }
                                             </Text>
                                         </View>
                                     </View>
@@ -1374,10 +1548,22 @@ class JogoH extends React.Component {
                                         { timeTextCasa }
                                         <View style={{ flex: 1 }}>
                                             <Text style={styles.textOut}>
-                                                { subsCasa[i].jogadorOut.nome }
+                                                { 
+                                                    retrieveUpdUserGroup(
+                                                        subsCasa[i].jogadorOut.key, 
+                                                        'nome', 
+                                                        subsCasa[i].jogadorOut
+                                                    ) 
+                                                }
                                             </Text>
                                             <Text style={styles.textIn}>
-                                                { subsCasa[i].jogadorIn.nome }
+                                                { 
+                                                    retrieveUpdUserGroup(
+                                                        subsCasa[i].jogadorIn.key, 
+                                                        'nome', 
+                                                        subsCasa[i].jogadorIn
+                                                    ) 
+                                                }
                                             </Text>
                                         </View>
                                     </View>
@@ -1401,11 +1587,23 @@ class JogoH extends React.Component {
                                             <Text style={{ textAlign: 'right' }}>
                                                 { timeTextVisit }
                                                 <Text style={styles.textOut}>
-                                                    { subsVisit[i].jogadorOut.nome }
+                                                    { 
+                                                        retrieveUpdUserGroup(
+                                                            subsVisit[i].jogadorOut.key, 
+                                                            'nome', 
+                                                            subsVisit[i].jogadorOut
+                                                        ) 
+                                                    }
                                                 </Text>
                                             </Text>
                                             <Text style={styles.textIn}>
-                                                { subsVisit[i].jogadorIn.nome }
+                                                { 
+                                                    retrieveUpdUserGroup(
+                                                        subsVisit[i].jogadorIn.key, 
+                                                        'nome', 
+                                                        subsVisit[i].jogadorIn
+                                                    ) 
+                                                }
                                             </Text>
                                         </View>
                                     </View>
@@ -1480,11 +1678,23 @@ class JogoH extends React.Component {
                                             <Text style={{ textAlign: 'right' }}>
                                                 { timeText }
                                                 <Text style={styles.textOut}>
-                                                    { subsVisit[i].jogadorOut.nome }
+                                                    { 
+                                                        retrieveUpdUserGroup(
+                                                            subsVisit[i].jogadorOut.key, 
+                                                            'nome', 
+                                                            subsVisit[i].jogadorOut
+                                                        ) 
+                                                    }
                                                 </Text>
                                             </Text>
                                             <Text style={styles.textIn}>
-                                                { subsVisit[i].jogadorIn.nome }
+                                                { 
+                                                    retrieveUpdUserGroup(
+                                                        subsVisit[i].jogadorIn.key, 
+                                                        'nome', 
+                                                        subsVisit[i].jogadorIn
+                                                    ) 
+                                                }
                                             </Text>
                                         </View>
                                     </View>
@@ -1583,10 +1793,22 @@ class JogoH extends React.Component {
                                         { timeTextCasa }
                                         <View style={{ flex: 1 }}>
                                             <Text style={styles.textOut}>
-                                                { subsCasa[i].jogadorOut.nome }
+                                                { 
+                                                    retrieveUpdUserGroup(
+                                                        subsCasa[i].jogadorOut.key, 
+                                                        'nome', 
+                                                        subsCasa[i].jogadorOut
+                                                    ) 
+                                                }
                                             </Text>
                                             <Text style={styles.textIn}>
-                                                { subsCasa[i].jogadorIn.nome }
+                                                { 
+                                                    retrieveUpdUserGroup(
+                                                        subsCasa[i].jogadorIn.key, 
+                                                        'nome', 
+                                                        subsCasa[i].jogadorIn
+                                                    ) 
+                                                }
                                             </Text>
                                         </View>
                                     </View>
@@ -1610,11 +1832,23 @@ class JogoH extends React.Component {
                                             <Text style={{ textAlign: 'right' }}>
                                                 { timeTextVisit }
                                                 <Text style={styles.textOut}>
-                                                    { subsVisit[i].jogadorOut.nome }
+                                                    { 
+                                                        retrieveUpdUserGroup(
+                                                            subsVisit[i].jogadorOut.key, 
+                                                            'nome', 
+                                                            subsVisit[i].jogadorOut
+                                                        ) 
+                                                    }
                                                 </Text>
                                             </Text>
                                             <Text style={styles.textIn}>
-                                                { subsVisit[i].jogadorIn.nome }
+                                                { 
+                                                    retrieveUpdUserGroup(
+                                                        subsVisit[i].jogadorIn.key, 
+                                                        'nome', 
+                                                        subsVisit[i].jogadorIn
+                                                    ) 
+                                                }
                                             </Text>
                                         </View>
                                     </View>
@@ -1640,7 +1874,7 @@ class JogoH extends React.Component {
         return viewSubs;
     }
 
-    renderEscalados(jogo) {
+    renderEscalados = (jogo) => {
         let jogadoresCasaFt = _.filter(jogo.escalacao.casa, (jgCasa) => !jgCasa.push).sort(
             (a, b) => {
                 if (getPosIndex(a.posvalue) > getPosIndex(b.posvalue)) {
@@ -1699,7 +1933,11 @@ class JogoH extends React.Component {
                     >
                         {
                             jogadoresCasaFt.map((item, index) => {
-                                const imgAvt = item.imgAvatar ? { uri: item.imgAvatar } : imgAvatar;
+                                const updatedImg = retrieveUpdUserGroup(
+                                    item.key, 'imgAvatar', item
+                                );
+                                const imgAvt = updatedImg ? 
+                                { uri: updatedImg } : { uri: '' };
                                 return (
                                     <ListItem
                                         containerStyle={
@@ -1712,8 +1950,16 @@ class JogoH extends React.Component {
                                         roundAvatar
                                         avatar={imgAvt}
                                         key={index}
-                                        title={item.nome}
-                                        subtitle={item.posicao}
+                                        title={retrieveUpdUserGroup(
+                                            item.key, 
+                                            'nome', 
+                                            item
+                                        )}
+                                        subtitle={retrieveUpdUserGroup(
+                                            item.key, 
+                                            'posicao', 
+                                            item
+                                        )}
                                         rightIcon={this.renderIcons(item, jogo)}
                                         leftIcon={(
                                             <Image 
@@ -1730,7 +1976,13 @@ class JogoH extends React.Component {
                         }
                         {
                             jogadoresVisitFt.map((item, index) => {
-                                const imgAvt = item.imgAvatar ? { uri: item.imgAvatar } : imgAvatar;
+                                const updatedImg = retrieveUpdUserGroup(
+                                    item.key,
+                                    'imgAvatar',
+                                    item
+                                );
+                                const imgAvt = updatedImg.imgAvatar ? 
+                                { uri: updatedImg } : { uri: '' };
                                 return (
                                     <ListItem
                                         containerStyle={
@@ -1742,8 +1994,16 @@ class JogoH extends React.Component {
                                         roundAvatar
                                         avatar={imgAvt}
                                         key={index}
-                                        title={item.nome}
-                                        subtitle={item.posicao}
+                                        title={retrieveUpdUserGroup(
+                                            item.key, 
+                                            'nome', 
+                                            item
+                                        )}
+                                        subtitle={retrieveUpdUserGroup(
+                                            item.key, 
+                                            'posicao', 
+                                            item
+                                        )}
                                         rightIcon={this.renderIcons(item, jogo)}
                                         leftIcon={(
                                             <Image 
@@ -1751,7 +2011,7 @@ class JogoH extends React.Component {
                                                 resizeMode={'stretch'}
                                                 source={
                                                     shirtColors[jogo.visitshirt] || shirtColors.blue
-                                                }
+                                                } 
                                             />)
                                         }
                                     />
@@ -1764,79 +2024,12 @@ class JogoH extends React.Component {
         );
     }
 
-    renderIcons(/*jogador, jogo*/) {
-        return (<View />);
-        /* let i = 0;
-        let yellow = 0;
-        let red = 0;
-        let disabled = false;
+    renderIcons = (/*jogador, jogo*/) => (<View />)
+        
+    render = () => {
+        const { jogo } = this.state;
 
-        for (i = 0; i < jogo.cartoes.length; i++) {
-            if (!jogo.cartoes[i].push && jogo.cartoes[i].key === jogador.key) {
-                if (jogo.cartoes[i].color === 'amarelo') {
-                    yellow++;
-                }
-                if (jogo.cartoes[i].color === 'vermelho') {
-                    red++;
-                }
-            }
-        }
-
-        if (yellow >= 2 || red >= 1) {
-            disabled = true;
-        }
-
-        return (
-            <View 
-                style={{ 
-                    flex: 1
-                }}
-            >
-                {
-                    disabled ?
-                    (
-                        <View 
-                            style={{ 
-                                flex: 1, 
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            }}
-                        >
-                            <Text style={{ color: 'red', fontWeight: '500' }}>
-                                Jogador Expulso
-                            </Text>
-                        </View>
-                    )
-                    :
-                    (
-                        <View 
-                            style={{ 
-                                flex: 0.8, 
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                            }}
-                        >
-                            <View 
-                                style={{ 
-                                    flex: 1, 
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
-                            />
-                        </View>
-                    )
-                }
-            </View>
-
-        ); */
-    }
-
-    render() {
-        const { listJogos, itemSelected } = this.props;
-        const jogo = _.filter(listJogos, (item) => item.key === itemSelected)[0];
-
-        if (!jogo) {
+        if (typeof jogo === 'object' && Object.keys(jogo).length === 0) {
             return false;
         }
 
@@ -1859,7 +2052,7 @@ class JogoH extends React.Component {
 const styles = StyleSheet.create({
     viewP: {
         flex: 1,
-        backgroundColor: colorAppF
+        backgroundColor: colorAppForeground
     },
     viewPlacar: {
         flex: 1,
@@ -1899,7 +2092,7 @@ const styles = StyleSheet.create({
         width: '80%',
         height: 0,
         borderTopWidth: 40,
-        borderTopColor: colorAppP,
+        borderTopColor: colorAppPrimary,
         borderLeftWidth: 20,
         borderLeftColor: 'transparent',
         borderRightWidth: 20,
@@ -1957,8 +2150,10 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-    itemSelected: state.HistoricoReducer.itemSelected,
-    listJogos: state.HistoricoReducer.listJogos
+    itemSelected: state.JogoReducer.jogoSelected,
+    grupoSelected: state.GruposReducer.grupoSelected
 });
 
-export default connect(mapStateToProps, { modificaJogoSelected })(JogoH);
+export default connect(mapStateToProps, { 
+    modificaJogoSelected
+})(JogoH);

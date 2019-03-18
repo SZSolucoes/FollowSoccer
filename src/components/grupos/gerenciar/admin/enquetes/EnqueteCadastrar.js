@@ -20,15 +20,13 @@ import {
 import Moment from 'moment';
 import _ from 'lodash';
 
-import firebase from '../../../Firebase';
-import { showAlert } from '../../../utils/store';
-import { colorAppF, colorAppS } from '../../../utils/constantes';
-import { checkConInfo } from '../../../utils/jogosUtils';
-import { sendEnquetePushNotifForTopic } from '../../../utils/fcmPushNotifications';
-import Card from '../../tools/Card';
+import firebase from '../../../../../utils/Firebase';
+import { colorAppForeground, colorAppSecondary, ERROS } from '../../../../../utils/Constantes';
+import { sendEnquetePushNotifForTopic } from '../../../../../utils/FcmPushNotifications';
+import { checkConInfo, showDropdownAlert } from '../../../../../utils/SystemEvents';
+import Card from '../../../../../tools/elements/Card';
 
 class EnqueteCadastrar extends React.Component {
-
     constructor(props) {
         super(props);
 
@@ -39,17 +37,15 @@ class EnqueteCadastrar extends React.Component {
             opts: [''],
             inputWidth: '99%'
         };
-
-        this.onPressConfirmar = this.onPressConfirmar.bind(this);
-        this.renderOpts = this.renderOpts.bind(this);
     }
 
     componentDidMount = () => {
         setTimeout(() => this.setState({ inputWidth: 'auto' }), 100);
     }
 
-    onPressConfirmar() {
+    onPressConfirmar = () => {
         const { opts, titulo } = this.state;
+        const { grupoSelected } = this.props;
         const newOpts = _.filter(opts, op => op.trim() !== '');
         const newTitulo = titulo.trim();
 
@@ -72,7 +68,7 @@ class EnqueteCadastrar extends React.Component {
         const dataCriacao = Moment().format('DD/MM/YYYY HH:mm:ss');
 
         const databaseRef = firebase.database().ref();
-        const dbEnqueteRef = databaseRef.child('enquetes');
+        const dbEnqueteRef = databaseRef.child(`grupos/${grupoSelected.key}/enquetes`);
 
         dbEnqueteRef.push({
             titulo: newTitulo,
@@ -82,7 +78,7 @@ class EnqueteCadastrar extends React.Component {
             status: '1'
         })
         .then(() => {
-            sendEnquetePushNotifForTopic();
+            sendEnquetePushNotifForTopic(grupoSelected);
             
             this.setState({
                 loading: false,
@@ -90,21 +86,23 @@ class EnqueteCadastrar extends React.Component {
                 isTituloNotValid: false,
                 opts: ['']
             });
-            showAlert(
-                'success', 'Sucesso', 'Cadastro realizado com sucesso'
+            showDropdownAlert(
+                'success', 
+                'Sucesso', 
+                'Enquete criada com sucesso'
             );
         })
         .catch(() => {
             this.setState({ loading: false });
-            showAlert(
-                'danger', 
-                'Ops', 
-                'Ocorreu um erro ao cadastrar a enquete'
+            showDropdownAlert(
+                'error', 
+                ERROS.enqueteCad.erro,
+                ERROS.enqueteCad.mes
             );
         });
     }
 
-    renderOpts() {
+    renderOpts = () => {
         let optsViews = null;
 
         optsViews = _.map(this.state.opts, (opt, index) => {
@@ -178,7 +176,7 @@ class EnqueteCadastrar extends React.Component {
                         <Icon
                             name='plus-circle' 
                             type='material-community' 
-                            size={26} color={colorAppS} 
+                            size={26} color={colorAppSecondary} 
                         />
                     </TouchableOpacity>
                 </View>
@@ -188,73 +186,71 @@ class EnqueteCadastrar extends React.Component {
         return optsViews;
     }
 
-    render() {
-        return (
-            <ScrollView 
-                style={{ flex: 1 }} 
-                ref={(ref) => { this.scrollView = ref; }}
-                keyboardShouldPersistTaps={'handled'}
-            >
-                <View>
-                    <Card containerStyle={styles.card}>
-                        <FormLabel labelStyle={styles.text}>TÍTULO</FormLabel>
-                        <FormInput
-                            ref={(ref) => {
-                                this.titulo = ref;
-                            }}
-                            selectTextOnFocus
-                            containerStyle={styles.inputContainerMargem}
-                            inputStyle={[styles.text, styles.inputMargem, {
-                                width: this.state.inputWidth
-                            }]} 
-                            value={this.state.titulo}
-                            underlineColorAndroid={'transparent'}
-                            multiline
-                            onChangeText={value => this.setState({ titulo: value })}
-                        />
-                        { 
-                            this.state.isTituloNotValid &&
-                            <FormValidationMessage>
-                                Campo obrigatório
-                            </FormValidationMessage> 
-                        }
-                        <FormLabel labelStyle={styles.text}>OPÇÕES</FormLabel>
-                        {this.renderOpts()}
-                        <Button 
-                            small
-                            loading={this.state.loading}
-                            disabled={this.state.loading}
-                            loadingProps={{ size: 'large', color: 'rgba(111, 202, 186, 1)' }}
-                            title={this.state.loading ? ' ' : 'Confirmar'} 
-                            buttonStyle={{ width: '100%', marginTop: 30 }}
-                            onPress={() => checkConInfo(() => this.onPressConfirmar())}
-                        />
-                        <Button 
-                            small
-                            title={this.props.keyItem ? 'Restaurar' : 'Limpar'}
-                            buttonStyle={{ width: '100%', marginVertical: 10 }}
-                            onPress={() => {
-                                Keyboard.dismiss();
-                                this.setState({
-                                    loading: false,
-                                    titulo: '',
-                                    isTituloNotValid: false,
-                                    opts: ['']
-                                });
-                            }}
-                        />
-                    </Card>
-                    <View style={{ marginBottom: 100 }} />
-                </View>
-            </ScrollView>
-        );
-    }
+    render = () => (
+        <ScrollView 
+            style={{ flex: 1 }} 
+            ref={(ref) => { this.scrollView = ref; }}
+            keyboardShouldPersistTaps={'handled'}
+        >
+            <View>
+                <Card containerStyle={styles.card}>
+                    <FormLabel labelStyle={styles.text}>TÍTULO</FormLabel>
+                    <FormInput
+                        ref={(ref) => {
+                            this.titulo = ref;
+                        }}
+                        selectTextOnFocus
+                        containerStyle={styles.inputContainerMargem}
+                        inputStyle={[styles.text, styles.inputMargem, {
+                            width: this.state.inputWidth
+                        }]} 
+                        value={this.state.titulo}
+                        underlineColorAndroid={'transparent'}
+                        multiline
+                        onChangeText={value => this.setState({ titulo: value })}
+                    />
+                    { 
+                        this.state.isTituloNotValid &&
+                        <FormValidationMessage>
+                            Campo obrigatório
+                        </FormValidationMessage> 
+                    }
+                    <FormLabel labelStyle={styles.text}>OPÇÕES</FormLabel>
+                    {this.renderOpts()}
+                    <Button 
+                        small
+                        loading={this.state.loading}
+                        disabled={this.state.loading}
+                        loadingProps={{ size: 'large', color: 'rgba(111, 202, 186, 1)' }}
+                        title={this.state.loading ? ' ' : 'Confirmar'} 
+                        buttonStyle={{ width: '100%', marginTop: 30 }}
+                        onPress={() => checkConInfo(() => this.onPressConfirmar())}
+                    />
+                    <Button 
+                        small
+                        title={this.props.keyItem ? 'Restaurar' : 'Limpar'}
+                        buttonStyle={{ width: '100%', marginVertical: 10 }}
+                        onPress={() => {
+                            Keyboard.dismiss();
+                            this.setState({
+                                loading: false,
+                                titulo: '',
+                                isTituloNotValid: false,
+                                opts: ['']
+                            });
+                        }}
+                    />
+                </Card>
+                <View style={{ marginBottom: 100 }} />
+            </View>
+        </ScrollView>
+    )
 }
 
 const styles = StyleSheet.create({
     viewPrinc: {
         flex: 1,
-        backgroundColor: colorAppF
+        backgroundColor: colorAppForeground
     },
     text: {
         fontSize: 14,
@@ -322,7 +318,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-    userLogged: state.LoginReducer.userLogged
+    userLogged: state.LoginReducer.userLogged,
+    grupoSelected: state.GruposReducer.grupoSelected
 });
 
 export default connect(mapStateToProps, {})(EnqueteCadastrar);

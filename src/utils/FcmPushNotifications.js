@@ -1,9 +1,9 @@
 /* eslint-disable max-len */
 import Axios from 'axios';
 import _ from 'lodash';
-import firebase from './Firebase';
+import firebase, { pushKey } from './Firebase';
 
-const key = '';
+const key = pushKey;
 
 export const sendCadJogoPushNotifForAll = (jogo, grupo) => {
     const participantesKeys = [];
@@ -53,8 +53,8 @@ export const sendCadJogoPushNotifForAll = (jogo, grupo) => {
                 {
                     to: k,
                     notification: {
-                        title: `Jogo (${jogo}) foi criado`,
-                        body: 'Aproveite e já confirme a sua presença',
+                        title: `Grupo "${grupo.nome}"`,
+                        body: `Jogo (${jogo}) foi criado. Aproveite e já confirme a sua presença.`,
                         show_in_foreground: true
                     }, 
                     data: {
@@ -76,7 +76,7 @@ export const sendCadJogoPushNotifForAll = (jogo, grupo) => {
 };
 
 export const sendReminderJogoPushNotifForAll = async (jogo, grupo) => { 
-    const message = `Jogo (${jogo}) está chegando. Aproveite e confirme sua presença o quanto antes`;
+    const message = `Lembrete! O jogo (${jogo}) está chegando. Aproveite e confirme sua presença o quanto antes.`;
     const participantesKeys = [];
     const participantes = _.filter(
         grupo.participantes, 
@@ -124,7 +124,7 @@ export const sendReminderJogoPushNotifForAll = async (jogo, grupo) => {
                 {
                     to: k,
                     notification: {
-                        title: 'Lembrete',
+                        title: `Grupo "${grupo.nome}"`,
                         body: message,
                         show_in_foreground: true
                     }, 
@@ -194,8 +194,8 @@ export const sendEnquetePushNotifForTopic = (grupo) => {
                 {
                     to: k,
                     notification: {
-                        title: 'Nova enquete disponível',
-                        body: 'Aproveite e já confirme o seu voto',
+                        title: `Grupo "${grupo.nome}"`,
+                        body: 'Nova enquete disponível. Aproveite e já confirme o seu voto.',
                         show_in_foreground: true,
                         targetScreen: 'enquetes'
                     }, 
@@ -267,8 +267,8 @@ export const sendMuralPushNotifForTopic = (grupo) => {
                 {
                     to: k,
                     notification: {
-                        title: 'Mural',
-                        body: 'Foi realizado uma nova publicação no mural',
+                        title: `Grupo "${grupo.nome}"`,
+                        body: 'Mural! Foi realizado uma nova publicação no mural.',
                         show_in_foreground: true,
                         targetScreen: 'mural'
                     }, 

@@ -16,6 +16,7 @@ import ImagensJogosReducer from './components/grupos/gerenciar/admin/gerenciar/I
 import SearchBarReducer from './tools/searchbar/SearchBarReducer';
 import InfoReducer from './components/grupos/gerenciar/admin/informativos/InfoReducer';
 import FinanceiroReducer from './components/grupos/gerenciar/admin/financeiro/FinanceiroReducer';
+import EnquetesReducer from './components/grupos/gerenciar/admin/enquetes/EnquetesReducer';
 
 export default combineReducers({
     SystemEventsReducer,
@@ -32,5 +33,6 @@ export default combineReducers({
     ImagensJogosReducer,
     SearchBarReducer,
     InfoReducer,
-    FinanceiroReducer
+    FinanceiroReducer,
+    EnquetesReducer
 });

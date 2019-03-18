@@ -121,7 +121,6 @@ class EnqueteEditModal extends React.Component {
             keyboardShouldPersistTaps={'handled'}
         >
             <TouchableWithoutFeedback>
-
                 <View>
                     <Card containerStyle={styles.card}>
                         <FormLabel labelStyle={styles.text}>TÍTULO</FormLabel>
