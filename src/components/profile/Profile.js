@@ -26,13 +26,8 @@ import ListItem from '../../tools/elements/ListItem';
 import { stopFbListener } from '../../utils/FirebaseListeners';
 
 class Profile extends React.Component {
-
     constructor(props) {
         super(props);
-
-        this.onPressLogout = this.onPressLogout.bind(this);
-        this.onPressUserImg = this.onPressUserImg.bind(this);
-        this.doUploadUserImg = this.doUploadUserImg.bind(this);
 
         this.state = {
             progress: 0,
@@ -244,7 +239,8 @@ class Profile extends React.Component {
                     </List>
                     <Button 
                         small 
-                        title={'Sair'} 
+                        title={'Sair'}
+                        textStyle={{ fontFamily: 'OpenSans-Regular', color: 'white' }}
                         buttonStyle={{ width: '100%', marginVertical: 20 }}
                         onPress={() => this.onPressLogout()}
                     />
@@ -280,7 +276,7 @@ class Profile extends React.Component {
                                 small 
                                 title={'Fechar'}
                                 backgroundColor={colorAppSecondary}
-                                textStyle={{ color: 'white' }}
+                                textStyle={{ fontFamily: 'OpenSans-Regular', color: 'white' }}
                                 buttonStyle={{ width: '100%' }}
                                 onPress={() => this.setState({ showAbout: false })}
                             />

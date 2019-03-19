@@ -260,7 +260,7 @@ class EscalacaoG extends React.Component {
                     () => this.doInOrOut(nJog, true, jogo, 'true')) 
                 }
             ],
-            { cancelable: false }
+            { cancelable: true }
         );
     }
 

@@ -251,6 +251,31 @@ export const ERROS = {
     enqueteEdit: {
         erro: 'Erro #0045',
         mes: 'Ocorreu um erro ao alterar a enquete. Verifique a conexão.'
+    },
+    enqueteRemove: {
+        erro: 'Erro #0046',
+        mes: 'Ocorreu um erro ao remover a enquete. Verifique a conexão.'
+    },
+    enqueteEnd: {
+        erro: 'Erro #0047',
+        mes: 'Ocorreu um erro ao encerrar a enquete. Verifique a conexão.'
+    },
+    perfilEdit: {
+        erro: 'Erro #0048',
+        mes: 'Ocorreu um erro ao editar o perfil. Verifique a conexão.'
+    },
+    perfilEditPw: {
+        erro: 'Erro #0049',
+        mes: 'Ocorreu um erro ao alterar a senha. Verifique a conexão.'
+    },
+    perfilEditPwInsec: {
+        erro: 'Erro #0049',
+        mes: 'A senha informada é insegura. Informe outra senha.'
+    },
+    enqueteVoting: {
+        erro: 'Erro #0050',
+        mes: 'Ocorreu um erro na votação. Verifique a conexão.'
     }
+
 };
 

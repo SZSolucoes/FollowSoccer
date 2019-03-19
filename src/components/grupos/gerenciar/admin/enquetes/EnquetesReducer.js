@@ -7,7 +7,8 @@ const INITIAL_STATE = {
     flagEndEnquetes: false,
     titulo: '',
     opts: [''],
-    itemEditModal: {}
+    itemEditModal: {},
+    enqueteProps: {}
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -56,6 +57,11 @@ export default (state = INITIAL_STATE, action) => {
             return { 
                 ...state, 
                 itemEditModal: { ...action.payload }
+            };
+        case 'modifica_enqueteprops_enquetes':
+            return { 
+                ...state, 
+                enqueteProps: { ...action.payload }
             };
         case 'modifica_clean_enquetes':
             return {

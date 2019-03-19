@@ -12,18 +12,18 @@ import {
 import { Icon, List, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { colorAppF, shirtColors } from '../../../utils/constantes';
+import { colorAppF, shirtColors } from '../../../../../utils/Constantes';
 //import Campo from '../../campo/Campo';
-import { isPortrait } from '../../../utils/orientation';
-import { getPosIndex } from '../../../utils/jogosUtils';
-import ListItem from '../../tools/ListItem';
-import Card from '../../tools/Card';
+import { isPortrait } from '../../../../../utils/Screen';
+import { getPosIndex } from '../../../../../utils/JogosUtils';
+import firebase from '../../../../../utils/Firebase';
+import ListItem from '../../../../../tools/elements/ListItem';
+import Card from '../../../../../tools/elements/Card';
 
-import imgTeam from '../../../imgs/team.png';
-import imgAvatar from '../../../imgs/perfiluserimg.png';
+import imgTeam from '../../../../../assets/imgs/team.png';
+import { retrieveUpdUserGroup } from '../../../../../utils/UserUtils';
 
 class EscalacaoH extends React.Component {
-
     constructor(props) {
         super(props);
 
@@ -36,43 +36,53 @@ class EscalacaoH extends React.Component {
         this.maxViewVisitHeight = 0;
         this.minViewVisitHeight = 0;
 
-        this.onLayoutTitleCasa = this.onLayoutTitleCasa.bind(this);
-        this.onLayoutCasa = this.onLayoutCasa.bind(this);
-        this.onToggleCasa = this.onToggleCasa.bind(this);
+        this.animCasaValue = new Animated.Value();
+        this.animVisitValue = new Animated.Value();
 
-        this.onLayoutTitleVisit = this.onLayoutTitleVisit.bind(this);
-        this.onLayoutVisit = this.onLayoutVisit.bind(this);
-        this.onToggleVisit = this.onToggleVisit.bind(this);
-
-        this.onChangeDimensions = this.onChangeDimensions.bind(this);
-        this.renderCasaJogadores = this.renderCasaJogadores.bind(this);
-        this.renderVisitJogadores = this.renderVisitJogadores.bind(this);
-        this.renderIcons = this.renderIcons.bind(this);
-        this.renderConfirmados = this.renderConfirmados.bind(this);
+        this.fbJogoRef = null;
+        this.fbDatabaseRef = firebase.database().ref();
 
         this.state = {
             heightDim: Dimensions.get('screen').height,
-            animCasaValue: new Animated.Value(),
-            animVisitValue: new Animated.Value(),
             isCasaExpanded: true,
-            isVisitExpanded: true
+            isVisitExpanded: true,
+            jogo: {}
         };
     }
 
-    componentDidMount() {
+    componentDidMount = () => {
+        const { itemSelected, grupoSelected } = this.props;
+
         Dimensions.addEventListener('change', this.onChangeDimensions);
         if (isPortrait()) {
             this.setState({ heightDim: Dimensions.get('screen').height / 2.5 });
         } else {
             this.setState({ heightDim: Dimensions.get('screen').height / 1.5 });
         }
+
+        this.fbJogoRef = this.fbDatabaseRef
+        .child(`grupos/${grupoSelected.key}/jogos/${itemSelected}`);
+
+        this.fbJogoRef.on('value', snap => {
+            if (snap) {
+                const snapVal = snap.val();
+
+                if (snapVal) {
+                    this.setState({ jogo: { key: snap.key, ...snapVal } });
+
+                    return;
+                }
+            }
+
+            this.setState({ jogo: {} });
+        });
     }
 
-    shouldComponentUpdate(nextProps, nextStates) {
+    shouldComponentUpdate = (nextProps, nextStates) => {
         const { itemSelected } = this.props;
 
         if (nextProps.listJogos) {
-            const nj = _.filter(nextProps.listJogos, (item) => item.key === itemSelected)[0];
+            const nj = _.find(nextProps.listJogos, (item) => item.key === itemSelected);
                 
             if (!nj) {
                 return false;
@@ -82,17 +92,18 @@ class EscalacaoH extends React.Component {
         return nextProps !== this.props || nextStates !== this.state;
     }
 
-    componentWillUnmount() {
+    componentWillUnmount = () => {
         Dimensions.removeEventListener('change', this.onChangeDimensions);
+        if (this.fbJogoRef) this.fbJogoRef.off();
     }
 
-    onChangeDimensions(event) {
+    onChangeDimensions = (event) => {
         if (isPortrait()) {
             this.setState({ heightDim: event.screen.height / 2.5 });
         }
     }
 
-    onLayoutTitleCasa(event) {
+    onLayoutTitleCasa = (event) => {
         this.minViewCasaHeight = event.nativeEvent.layout.height;
         if (this.isFirstCasa) {
             this.onToggleCasa();
@@ -100,11 +111,11 @@ class EscalacaoH extends React.Component {
         }
     }
 
-    onLayoutCasa(event) {
+    onLayoutCasa = (event) => {
         this.maxViewCasaHeight = event.nativeEvent.layout.height;
         if (this.state.isCasaExpanded) {
             Animated.spring(     
-                this.state.animCasaValue,
+                this.animCasaValue,
                 {
                     toValue: this.maxViewCasaHeight + 50
                 }
@@ -112,7 +123,7 @@ class EscalacaoH extends React.Component {
         }
     }
 
-    onLayoutTitleVisit(event) {
+    onLayoutTitleVisit = (event) => {
         this.minViewVisitHeight = event.nativeEvent.layout.height;
         if (this.isFirstVisit) {
             this.onToggleVisit();
@@ -120,11 +131,11 @@ class EscalacaoH extends React.Component {
         }
     }
 
-    onLayoutVisit(event) {
+    onLayoutVisit = (event) => {
         this.maxViewVisitHeight = event.nativeEvent.layout.height;
         if (this.state.isVisitExpanded) {
             Animated.spring(     
-                this.state.animVisitValue,
+                this.animVisitValue,
                 {
                     toValue: this.maxViewVisitHeight + 50
                 }
@@ -132,7 +143,7 @@ class EscalacaoH extends React.Component {
         }
     }
 
-    onToggleCasa() {
+    onToggleCasa = () => {
         const initialValue = this.state.isCasaExpanded ? 
         this.maxViewCasaHeight + this.minViewCasaHeight : this.minViewCasaHeight;
 
@@ -141,16 +152,16 @@ class EscalacaoH extends React.Component {
     
         this.setState({ isCasaExpanded: !this.state.isCasaExpanded });
 
-        this.state.animCasaValue.setValue(initialValue);
+        this.animCasaValue.setValue(initialValue);
         Animated.spring(     
-            this.state.animCasaValue,
+            this.animCasaValue,
             {
                 toValue: finalValue
             }
         ).start(); 
     }
 
-    onToggleVisit() {
+    onToggleVisit = () => {
         const initialValue = this.state.isVisitExpanded ? 
         this.maxViewVisitHeight + this.minViewVisitHeight : this.minViewVisitHeight;
 
@@ -159,37 +170,35 @@ class EscalacaoH extends React.Component {
     
         this.setState({ isVisitExpanded: !this.state.isVisitExpanded });
     
-        this.state.animVisitValue.setValue(initialValue);
+        this.animVisitValue.setValue(initialValue);
         Animated.spring(     
-            this.state.animVisitValue,
+            this.animVisitValue,
             {
                 toValue: finalValue
             }
         ).start(); 
     }
 
-    renderIcons() {
-        return (
+    renderIcons = () => (
+        <View 
+            style={{ 
+                flex: 0.5, 
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}
+        >
             <View 
                 style={{ 
-                    flex: 0.5, 
-                    flexDirection: 'row',
+                    flex: 1, 
                     alignItems: 'center',
                     justifyContent: 'center'
                 }}
-            >
-                <View 
-                    style={{ 
-                        flex: 1, 
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                />
-            </View>
-        );
-    }
+            />
+        </View>
+    )
 
-    renderCasaJogadores(jogo) {
+    renderCasaJogadores = (jogo) => {
         let casaJogadores = _.filter(jogo.escalacao.casa, (item) => !item.push).sort(
             (a, b) => {
                 if (getPosIndex(a.posvalue) > getPosIndex(b.posvalue)) {
@@ -219,7 +228,8 @@ class EscalacaoH extends React.Component {
             >
                 {
                     casaJogadores.map((item, index) => {
-                        const imgAvt = item.imgAvatar ? { uri: item.imgAvatar } : imgAvatar;
+                        const updatedImg = retrieveUpdUserGroup(item.key, 'imgAvatar', item);
+                        const imgAvt = updatedImg ? { uri: updatedImg } : { uri: '' };
                         return (
                             <ListItem
                                 containerStyle={
@@ -228,8 +238,16 @@ class EscalacaoH extends React.Component {
                                 roundAvatar
                                 avatar={imgAvt}
                                 key={index}
-                                title={item.nome}
-                                subtitle={item.posicao}
+                                title={retrieveUpdUserGroup(
+                                    item.key, 
+                                    'nome', 
+                                    item
+                                )}
+                                subtitle={retrieveUpdUserGroup(
+                                    item.key, 
+                                    'posicao', 
+                                    item
+                                )}
                                 rightIcon={(
                                     this.renderIcons()
                                 )}
@@ -241,7 +259,7 @@ class EscalacaoH extends React.Component {
         );
     }
 
-    renderVisitJogadores(jogo) {
+    renderVisitJogadores = (jogo) => {
         let visitJogadores = _.filter(jogo.escalacao.visit, (item) => !item.push).sort(
             (a, b) => {
                 if (getPosIndex(a.posvalue) > getPosIndex(b.posvalue)) {
@@ -271,7 +289,8 @@ class EscalacaoH extends React.Component {
             >
                 {
                     visitJogadores.map((item, index) => {
-                        const imgAvt = item.imgAvatar ? { uri: item.imgAvatar } : imgAvatar;
+                        const updatedImg = retrieveUpdUserGroup(item.key, 'imgAvatar', item);
+                        const imgAvt = updatedImg ? { uri: updatedImg } : { uri: '' };
                         return (
                             <ListItem
                                 containerStyle={
@@ -280,8 +299,16 @@ class EscalacaoH extends React.Component {
                                 roundAvatar
                                 avatar={imgAvt}
                                 key={index}
-                                title={item.nome}
-                                subtitle={item.posicao}
+                                title={retrieveUpdUserGroup(
+                                    item.key, 
+                                    'nome', 
+                                    item
+                                )}
+                                subtitle={retrieveUpdUserGroup(
+                                    item.key, 
+                                    'posicao', 
+                                    item
+                                )}
                                 rightIcon={(
                                     this.renderIcons()
                                 )}
@@ -293,7 +320,7 @@ class EscalacaoH extends React.Component {
         );
     }
 
-    renderConfirmados(jogo) {
+    renderConfirmados = (jogo) => {
         let jogadoresConfirmados = _.filter(jogo.confirmados, (jgCasa) => !jgCasa.push);
         jogadoresConfirmados = _.orderBy(jogadoresConfirmados, ['nome'], ['asc']);
 
@@ -336,7 +363,8 @@ class EscalacaoH extends React.Component {
                 >
                     {
                         jogadoresConfirmados.map((item, index) => {
-                            const imgAvt = item.imgAvatar ? { uri: item.imgAvatar } : imgAvatar;
+                            const updatedImg = retrieveUpdUserGroup(item.key, 'imgAvatar', item);
+                            const imgAvt = updatedImg ? { uri: updatedImg } : { uri: '' };
                             return (
                                 <ListItem
                                     containerStyle={
@@ -348,7 +376,16 @@ class EscalacaoH extends React.Component {
                                     roundAvatar
                                     avatar={imgAvt}
                                     key={index}
-                                    title={item.nome}
+                                    title={retrieveUpdUserGroup(
+                                        item.key, 
+                                        'nome', 
+                                        item
+                                    )}
+                                    subtitle={retrieveUpdUserGroup(
+                                        item.key, 
+                                        'posicao', 
+                                        item
+                                    )}
                                     rightIcon={(<View />)}
                                 />
                             );
@@ -359,14 +396,13 @@ class EscalacaoH extends React.Component {
         );
     }
 
-    render() {
-        const { listJogos, itemSelected } = this.props;
-        const jogo = _.filter(listJogos, (item) => item.key === itemSelected)[0];
+    render = () => {
+        const { jogo } = this.state;
 
-        if (!jogo) {
+        if (typeof jogo === 'object' && Object.keys(jogo).length === 0) {
             return false;
         }
-        
+
         //const jogadoresCasaFt = _.filter(jogo.escalacao.casa, (jgCasa) => !jgCasa.push);
         //const jogadoresVisitFt = _.filter(jogo.escalacao.visit, (jgVisit) => !jgVisit.push);
 
@@ -377,7 +413,7 @@ class EscalacaoH extends React.Component {
                         containerStyle={styles.card}
                     >
                         <Animated.View
-                            style={{ height: this.state.animCasaValue }}
+                            style={{ height: this.animCasaValue }}
                         >
                             <View  
                                 onLayout={this.onLayoutTitleCasa}
@@ -434,7 +470,7 @@ class EscalacaoH extends React.Component {
                                         tatics={'4-4-2'}
                                         enableTouch={false}
                                     />
-                                </View>
+                                </View> 
                                 <View style={{ marginVertical: 20 }} /> */}
                                 { this.renderCasaJogadores(jogo) }
                                 <View style={{ marginVertical: 20 }} />
@@ -445,7 +481,7 @@ class EscalacaoH extends React.Component {
                         containerStyle={styles.card}
                     >
                         <Animated.View
-                            style={{ height: this.state.animVisitValue }}
+                            style={{ height: this.animVisitValue }}
                         >
                             <View onLayout={this.onLayoutTitleVisit}>
                                 <TouchableWithoutFeedback
@@ -465,7 +501,7 @@ class EscalacaoH extends React.Component {
                                                 resizeMode={'stretch'}
                                                 source={
                                                     shirtColors[jogo.visitshirt] || shirtColors.blue
-                                                } 
+                                                }
                                             />
                                             <Text 
                                                 onPress={() => this.onToggleVisit()}
@@ -475,7 +511,7 @@ class EscalacaoH extends React.Component {
                                                     jogo.timeVisit ? 
                                                     jogo.timeVisit.trim() 
                                                     : 
-                                                    'Visitantes'
+                                                    'Visitantes' 
                                                 }
                                             </Text>
                                         </View>
@@ -547,8 +583,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-    itemSelected: state.HistoricoReducer.itemSelected,
-    listJogos: state.HistoricoReducer.listJogos
+    itemSelected: state.JogosReducer.itemSelectedAusente,
+    grupoSelected: state.GruposReducer.grupoSelected
 });
 
 export default connect(mapStateToProps, {})(EscalacaoH);

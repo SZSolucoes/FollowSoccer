@@ -8,6 +8,7 @@ import {
     Alert,
     AsyncStorage
 } from 'react-native';
+import { connect } from 'react-redux';
 import { 
     FormLabel, 
     FormInput,
@@ -17,22 +18,22 @@ import {
 } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
 import { TextInputMask } from 'react-native-masked-text';
+import { Dropdown } from 'react-native-material-dropdown';
 import Moment from 'moment';
+import _ from 'lodash';
 
-import { connect } from 'react-redux';
-import firebase from '../../Firebase';
-import { checkConInfo } from '../../utils/jogosUtils';
-import { showAlert, mappedKeyStorage } from '../../utils/store';
-import { updateUserDB } from '../../utils/userUtils';
+import firebase from '../../utils/Firebase';
+import { checkConInfo, showDropdownAlert } from '../../utils/SystemEvents';
 import Card from '../../tools/elements/Card';
+import { ERROS } from '../../utils/Constantes';
+import { mappedKeyStorage } from '../../utils/Storage';
+import cityes from '../../utils/CityStates.json';
+
+const ESTADOS = _.map(cityes.estados, st => ({ value: st.nome, cidades: st.cidades }));
 
 class EditPerfil extends React.Component {
     constructor(props) {
         super(props);
-
-        this.onPressConfirmarEdit = this.onPressConfirmarEdit.bind(this);
-        this.onPressConfirmarSenha = this.onPressConfirmarSenha.bind(this);
-        this.onValidField = this.onValidField.bind(this);
 
         this.state = {
             userLogged: { ...this.props.userLogged },
@@ -43,11 +44,16 @@ class EditPerfil extends React.Component {
             isTelefoneValid: true,
             cleanEditPerfil: false,
             loadingEditP: false,
-            loadingSenha: false
+            loadingSenha: false,
+            inputWidth: '99%'
         };
     }
 
-    shouldComponentUpdate(nextProps, nextStates) {
+    componentDidMount = () => {
+        setTimeout(() => this.setState({ inputWidth: '100%' }), 100);
+    }
+
+    shouldComponentUpdate = (nextProps, nextStates) => {
         if (!nextStates.cleanEditPerfil &&
             (nextStates.userLogged.telefone !== this.inputTelefone.getRawValue())) {
             this.setState({ 
@@ -65,14 +71,16 @@ class EditPerfil extends React.Component {
         return nextProps !== this.props || nextStates !== this.state;
     }
 
-    onPressConfirmarEdit() {
+    onPressConfirmarEdit = () => {
         const telefone = this.inputTelefone.getRawValue();
         const {
             key,
             nome,
             nomeForm,
             dtnasc,
-            endereco
+            endereco,
+            estado,
+            cidade
         } = this.state.userLogged;
         const updatesName = {};
         const newName = nome;
@@ -98,42 +106,38 @@ class EditPerfil extends React.Component {
             endereco,
             dtnasc,
             telefone,
+            estado,
+            cidade,
             ...updatesName
         })
         .then(() => {
-            if (newName !== oldName) {
-                setTimeout(() => updateUserDB(
-                    'false',
-                    'false',
-                    this.props.userLogged.email, 
-                    this.props.userLogged.key, 
-                    this.props.userLogged.imgAvatar,
-                    newName
-                ), 2000);
-            }
             this.setState({ loadingEditP: false, isTelefoneValid: true });
-            showAlert('success', 'Sucesso', 'Edição realizada com sucesso');
+            showDropdownAlert(
+                'success', 
+                'Sucesso!', 
+                'Edição realizada com sucesso.'
+            );
         })
         .catch(() => {
             this.setState({ loadingEditP: false, isTelefoneValid: true });
-            showAlert(
-                'danger', 
-                'Ops', 
-                'Ocorreu um erro ao editar o perfil'
+            showDropdownAlert(
+                'error', 
+                ERROS.perfilEdit.erro, 
+                ERROS.perfilEdit.mes
             );
         });
     }
 
-    onPressConfirmarSenha() {
+    onPressConfirmarSenha = () => {
         const { novaSenha, novaSenhaRep, userLogged } = this.state;
 
         if (novaSenha.trim() !== novaSenhaRep.trim()) {
-            Alert.alert('Aviso', 'As senhas informadas devem ser iguais');
+            Alert.alert('Aviso!', 'As senhas informadas devem ser iguais.');
             return;
         }
 
         if (novaSenha.trim().length < 6) {
-            Alert.alert('Aviso', 'As senhas devem possuir 6 ou mais caracteres');
+            Alert.alert('Aviso!', 'As senha devem possuir 6 ou mais caracteres.');
             return;
         }
 
@@ -144,49 +148,67 @@ class EditPerfil extends React.Component {
 
         firebase.auth().signInWithEmailAndPassword(user.email, userLogged.senha)
         .then(() => {
-            dbUsuariosRef.update({
-                senha: novaSenha,
-                pwRecover: ''
-            })
-            .then(() => {
-                user.updatePassword(novaSenha).then(() => {
-                    this.setState({ loadingSenha: false });
+            user.updatePassword(novaSenha).then(() => {
+                dbUsuariosRef.update({
+                    senha: novaSenha
+                })
+                .then(() => {
                     AsyncStorage.setItem(mappedKeyStorage('password'), novaSenha);
-                    showAlert('success', 'Sucesso', 'Senha alterada com sucesso');
-                }).catch((error) => {
-                    this.setState({ loadingSenha: false });
-
-                    if (error && error.code && error.code === 'auth/weak-password') {
-                        showAlert('danger', 'Erro', 'A senha informada é insegura');
-                    } else {
-                        showAlert(
-                            'danger', 
-                            'Ops', 
-                            'Ocorreu um erro ao alterar a senha'
+                    firebase.auth().signInWithEmailAndPassword(user.email, novaSenha)
+                    .then(() => {
+                        this.setState({ loadingSenha: false });
+                        showDropdownAlert(
+                            'success', 
+                            'Sucesso', 
+                            'Senha alterada com sucesso'
                         );
-                    }
+                    })
+                    .catch(() => {
+                        this.setState({ loadingSenha: false });
+                        showDropdownAlert(
+                            'error', 
+                            ERROS.perfilEditPw.erro,
+                            ERROS.perfilEditPw.mes
+                        );
+                    });
+                })
+                .catch(() => {
+                    this.setState({ loadingSenha: false });
+                    showDropdownAlert(
+                        'error', 
+                        ERROS.perfilEditPw.erro,
+                        ERROS.perfilEditPw.mes
+                    );
                 });
-            })
-            .catch(() => {
+            }).catch((error) => {
                 this.setState({ loadingSenha: false });
-                showAlert(
-                    'danger', 
-                    'Ops', 
-                    'Ocorreu um erro ao alterar a senha'
-                );
+
+                if (error && error.code && error.code === 'auth/weak-password') {
+                    showDropdownAlert(
+                        'error', 
+                        ERROS.perfilEditPwInsec.erro,
+                        ERROS.perfilEditPwInsec.mes
+                    );
+                } else {
+                    showDropdownAlert(
+                        'error',
+                        ERROS.perfilEditPw.erro,
+                        ERROS.perfilEditPw.mes
+                    );
+                }
             });
         })
         .catch(() => {
             this.setState({ loadingSenha: false });
-            showAlert(
-                'danger', 
-                'Ops', 
-                'Ocorreu um erro ao alterar a senha'
+            showDropdownAlert(
+                'error', 
+                ERROS.perfilEditPw.erro,
+                ERROS.perfilEditPw.mes
             );
         });
     }
 
-    onValidField(value, field) {
+    onValidField = (value, field) => {
         let newValue = value;
 
         switch (field) {
@@ -214,7 +236,19 @@ class EditPerfil extends React.Component {
         return newValue;
     }
 
-    render() {
+    render = () => {
+        const estado = _.find(
+            ESTADOS, 
+            st => st.value === this.state.userLogged.estado
+        );
+        let cidades = [];
+        if (estado) {
+            cidades = _.map(
+                estado.cidades, 
+                 ct => ({ value: ct })
+             );
+        }
+
         return (
             <ScrollView style={styles.viewPrinc}>
                 <Card 
@@ -297,6 +331,90 @@ class EditPerfil extends React.Component {
                             )}
                         />
                     </View>
+                    <FormLabel labelStyle={styles.text}>ESTADO</FormLabel>
+                    <View 
+                        style={[styles.inputContainer, { 
+                            flex: 1,
+                            flexDirection: 'row',
+                            ...Platform.select({
+                            android: {
+                                marginHorizontal: 16,
+                                paddingHorizontal: 4
+                            },
+                            ios: {
+                                marginHorizontal: 20,
+                                paddingHorizontal: 6
+                            }
+                        }) }]}
+                    >
+                        <Dropdown
+                            value={this.state.userLogged.estado}
+                            onChangeText={(value) => this.setState(
+                                { 
+                                    userLogged: { 
+                                        ...this.state.userLogged, 
+                                        estado: this.onValidField(value, 'estado') 
+                                    } 
+                                }
+                            )}
+                            fontSize={14}
+                            style={[styles.text, styles.input]}
+                            itemTextStyle={{ fontFamily: 'OpenSans-Regular' }}
+                            data={ESTADOS}
+                            containerStyle={{
+                                width: this.state.inputWidth
+                            }}
+                            inputContainerStyle={{
+                                borderBottomColor: 'transparent',
+                                borderBottomWidth: 0,
+                                paddingTop: 8,
+                                paddingBottom: 0
+                            }}
+                            rippleInsets={{ top: 0, bottom: -8 }}
+                        />
+                    </View>
+                    <FormLabel labelStyle={styles.text}>CIDADE</FormLabel>
+                    <View 
+                        style={[styles.inputContainer, { 
+                            flex: 1,
+                            flexDirection: 'row',
+                            ...Platform.select({
+                            android: {
+                                marginHorizontal: 16,
+                                paddingHorizontal: 4
+                            },
+                            ios: {
+                                marginHorizontal: 20,
+                                paddingHorizontal: 6
+                            }
+                        }) }]}
+                    >
+                        <Dropdown
+                            value={this.state.userLogged.cidade}
+                            onChangeText={(value) => this.setState(
+                                { 
+                                    userLogged: { 
+                                        ...this.state.userLogged, 
+                                        cidade: this.onValidField(value, 'cidade') 
+                                    } 
+                                }
+                            )}
+                            fontSize={14}
+                            style={[styles.text, styles.input]}
+                            itemTextStyle={{ fontFamily: 'OpenSans-Regular' }}
+                            data={cidades}
+                            containerStyle={{
+                                width: this.state.inputWidth
+                            }}
+                            inputContainerStyle={{
+                                borderBottomColor: 'transparent',
+                                borderBottomWidth: 0,
+                                paddingTop: 8,
+                                paddingBottom: 0
+                            }}
+                            rippleInsets={{ top: 0, bottom: -8 }}
+                        />
+                    </View>
                     <FormLabel labelStyle={styles.text}>ENDEREÇO</FormLabel>
                     <FormInput
                         selectTextOnFocus
@@ -355,6 +473,8 @@ class EditPerfil extends React.Component {
                                 dtnasc: this.props.userLogged.dtnasc, 
                                 endereco: this.props.userLogged.endereco, 
                                 telefone: this.props.userLogged.telefone,
+                                estado: this.props.userLogged.estado,
+                                cidade: this.props.userLogged.cidade
                             },
                             isTelefoneValid: true,
                             cleanEditPerfil: true
@@ -441,7 +561,7 @@ class EditPerfil extends React.Component {
                         })}
                     />
                 </Card>
-                <View style={{ marginBottom: 30 }} />
+                <View style={{ marginVertical: 60 }} />
             </ScrollView>
         );
     }
@@ -453,6 +573,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#EEEEEE'
     },
     text: {
+        fontFamily: 'OpenSans-Regular',
         fontSize: 14,
     },
     inputContainer: {

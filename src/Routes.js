@@ -70,6 +70,16 @@ import FinanceiroCadastrar from './components/grupos/gerenciar/admin/financeiro/
 import FinanceiroEditar from './components/grupos/gerenciar/admin/financeiro/FinanceiroEditar';
 import EnqueteCadastrar from './components/grupos/gerenciar/admin/enquetes/EnqueteCadastrar';
 import EnqueteEditar from './components/grupos/gerenciar/admin/enquetes/EnqueteEditar';
+import EditPerfil from './components/profile/EditPerfil';
+import ProfileEnquetes from './components/grupos/gerenciar/plus/enquetes/ProfileEnquetes';
+import ProfileEnquetesHistorico from './components/grupos/gerenciar/plus/enquetes/ProfileEnquetesHistorico';
+import GrupoFinanceiro from './components/grupos/gerenciar/plus/GrupoFinanceiro';
+import AnaliseJogadores from './components/grupos/gerenciar/plus/jogadores/AnaliseJogadores';
+import Historico from './components/grupos/gerenciar/plus/historico/Historico';
+import JogoH from './components/grupos/gerenciar/plus/historico/JogoH';
+import EscalacaoH from './components/grupos/gerenciar/plus/historico/EscalacaoH';
+import AusentesH from './components/grupos/gerenciar/plus/historico/AusentesH';
+import Mural from './components/grupos/gerenciar/plus/mural/Mural';
 
 const AnimatedSceneComp = Animated.createAnimatedComponent(AnimatedScene);
 
@@ -367,7 +377,7 @@ class Routes extends React.Component {
                     const jogo = _.find(listJogos, (item) => item.key === itemSelected);
                     
                     if (jogo) {
-                        const listUsuarios = grupoSelected.participantes || [];
+                        const listUsuarios = _.values(grupoSelected.participantes) || [];
 
                         if (jogo.status === '1') {
                             Alert.alert(
@@ -759,6 +769,47 @@ class Routes extends React.Component {
         </Scene>
     )
 
+    renderHistoricoJogo = () => (
+        <Scene 
+            key={'historicoJogoTab'}
+            tabs
+            showLabel
+            tabBarPosition={'top'}
+            lazy={false}
+            swipeEnabled
+            title={'Histórico de Jogo'} 
+            titleStyle={styles.title}
+            leftButtonTextStyle={styles.btLeft}
+            backButtonTintColor={'white'}
+            tabBarStyle={{ backgroundColor: colorAppSecondary }}
+            labelStyle={{ fontSize: normalize(12), fontWeight: 'bold' }}
+            renderRightButton={() => this.rightButtonImagens()}
+        >
+            <Scene 
+                key={'jogoTabH'}
+                hideNavBar 
+                component={JogoH}
+                initial
+                tabBarLabel={'Jogo'}
+                activeTintColor={'white'}
+            />
+            <Scene 
+                key={'escalacaoTabH'}
+                hideNavBar 
+                component={EscalacaoH}
+                tabBarLabel={'Escalação'}
+                activeTintColor={'white'}
+            />
+            <Scene 
+                key={'ausentesTabH'}
+                hideNavBar 
+                component={AusentesH}
+                tabBarLabel={'Ausentes'}
+                activeTintColor={'white'}
+            />
+        </Scene>
+    )
+
     renderRouter = () => (
         <Router>
             <Scene 
@@ -780,6 +831,7 @@ class Routes extends React.Component {
                 {this.renderMuralAdmin()}
                 {this.renderFinanceiroAdmin()}
                 {this.renderEnquetesAdmin()}
+                {this.renderHistoricoJogo()}
                 <Scene 
                     key='cadastrar'
                     title={'Cadastrar'}
@@ -875,6 +927,69 @@ class Routes extends React.Component {
                     key={'cadastroInfos'}
                     title={'Informativos'} 
                     component={Info}
+                    titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'profileEditPerfil'}
+                    title={'Editar Perfil'} 
+                    component={EditPerfil}
+                    titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'profileEnquetes'}
+                    title={'Enquetes'}
+                    component={ProfileEnquetes}
+                    titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'profileEnquetesHistorico'}
+                    title={'Histórico de Enquetes'}
+                    component={ProfileEnquetesHistorico}
+                    titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'profileFinanceiro'}
+                    title={'Financeiro'}
+                    component={GrupoFinanceiro}
+                    titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'analisejogadores'}
+                    title={'Histórico de Faltas'}
+                    component={AnaliseJogadores}
+                    titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'historico'}
+                    title={'Histórico de Jogos'} 
+                    component={Historico}
+                    titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'mural'}
+                    title={'Mural'}
+                    component={Mural}
                     titleStyle={styles.title}
                     leftButtonTextStyle={styles.btLeft}
                     backButtonTintColor={'white'}

@@ -15,7 +15,7 @@ import { colorAppForeground, colorAppPrimary, shirtColors } from '../../../../..
 import { getPosIndex } from '../../../../../utils/JogosUtils';
 import { limitDotText, formattedSeconds, formatJogoSeconds } from '../../../../../utils/StrComplex';
 import firebase from '../../../../../utils/Firebase';
-import { modificaJogoSelected } from '../gerenciar/ImagensJogosActions';
+import { modificaJogoSelected } from '../../admin/gerenciar/ImagensJogosActions';
 import Card from '../../../../../tools/elements/Card';
 import ListItem from '../../../../../tools/elements/ListItem';
 
@@ -58,10 +58,10 @@ class JogoH extends React.Component {
                     })
                 , 1000);
             }
+
+            this.props.modificaJogoSelected(jogo);
         }
         
-        this.props.modificaJogoSelected(jogo);
-
         // LISTENER PARA ATUALIZACAO DO JOGO
         this.fbJogoRef = this.fbDatabaseRef
         .child(`grupos/${grupoSelected.key}/jogos/${itemSelected}`);
@@ -2150,7 +2150,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-    itemSelected: state.JogoReducer.jogoSelected,
+    itemSelected: state.JogosReducer.itemSelectedAusente,
     grupoSelected: state.GruposReducer.grupoSelected
 });
 

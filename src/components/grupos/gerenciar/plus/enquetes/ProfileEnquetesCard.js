@@ -10,13 +10,12 @@ import { PieChart } from 'react-native-svg-charts';
 import { Circle, G, Line, Text, Svg } from 'react-native-svg';
 
 import { connect } from 'react-redux';
-import Toast from 'react-native-simple-toast';
 import _ from 'lodash';
 import { CheckBox, Button, Text as RNEText } from 'react-native-elements';
-import { checkConInfo } from '../../../utils/jogosUtils';
-import { colorAppS, colorAppP } from '../../../utils/constantes';
-import firebase from '../../../Firebase';
-import Card from '../../../tools/elements/Card';
+import { checkConInfo, showDropdownAlert } from '../../../../../utils/SystemEvents';
+import { colorAppSecondary, colorAppPrimary, ERROS } from '../../../../../utils/Constantes';
+import firebase from '../../../../../utils/Firebase';
+import Card from '../../../../../tools/elements/Card';
 
 class ProfileEnquetesCard extends React.Component {
     constructor(props) {
@@ -24,30 +23,25 @@ class ProfileEnquetesCard extends React.Component {
 
         this.opacityValue = new Animated.Value(1);
 
-        this.onChangeDimensions = this.onChangeDimensions.bind(this);
-        this.onPressVotar = this.onPressVotar.bind(this);
-        this.renderEnqueteWithOpts = this.renderEnqueteWithOpts.bind(this);
-        this.renderEnqueteWithResult = this.renderEnqueteWithResult.bind(this);
-
         this.state = {
             loading: false,
             optSelected: -1
         };
     }
 
-    componentDidMount() {
+    componentDidMount = () => {
         Dimensions.addEventListener('change', this.onChangeDimensions);
     }
 
-    componentWillUnmount() {
+    componentWillUnmount = () => {
         Dimensions.removeEventListener('change', this.onChangeDimensions);
     }
 
-    onChangeDimensions() {
+    onChangeDimensions = () => {
         this.onAnimChartOpacity();
     }
 
-    onAnimChartOpacity() {
+    onAnimChartOpacity = () => {
         this.opacityValue.setValue(0);
         setTimeout(() => {
             Animated.timing(
@@ -61,8 +55,9 @@ class ProfileEnquetesCard extends React.Component {
         }, 500);
     }
 
-    onPressVotar(enquete, userKey) {
+    onPressVotar = (enquete, userKey) => {
         const { optSelected } = this.state;
+        const { grupoSelected } = this.props;
         const { votos } = enquete;
         const newVotos = [
             ...votos,
@@ -79,22 +74,30 @@ class ProfileEnquetesCard extends React.Component {
         this.setState({ loading: true });
 
         const databaseRef = firebase.database().ref();
-        const dbEnquetes = databaseRef.child(`enquetes/${enquete.key}`);
+        const dbEnquetes = databaseRef.child(`grupos/${grupoSelected.key}/enquetes/${enquete.key}`);
 
         dbEnquetes.update({
             votos: newVotos
         })
         .then(() => {
-            Toast.show('Voto efetuado com sucesso', Toast.SHORT);
+            showDropdownAlert(
+                'info',
+                'Seu voto foi efetuado',
+                ''
+            );
             this.setState({ loading: false });
         })
         .catch(() => {
-            Toast.show('Ocorreu um erro na votação. Verifique a conexão', Toast.SHORT);
+            showDropdownAlert(
+                'error',
+                ERROS.enqueteVoting.erro,
+                ERROS.enqueteVoting.mes
+            );
             this.setState({ loading: false });
         });
     }
 
-    renderEnqueteWithOpts(enquete, userKey) {
+    renderEnqueteWithOpts = (enquete, userKey) => {
         const titulo = enquete.titulo || '';
         let viewOpts = [];
 
@@ -136,7 +139,7 @@ class ProfileEnquetesCard extends React.Component {
                         buttonStyle={{ 
                             width: '100%', 
                             marginVertical: 10, 
-                            backgroundColor: colorAppS 
+                            backgroundColor: colorAppSecondary 
                         }}
                         onPress={
                             () => checkConInfo(() => this.onPressVotar(enquete, userKey))
@@ -147,7 +150,7 @@ class ProfileEnquetesCard extends React.Component {
         );
     }
 
-    renderEnqueteWithResult(enquete, userKey) {
+    renderEnqueteWithResult = (enquete, userKey) => {
         const titulo = enquete.titulo || '';
         const votos = _.groupBy(_.filter(enquete.votos, vts => !vts.push), 'optVal');
         const colors = [];
@@ -311,7 +314,7 @@ class ProfileEnquetesCard extends React.Component {
                                     >
                                         <View
                                             style={{
-                                                backgroundColor: colorAppP,
+                                                backgroundColor: colorAppPrimary,
                                                 borderRadius: 10,
                                                 paddingHorizontal: 9,
                                                 alignItems: 'center'
@@ -388,18 +391,16 @@ class ProfileEnquetesCard extends React.Component {
         );
     }
 
-    render() {
-        return (
-            this.props.isResult ? 
-            this.renderEnqueteWithResult(
-                this.props.enquete, 
-                this.props.userKey, 
-                this.props.isHistory
-            ) 
-            : 
-            this.renderEnqueteWithOpts(this.props.enquete, this.props.userKey)
-        );
-    }
+    render = () => (
+        this.props.isResult ? 
+        this.renderEnqueteWithResult(
+            this.props.enquete, 
+            this.props.userKey, 
+            this.props.isHistory
+        ) 
+        : 
+        this.renderEnqueteWithOpts(this.props.enquete, this.props.userKey)
+    )
 }
 
 const styles = StyleSheet.create({

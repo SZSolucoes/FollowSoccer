@@ -14,10 +14,14 @@ import {
 } from 'react-native-elements';
 import _ from 'lodash';
 
-import firebase from '../../../Firebase';
-import MonthPicker from '../../tools/MonthPicker';
-import Card from '../../tools/Card';
-import { colorAppS, colorAppF, colorAppP } from '../../../utils/constantes';
+import firebase from '../../../../../utils/Firebase';
+import MonthPicker from '../../../../../tools/month/MonthPicker';
+import Card from '../../../../../tools/elements/Card';
+import { 
+    colorAppSecondary, 
+    colorAppForeground, 
+    colorAppPrimary 
+} from '../../../../../utils/Constantes';
 import Versus from '../../jogos/Versus';
 import { 
     modificaFilterStr, 
@@ -25,11 +29,10 @@ import {
     modificaItemSelected,
     modificaListJogos,
     modificaClean
-} from '../../../actions/HistoricoActions';
-import { store } from '../../../App';
+} from './HistoricoActions';
+import { store } from '../../../../../App';
 
 class Historico extends React.Component {
-
     constructor(props) {
         super(props);
 
@@ -42,44 +45,32 @@ class Historico extends React.Component {
         this.fbDatabaseRef = firebase.database().ref();
 
         this.scrollView = null;
-
-        this.doDateFilter = this.doDateFilter.bind(this);
-        this.renderEditar = this.renderEditar.bind(this);
-        this.renderListJogos = this.renderListJogos.bind(this);
-        this.onFilterJogos = this.onFilterJogos.bind(this);
-        this.renderBasedFilterOrNot = this.renderBasedFilterOrNot.bind(this);
-        this.onPressCardGame = this.onPressCardGame.bind(this);
     }
 
-    componentDidMount() {
-        const { conInfo } = this.props;
-        if (conInfo) {
-            if (!(conInfo.type === 'none' || conInfo.type === 'unknown')
-            ) {
-                this.fbDatabaseRef.child('jogos')
-                .orderByChild('endStatus')
-                .equalTo('1')
-                .once('value', (snapshot) => {
-                    if (snapshot) {
-                        this.props.modificaListJogos(
-                            _.map(snapshot.val(), (value, key) => ({ key, ...value }))
-                        );
-                    }
-                    this.setState({ indicatorOn: false });     
-                });
-            } else {
+    componentDidMount = () => {
+        const { grupoSelected } = this.props;
+        if (grupoSelected && grupoSelected.key) { 
+            this.fbDatabaseRef.child(`grupos/${grupoSelected.key}/jogos`)
+            .orderByChild('endStatus')
+            .equalTo('1')
+            .once('value', (snapshot) => {
+                if (snapshot) {
+                    this.props.modificaListJogos(
+                        _.map(snapshot.val(), (value, key) => ({ key, ...value }))
+                    );
+                }
                 this.setState({ indicatorOn: false });
-            }
+            });
         } else {
             this.setState({ indicatorOn: false });
         }
     }
 
-    componentWillUnmount() {
+    componentWillUnmount = () => {
         this.props.modificaClean();
     }
 
-    onFilterJogos(jogos, filterStr) {
+    onFilterJogos = (jogos, filterStr) => {
         const lowerFilter = filterStr.toLowerCase();
         return _.filter(jogos, (jogo) => (
                 (jogo.titulo && jogo.titulo.toLowerCase().includes(lowerFilter)) ||
@@ -89,7 +80,7 @@ class Historico extends React.Component {
         ));
     }
 
-    onPressCardGame(item) {
+    onPressCardGame = (item) => {
         this.props.modificaItemSelected(item.key);
         store.dispatch({
             type: 'modifica_itemselectedausente_jogos',
@@ -98,7 +89,7 @@ class Historico extends React.Component {
         Actions.historicoJogoTab({ onBack: () => Actions.popTo('historico') });
     }
 
-    doDateFilter(value, type) {
+    doDateFilter = (value, type) => {
         if (type === 'month') {
             this.setState({ monthFilter: value });
         } else if (type === 'year') {
@@ -106,7 +97,7 @@ class Historico extends React.Component {
         }
     }
 
-    renderListJogos(jogos) {
+    renderListJogos = (jogos) => {
         const reverseJogos = _.reverse([...jogos]);
         const jogosView = reverseJogos.map((item, index) => {
             const titulo = item.titulo ? item.titulo : ' ';
@@ -146,7 +137,7 @@ class Historico extends React.Component {
         return jogosView;
     }
 
-    renderBasedFilterOrNot() {
+    renderBasedFilterOrNot = () => {
         const { listJogos, filterStr } = this.props;
         const { monthFilter, yearFilter } = this.state;
         let filtredJogos = listJogos;
@@ -175,92 +166,88 @@ class Historico extends React.Component {
         return jogosView;
     }
 
-    renderEditar() {
-        return (
-            <Card containerStyle={styles.card}>
-                <SearchBar
-                    round
-                    lightTheme
-                    autoCapitalize={'none'}
-                    autoCorrect={false}
-                    clearIcon={!!this.props.filterStr}
-                    showLoadingIcon={
-                        this.props.listJogos &&
-                        this.props.listJogos.length > 0 && 
-                        this.props.filterLoad
-                    }
-                    containerStyle={{ 
-                        backgroundColor: 'transparent',
-                        borderTopWidth: 0, 
-                        borderBottomWidth: 0
-                    }}
-                    searchIcon={{ size: 26 }}
-                    value={this.props.filterStr}
-                    onChangeText={(value) => {
-                        this.props.modificaFilterStr(value);
-                        this.props.modificaFilterLoad(true);
-                    }}
-                    onClear={() => this.props.modificaFilterStr('')}
-                    placeholder='Buscar jogo...' 
-                />
-                { this.renderBasedFilterOrNot() }
-            </Card>
-        );
-    }
+    renderEditar = () => (
+        <Card containerStyle={styles.card}>
+            <SearchBar
+                round
+                lightTheme
+                autoCapitalize={'none'}
+                autoCorrect={false}
+                clearIcon={!!this.props.filterStr}
+                showLoadingIcon={
+                    this.props.listJogos &&
+                    this.props.listJogos.length > 0 && 
+                    this.props.filterLoad
+                }
+                containerStyle={{ 
+                    backgroundColor: 'transparent',
+                    borderTopWidth: 0, 
+                    borderBottomWidth: 0
+                }}
+                searchIcon={{ size: 26 }}
+                value={this.props.filterStr}
+                onChangeText={(value) => {
+                    this.props.modificaFilterStr(value);
+                    this.props.modificaFilterLoad(true);
+                }}
+                onClear={() => this.props.modificaFilterStr('')}
+                placeholder='Buscar jogo...' 
+            />
+            { this.renderBasedFilterOrNot() }
+        </Card>
+    )
 
-    render() {
-        return (
-            <View style={styles.viewPrinc}>
-                <View style={{ flex: 0.8 }}>
-                    {
-                        this.state.indicatorOn ?
-                        (
-                            <View
-                                style={{
-                                    flex: 1,
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
-                            >
-                                <ActivityIndicator size={'large'} color={colorAppP} />
-                            </View>
-                        )
-                        :
-                        (
-                            <ScrollView 
-                                style={{ flex: 1 }} 
-                                ref={(ref) => { this.scrollView = ref; }}
-                                keyboardShouldPersistTaps={'handled'}
-                            >
-                                { this.renderEditar() }
-                                <View style={{ marginVertical: 20 }} />
-                            </ScrollView>
-                        )
-                    }
-                </View>
-                <View style={{ flex: 0.2 }}>
-                    <MonthPicker 
-                        orientation={'vertical'}
-                        onSelectYear={(value) => this.doDateFilter(value, 'year')}
-                        onPressMonth={(value, number) => this.doDateFilter(number, 'month')}
-                    />
-                </View>
+    render = () => (
+        <View style={styles.viewPrinc}>
+            <View style={{ flex: 0.8 }}>
+                {
+                    this.state.indicatorOn ?
+                    (
+                        <View
+                            style={{
+                                flex: 1,
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                        >
+                            <ActivityIndicator size={'large'} color={colorAppPrimary} />
+                        </View>
+                    )
+                    :
+                    (
+                        <ScrollView 
+                            style={{ flex: 1 }} 
+                            ref={(ref) => { this.scrollView = ref; }}
+                            keyboardShouldPersistTaps={'handled'}
+                        >
+                            { this.renderEditar() }
+                            <View style={{ marginVertical: 20 }} />
+                        </ScrollView>
+                    )
+                }
             </View>
-        );
-    }
+            <View style={{ flex: 0.2 }}>
+                <MonthPicker 
+                    orientation={'vertical'}
+                    onSelectYear={(value) => this.doDateFilter(value, 'year')}
+                    onPressMonth={(value, number) => this.doDateFilter(number, 'month')}
+                />
+            </View>
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
     viewPrinc: {
         flex: 1,
         flexDirection: 'row',
-        backgroundColor: colorAppF
+        backgroundColor: colorAppForeground
     },
     card: {
         paddingHorizontal: 10,
     },
     dropCard: { 
-        backgroundColor: colorAppS,
+        backgroundColor: colorAppSecondary,
         flex: 1,
         flexDirection: 'row',
         alignItems: 'flex-end',
@@ -281,7 +268,7 @@ const mapStateToProps = (state) => ({
     listJogos: state.HistoricoReducer.listJogos,
     filterStr: state.HistoricoReducer.filterStr,
     filterLoad: state.HistoricoReducer.filterLoad,
-    conInfo: state.LoginReducer.conInfo
+    grupoSelected: state.GruposReducer.grupoSelected
 });
 
 export default connect(mapStateToProps, {

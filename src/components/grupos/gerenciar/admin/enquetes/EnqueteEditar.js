@@ -1,10 +1,11 @@
 import React from 'react';
 import { 
     View,
+    Alert,
+    Image,
     ScrollView, 
     StyleSheet,
-    TouchableOpacity,
-    Image
+    TouchableOpacity
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -14,8 +15,8 @@ import {
 } from 'react-native-elements';
 import _ from 'lodash';
 
-import { colorAppForeground } from '../../../../../utils/Constantes';
-import { checkConInfo } from '../../../../../utils/SystemEvents';
+import { colorAppForeground, ERROS } from '../../../../../utils/Constantes';
+import { checkConInfo, showDropdownAlert } from '../../../../../utils/SystemEvents';
 import firebase from '../../../../../utils/Firebase';
 import Card from '../../../../../tools/elements/Card';
 import {
@@ -62,16 +63,20 @@ class EnqueteEditar extends React.Component {
                 
                 if (snapshot) {
                     snapVal = snapshot.val();
+
+                    if (snapVal) {
+                        const enquetesList = _.map(
+                            snapshot.val(), (value, key) => ({ key, ...value })
+                        );
+        
+                        // LISTA DE TODAS AS ENQUETES
+                        this.props.modificaEnquetes(enquetesList);
+    
+                        return;
+                    }
                 }
     
-                if (snapVal) {
-                    const enquetesList = _.map(
-                        snapshot.val(), (value, key) => ({ key, ...value })
-                    );
-    
-                    // LISTA DE TODAS AS ENQUETES
-                    this.props.modificaEnquetes(enquetesList);
-                }
+                this.props.modificaEnquetes([]);
             });
         }
     }
@@ -83,17 +88,90 @@ class EnqueteEditar extends React.Component {
     }
 
     onPressRemove = (item) => {
-        this.props.modificaItemSelected(item);
-        this.props.modificaFlagRemoveEnquetes(true);
-        this.props.modificaRemocao(true);
-        //showAlert('danger', 'Remover', 'Confirma a remoção ?');
+        const funExec = () => {
+            const { grupoSelected } = this.props;
+    
+            const dbItemRef = this.dbFirebaseRef
+            .child(`grupos/${grupoSelected.key}/enquetes/${item.key}`);
+    
+            dbItemRef.remove()
+            .then(() => {
+                setTimeout(
+                    () => showDropdownAlert(
+                        'success',
+                        'Sucesso',
+                        'Remoção efetuada com sucesso'
+                    )
+                , 1000);
+            })
+            .catch(() => 
+                setTimeout(
+                    () => showDropdownAlert(
+                        'error',
+                        ERROS.enqueteRemove.erro,
+                        ERROS.enqueteRemove.mes
+                    )
+                , 1000)
+            );
+        };
+
+        Alert.alert(
+            'Aviso', 
+            'Confirma a remoção da enquete selecionada ?',
+            [
+                { text: 'Cancelar', onPress: () => false },
+                { 
+                    text: 'Sim', 
+                    onPress: () => checkConInfo(
+                    () => funExec()) 
+                }
+            ],
+            { cancelable: true }
+        );
     }
 
     onPressEnd = (item) => {
-        this.props.modificaItemSelected(item);
-        this.props.modificaFlagEndEnquetes(true);
-        this.props.modificaRemocao(true);
-        //showAlert('danger', 'Encerrar', 'Confirma o encerramento da enquete ?');
+        const funExec = () => {
+            const { grupoSelected } = this.props;
+    
+            const dbItemRef = firebase.database().ref()
+            .child(`grupos/${grupoSelected.key}/enquetes/${item.key}`);
+            dbItemRef.update({
+                status: '2'
+            })
+            .then(() => {
+                setTimeout(
+                    () => showDropdownAlert(
+                        'success',
+                        'Sucesso',
+                        'Enquete encerrada com sucesso'
+                    )
+                , 1000);
+            })
+            .catch(() => 
+                setTimeout(
+                    () => showDropdownAlert(
+                        'error',
+                        ERROS.enqueteEnd.erro,
+                        ERROS.enqueteEnd.mes
+                    )
+                , 1000)
+            );
+        };
+
+        Alert.alert(
+            'Aviso', 
+            'Confirma o encerramento da enquete selecionada ?',
+            [
+                { text: 'Cancelar', onPress: () => false },
+                { 
+                    text: 'Sim', 
+                    onPress: () => checkConInfo(
+                    () => funExec()) 
+                }
+            ],
+            { cancelable: true }
+        );
     }
 
     onFilterEnqueteEdit = (enquetes, filterStr) => {

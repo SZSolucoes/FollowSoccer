@@ -10,13 +10,14 @@ import JogosReducer from './components/grupos/gerenciar/jogos/JogosReducer';
 import CadastroJogosReducer from './components/grupos/gerenciar/admin/cadastrojogos/CadastroJogosReducer';
 import GruposReducer from './components/grupos/GruposReducer';
 import JogoReducer from './components/grupos/gerenciar/jogos/JogoReducer';
-import HistoricoReducer from './components/grupos/gerenciar/jogos/HistoricoReducer';
 import GerenciarReducer from './components/grupos/gerenciar/admin/gerenciar/GerenciarReducer';
 import ImagensJogosReducer from './components/grupos/gerenciar/admin/gerenciar/ImagensJogosReducer';
 import SearchBarReducer from './tools/searchbar/SearchBarReducer';
 import InfoReducer from './components/grupos/gerenciar/admin/informativos/InfoReducer';
 import FinanceiroReducer from './components/grupos/gerenciar/admin/financeiro/FinanceiroReducer';
 import EnquetesReducer from './components/grupos/gerenciar/admin/enquetes/EnquetesReducer';
+import AnaliseJogadoresReducer from './components/grupos/gerenciar/plus/jogadores/AnaliseJogadoresReducer';
+import HistoricoReducer from './components/grupos/gerenciar/plus/historico/HistoricoReducer';
 
 export default combineReducers({
     SystemEventsReducer,
@@ -34,5 +35,6 @@ export default combineReducers({
     SearchBarReducer,
     InfoReducer,
     FinanceiroReducer,
-    EnquetesReducer
+    EnquetesReducer,
+    AnaliseJogadoresReducer
 });

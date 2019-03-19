@@ -1,17 +1,14 @@
 import React from 'react';
 import { 
-    View,
-    Text,
-    Image,
-    Alert,
     ScrollView,
     StyleSheet,
-    TouchableOpacity
+    View,
+    Text,
+    Image
 } from 'react-native';
-import { List, Badge, Icon } from 'react-native-elements';
+import { List, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import Moment from 'moment';
 import { colorAppForeground } from '../../../../../utils/Constantes';
 import Card from '../../../../../tools/elements/Card';
 import ListItem from '../../../../../tools/elements/ListItem';
@@ -19,9 +16,8 @@ import ListItem from '../../../../../tools/elements/ListItem';
 import imgTeam from '../../../../../assets/imgs/team.png';
 import firebase from '../../../../../utils/Firebase';
 import { retrieveUpdUserGroup } from '../../../../../utils/UserUtils';
-import { checkConInfo } from '../../../../../utils/SystemEvents';
 
-class AusentesG extends React.Component {
+class AusentesH extends React.Component {
     constructor(props) {
         super(props);
 
@@ -57,93 +53,6 @@ class AusentesG extends React.Component {
     componentWillUnmount = () => {
         if (this.fbJogoRef) this.fbJogoRef.off();
     }
-
-    onPressConfirmP = (jogo, user) => {
-        const { grupoSelected } = this.props;
-        const userAusenteIndex = _.findIndex(
-            jogo.ausentes, 
-            (usuario) => usuario.key && usuario.key === user.key);
-
-        const funExec = (newAusentesList = false) => {
-            const newConfirmadosList = jogo.confirmados ? 
-            [...jogo.confirmados] : [];
-            const dataAtual = Moment().format('YYYY-MM-DD HH:mm:ss');
-            const ausentes = newAusentesList ? { ausentes: newAusentesList } : {};
-    
-            newConfirmadosList.push({
-                key: user.key,
-                imgAvatar: user.imgAvatar,
-                nome: user.nome,
-                horaConfirm: dataAtual
-            });
-    
-            this.fbDatabaseRef.child(`grupos/${grupoSelected.key}/jogos/${jogo.key}`).update({
-                confirmados: newConfirmadosList,
-                ...ausentes
-            })
-            .then(() => true)
-            .catch(() => true);
-        };
-
-        if (userAusenteIndex !== -1) {
-            let newAusentesList = [];
-            newAusentesList = [...jogo.ausentes];
-            newAusentesList.splice(userAusenteIndex, 1);
-
-            Alert.alert(
-                'Aviso', 
-                `Deseja confirmar a presença do jogador "${
-                    retrieveUpdUserGroup(
-                        user.key, 
-                        'nome', 
-                        user
-                    )}" ?`,
-                [
-                    { text: 'Cancelar', onPress: () => false },
-                    { 
-                        text: 'OK', 
-                        onPress: () => checkConInfo(
-                        () => funExec(newAusentesList)) 
-                    }
-                ],
-                { cancelable: true }
-            );
-        } else {
-            Alert.alert(
-                'Aviso', 
-                `Deseja confirmar a presença do jogador "${user.nome}" ?`,
-                [
-                    { text: 'Cancelar', onPress: () => false },
-                    { 
-                        text: 'OK', 
-                        onPress: () => checkConInfo(
-                        () => funExec()) 
-                    }
-                ],
-                { cancelable: true }
-            );
-        }
-    }
-
-    renderRightConfirm = (jogo, userKey) => (
-        <TouchableOpacity
-            onPress={() => this.onPressConfirmP(jogo, userKey)}
-        >
-            <View
-                style={{
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}
-            >
-                <Icon 
-                    name='account-convert'
-                    type='material-community'
-                    size={28} 
-                />
-            </View>
-        </TouchableOpacity>
-    )
 
     render = () => {
         const { grupoSelected } = this.props;
@@ -244,7 +153,7 @@ class AusentesG extends React.Component {
                                                         'posicao', 
                                                         item
                                                     )}
-                                                    rightIcon={this.renderRightConfirm(jogo, item)}
+                                                    rightIcon={(<View />)}
                                                 />
                                             );
                                         })
@@ -315,7 +224,7 @@ class AusentesG extends React.Component {
                                                         'posicao', 
                                                         item
                                                     )}
-                                                    rightIcon={this.renderRightConfirm(jogo, item)}
+                                                    rightIcon={(<View />)}
                                                 />
                                             );
                                         })
@@ -362,8 +271,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-    itemSelected: state.GerenciarReducer.itemSelected,
+    itemSelected: state.JogosReducer.itemSelectedAusente,
     grupoSelected: state.GruposReducer.grupoSelected
 });
 
-export default connect(mapStateToProps, {})(AusentesG);
+export default connect(mapStateToProps, {})(AusentesH);

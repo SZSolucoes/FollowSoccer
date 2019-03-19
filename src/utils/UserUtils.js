@@ -14,6 +14,8 @@ export const usuarioAttr = {
     level: '1',
     telefone: '',
     endereco: '',
+    cidade: '',
+    estado: '',
     dataCadastro: '',
     dataHoraUltimoLogin: '',
     jogosParticipados: '0',
@@ -423,13 +425,14 @@ export const updateUserDB = (
     return true;
 };
 
-export const retrieveUpdUserGroup = (userKey, objKey, obj) => {
+export const retrieveUpdUserGroup = (userKey, objKey, obj, fullObj = false) => {
     if (userKey) {
         const grupoParticipantes = store.getState().GruposReducer.grupoParticipantes;
 
         if (grupoParticipantes && grupoParticipantes.length) {
                 const userFounded = _.find(grupoParticipantes, ita => ita.key === userKey);
 
+                if (fullObj) return { ...userFounded };
                 if (userFounded) return userFounded[objKey];
         }
     }

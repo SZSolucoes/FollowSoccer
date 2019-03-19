@@ -282,7 +282,7 @@ class Jogos extends React.Component {
                         () => funExec(newAusentesList)) 
                     }
                 ],
-                { cancelable: false }
+                { cancelable: true }
             );
         } else {
             funExec();
@@ -333,7 +333,7 @@ class Jogos extends React.Component {
                         () => funExec(newConfirmadosList)) 
                     }
                 ],
-                { cancelable: false }
+                { cancelable: true }
             );
         } else {
             funExec();

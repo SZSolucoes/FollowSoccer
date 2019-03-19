@@ -133,7 +133,7 @@ class EnqueteEditModal extends React.Component {
                     () => funExec()) 
                 }
             ],
-            { cancelable: false }
+            { cancelable: true }
         );
     }
 

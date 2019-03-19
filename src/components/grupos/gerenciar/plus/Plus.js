@@ -8,6 +8,8 @@ import {
 
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
+import _ from 'lodash';
+
 import { modifyCleanLogin } from '../../../login/LoginActions';
 
 import ListItem from '../../../../tools/elements/ListItem';
@@ -15,17 +17,86 @@ import { colorAppSecondary, ERROS } from '../../../../utils/Constantes';
 import Card from '../../../../tools/elements/Card';
 import { showDropdownAlert, checkConInfo } from '../../../../utils/SystemEvents';
 import firebase from '../../../../utils/Firebase';
+import { store } from '../../../../App';
 
 class Plus extends React.Component {
     constructor(props) {
         super(props);
 
         this.dbFirebaseRef = firebase.database().ref();
+        this.enquetesListener = null;
 
         this.state = {
             progress: 0,
             showAbout: false
         };
+    }
+
+    componentDidMount = () => {
+        this.onStartListener();
+    }
+
+    componentWillUnmount = () => {
+        if (this.enquetesListener) this.enquetesListener.off();
+    }
+
+    onStartListener = () => {
+        const { grupoSelected, userLogged } = this.props;
+
+        if (grupoSelected && grupoSelected.key) {
+            this.enquetesListener = this.dbFirebaseRef
+            .child(`grupos/${grupoSelected.key}/enquetes`);
+
+            this.enquetesListener.on('value', (snapshot) => {
+                let snapVal = null;
+                
+                if (snapshot) {
+                    snapVal = snapshot.val();
+
+                    if (snapVal) {
+                        const enquetesList = _.map(
+                            snapshot.val(), (value, key) => ({ key, ...value })
+                        );
+                        const openEnqts = _.filter(enquetesList, en => en.status === '1');
+    
+                        // CONTADOR DE ENQUETES NÃO VOTADAS
+                        if (userLogged && userLogged.key) {
+                            if (openEnqts && openEnqts.length) {
+                                const numEnquetes = _.reduce(openEnqts, (sum, item) => {
+                                    const votos = _.filter(item.votos, vl => !vl.push);
+    
+                                    if (votos && votos.length) {
+                                        const hasVote = _.findIndex(
+                                            votos, vot => vot.key === userLogged.key
+                                        ) !== -1;
+    
+                                        if (!hasVote) {
+                                            return sum + 1;
+                                        }
+    
+                                        return sum;
+                                    }
+    
+                                    return sum + 1;
+                                }, 0);
+                                
+                                store.dispatch({
+                                    type: 'modifica_enqueteprops_enquetes',
+                                    payload: { badge: { value: numEnquetes } }
+                                });
+
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                store.dispatch({
+                    type: 'modifica_enqueteprops_enquetes',
+                    payload: { badge: { value: 0 } }
+                });
+            });
+        }
     }
 
     onPressExitGroup = () => {
@@ -99,7 +170,13 @@ class Plus extends React.Component {
                             color: colorAppSecondary,
                             size: 28 
                         }}
-                        onPress={() => Actions.profileEnquetes()}
+                        onPress={() => {
+                            if (this.enquetesListener) this.enquetesListener.off();
+                            Actions.profileEnquetes({ onBack: () => {
+                                this.onStartListener();
+                                Actions.pop();
+                            } });
+                        }}
                         {...enqueteProps}
                     />
                 </Card>
@@ -134,7 +211,13 @@ class Plus extends React.Component {
                             color: colorAppSecondary,
                             size: 28 
                         }}
-                        onPress={() => Actions.profileEnquetesHistorico()}
+                        onPress={() => {
+                            if (this.enquetesListener) this.enquetesListener.off();
+                            Actions.profileEnquetesHistorico({ onBack: () => {
+                                this.onStartListener();
+                                Actions.pop();
+                            } });
+                        }}
                     />
                 </Card>
                 <Card
@@ -252,7 +335,7 @@ const mapStateToProps = (state) => ({
     grupoSelected: state.GruposReducer.grupoSelected,
     userLevel: state.LoginReducer.userLevel,
     username: state.LoginReducer.username,
-    enqueteProps: state.ProfileReducer.enqueteProps
+    enqueteProps: state.EnquetesReducer.enqueteProps
 });
 
 export default connect(mapStateToProps, {

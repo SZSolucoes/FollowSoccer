@@ -424,9 +424,19 @@ class Jogadores extends React.Component {
                                 'email', 
                                 ita
                             );
-                            const posicao = retrieveUpdUserGroup(
+                            /* const posicao = retrieveUpdUserGroup(
                                 ita.key, 
                                 'posicao', 
+                                ita
+                            ); */
+                            const cidade = retrieveUpdUserGroup(
+                                ita.key, 
+                                'cidade', 
+                                ita
+                            );
+                            const estado = retrieveUpdUserGroup(
+                                ita.key, 
+                                'estado', 
                                 ita
                             );
 
@@ -468,8 +478,8 @@ class Jogadores extends React.Component {
                                                 {email}
                                             </Text>
                                         </View>
-                                        <View style={{ marginVertical: 2 }} />
-                                        <View style={{ flexDirection: 'row' }}>
+                                        <View style={{ marginVertical: 4 }} />
+                                        {/* <View style={{ flexDirection: 'row' }}>
                                             <Text style={styles.cardTextUsersBold}>
                                                 {'Posição: '} 
                                             </Text>
@@ -478,6 +488,29 @@ class Jogadores extends React.Component {
                                                 style={styles.cardTextUsersSemiBold}
                                             >
                                                 {posicao}
+                                            </Text>
+                                        </View> */}
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={styles.cardTextUsersBold}>
+                                                {'Cidade: '} 
+                                            </Text>
+                                            <Text 
+                                                selectable
+                                                style={styles.cardTextUsersSemiBold}
+                                            >
+                                                {cidade || 'não informado'}
+                                            </Text>
+                                        </View>
+                                        <View style={{ marginVertical: 2 }} />
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={styles.cardTextUsersBold}>
+                                                {'Estado: '} 
+                                            </Text>
+                                            <Text 
+                                                selectable
+                                                style={styles.cardTextUsersSemiBold}
+                                            >
+                                                {estado || 'não informado'}
                                             </Text>
                                         </View>
                                     </View>
@@ -665,7 +698,7 @@ class Jogadores extends React.Component {
                                                     selectable
                                                     style={styles.cardTextUsersSemiBold}
                                                 >
-                                                    {posicao}
+                                                    {posicao || 'não informado'}
                                                 </Text>
                                             </View>
                                         </View>

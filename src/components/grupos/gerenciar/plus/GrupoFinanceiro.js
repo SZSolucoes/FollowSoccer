@@ -1,10 +1,10 @@
 import React from 'react';
 import { 
     View,
+    Text,
+    Platform,
     ScrollView, 
     StyleSheet,
-    Text,
-    Platform
 } from 'react-native';
 import { TextMask } from 'react-native-masked-text';
 
@@ -14,84 +14,113 @@ import {
     Divider
 } from 'react-native-elements';
 import _ from 'lodash';
+import b64 from 'base-64';
 
-import { colorAppF } from '../../utils/constantes';
-import { normalize } from '../../utils/strComplex';
-import ListItem from '../../tools/elements/ListItem';
-import {
-    modificaFilterLoad,
-    modificaFilterStr,
-    modificaClean
-} from '../../actions/FinanceiroActions';
-import Card from '../../tools/elements/Card';
+import { colorAppForeground } from '../../../../utils/Constantes';
+import { normalize } from '../../../../utils/StrComplex';
+import ListItem from '../../../../tools/elements/ListItem';
+import Card from '../../../../tools/elements/Card';
+import firebase from '../../../../utils/Firebase';
 
-class ProfileFinanceiro extends React.Component {
+class GrupoFinanceiro extends React.Component {
     constructor(props) {
         super(props);
 
+        this.dbFirebaseRef = firebase.database().ref();
         this.scrollView = null;
+        this.dbFinanceiroRef = null;
 
-        this.renderListFinaEdit = this.renderListFinaEdit.bind(this);
-        this.onFilterFinaEdit = this.onFilterFinaEdit.bind(this);
-        this.renderBasedFilterOrNot = this.renderBasedFilterOrNot.bind(this);
-        this.renderTitleAndIcons = this.renderTitleAndIcons.bind(this);
+        this.state = {
+            listFina: [],
+            filterLoad: false,
+            filterStr: ''
+        };
     }
 
-    componentWillUnmount() {
-        this.props.modificaClean();
+    componentDidMount = () => {
+        const { grupoSelected } = this.props;
+        const lValid = grupoSelected && typeof grupoSelected === 'object' && grupoSelected.key;
+
+        if (lValid) {
+            this.dbFinanceiroRef = this.dbFirebaseRef
+            .child(`grupos/${grupoSelected.key}/financeiro`);
+            this.dbFinanceiroRef.on('value', snap => {
+                if (snap) {
+                    const snapVal = snap.val();
+                    if (snapVal) {
+                        const mappedValues = _.map(snapVal, (ita, key) => { 
+                            const keyDecoded = b64.decode(key);
+
+                            return {
+                                key, 
+                                ...ita,
+                                data: keyDecoded,
+                                dataReversed: keyDecoded.split('').reverse().join('')
+                            };
+                        });
+                        
+                        this.setState({ 
+                            listFina: _.orderBy(mappedValues, ['dataReversed'], ['desc']), 
+                            loading: false 
+                        });
+                        
+                        return;
+                    }
+                } 
+    
+                this.setState({ listFina: [], loading: false });
+            });
+        }
     }
 
-    onFilterFinaEdit(listFina, filterStr) {
-        const lowerFilter = filterStr.toLowerCase();
+    componentWillUnmount = () => {
+        if (this.dbFinanceiroRef) this.dbFinanceiroRef.off();
+    }
+
+    onFilterFinaEdit = (listFina, filterStr) => {
+        const lowerFilter = filterStr.trim().toLowerCase();
         return _.filter(listFina, (item) => (
                 (item.data && item.data.toLowerCase().includes(lowerFilter))
         ));
     }
 
-    renderTitleAndIcons(item) {
-        return (
-            <View 
-                style={{ 
-                    flex: 1, 
-                    flexDirection: 'row', 
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    paddingBottom: 10
+    renderTitleAndIcons = (item) => (
+        <View 
+            style={{ 
+                flex: 1, 
+                flexDirection: 'row', 
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingBottom: 10
+            }}
+        >
+            <Text 
+                style={{   
+                    fontSize: normalize(14),
+                    ...Platform.select({
+                        ios: {
+                            fontWeight: 'bold',
+                        },
+                        android: {
+                            fontFamily: 'sans-serif',
+                            fontWeight: 'bold',
+                        },
+                    }),
+                    textAlign: 'center',
+                    color: '#43484d',
                 }}
             >
-                <Text 
-                    style={{   
-                        fontSize: normalize(14),
-                        ...Platform.select({
-                            ios: {
-                                fontWeight: 'bold',
-                            },
-                            android: {
-                                fontFamily: 'sans-serif',
-                                fontWeight: 'bold',
-                            },
-                        }),
-                        textAlign: 'center',
-                        color: '#43484d',
-                    }}
-                >
-                    {item.data}
-                </Text>
-            </View>
-        );
-    }
+                {item.data}
+            </Text>
+        </View>
+    )
 
-    renderListFinaEdit(listFina) {
-        const reverseListFina = _.reverse([...listFina]);
-        let finasView = null;
+    renderListFinaEdit = (listFina) => {
+        let finasView = false;
 
         if (listFina.length) {
             finasView = (
-                reverseListFina.map((item, index) => {
-                    if ((index + 1) > 30) {
-                        return false;
-                    }
-
+                listFina.map((item, index) => {
                     let valorReceita = 0;
                     let valorDespesa = 0;
                     let resultado = 0;
@@ -194,12 +223,13 @@ class ProfileFinanceiro extends React.Component {
             );
         }
 
-        setTimeout(() => this.props.modificaFilterLoad(false), 1000);
+        setTimeout(() => this.setState({ filterLoad: false }), 1000);
+
         return finasView;
     }
 
-    renderBasedFilterOrNot() {
-        const { listFina, filterStr } = this.props;
+    renderBasedFilterOrNot = () => {
+        const { listFina, filterStr } = this.state;
 
         let finasView = null;
         if (listFina) {
@@ -214,57 +244,55 @@ class ProfileFinanceiro extends React.Component {
         return finasView;
     }
 
-    render() {
-        return (
-            <View style={styles.viewPrinc}>
-                <ScrollView 
-                    style={{ flex: 1 }} 
-                    ref={(ref) => { this.scrollView = ref; }}
-                    keyboardShouldPersistTaps={'handled'}
-                >
-                    <View>
-                        <Card 
-                            containerStyle={styles.card}
-                        >
-                            <SearchBar
-                                round
-                                lightTheme
-                                autoCapitalize={'none'}
-                                autoCorrect={false}
-                                clearIcon={!!this.props.filterStr}
-                                showLoadingIcon={
-                                    this.props.listFina &&
-                                    this.props.listFina.length > 0 && 
-                                    this.props.filterLoad
-                                }
-                                containerStyle={{ 
-                                    backgroundColor: 'transparent',
-                                    borderTopWidth: 0, 
-                                    borderBottomWidth: 0
-                                }}
-                                searchIcon={{ size: 26 }}
-                                value={this.props.filterStr}
-                                onChangeText={(value) => {
-                                    this.props.modificaFilterStr(value);
-                                    this.props.modificaFilterLoad(true);
-                                }}
-                                onClear={() => this.props.modificaFilterStr('')}
-                                placeholder='Buscar data...' 
-                            />
-                            { this.renderBasedFilterOrNot() }
-                        </Card>
-                        <View style={{ marginBottom: 30 }} />
-                    </View>
-                </ScrollView>
-            </View>
-        );
-    }
+    render = () => (
+        <View style={styles.viewPrinc}>
+            <ScrollView 
+                style={{ flex: 1 }} 
+                ref={(ref) => { this.scrollView = ref; }}
+                keyboardShouldPersistTaps={'handled'}
+            >
+                <View>
+                    <Card 
+                        containerStyle={styles.card}
+                    >
+                        <SearchBar
+                            round
+                            lightTheme
+                            autoCapitalize={'none'}
+                            autoCorrect={false}
+                            clearIcon={!!this.state.filterStr}
+                            showLoadingIcon={
+                                this.state.listFina &&
+                                this.state.listFina.length > 0 && 
+                                this.state.filterLoad
+                            }
+                            containerStyle={{ 
+                                backgroundColor: 'transparent',
+                                borderTopWidth: 0, 
+                                borderBottomWidth: 0
+                            }}
+                            searchIcon={{ size: 26 }}
+                            value={this.state.filterStr}
+                            onChangeText={(value) => this.setState({
+                                filterStr: value,
+                                filterLoad: true
+                            })}
+                            onClear={() => this.setState({ filterStr: '' })}
+                            placeholder='Buscar data...' 
+                        />
+                        { this.renderBasedFilterOrNot() }
+                    </Card>
+                    <View style={{ marginBottom: 30 }} />
+                </View>
+            </ScrollView>
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
     viewPrinc: {
         flex: 1,
-        backgroundColor: colorAppF
+        backgroundColor: colorAppForeground
     },
     card: {
         paddingHorizontal: 10,
@@ -272,14 +300,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-    listFina: state.FinanceiroReducer.listFina,
-    filterStr: state.FinanceiroReducer.filterStr,
-    filterLoad: state.FinanceiroReducer.filterLoad,
+    grupoSelected: state.GruposReducer.grupoSelected,
     conInfo: state.LoginReducer.conInfo
 });
 
 export default connect(mapStateToProps, {
-    modificaFilterLoad,
-    modificaFilterStr,
-    modificaClean
-})(ProfileFinanceiro);
+})(GrupoFinanceiro);

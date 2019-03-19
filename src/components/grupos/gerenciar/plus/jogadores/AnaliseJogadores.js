@@ -7,11 +7,11 @@ import {
 import { connect } from 'react-redux';
 import { List, Button } from 'react-native-elements';
 //import { checkConInfo } from '../../../../utils/jogosUtils';
-import ListItem from '../../../tools/ListItem';
+import ListItem from '../../../../../tools/elements/ListItem';
 import AcumFaltas from './AcumFaltas';
 import {
     modificaShowModal,
-} from '../../../../actions/AnaliseJogadores';
+} from './AnaliseJogadoresActions';
 
 class AnaliseJogadores extends React.Component {
     constructor(props) {
@@ -22,31 +22,29 @@ class AnaliseJogadores extends React.Component {
         };
     }
 
-    render() {
-        return (
-            <View style={styles.viewPrinc}>
-                <List>
-                    <ListItem
-                        title='Acúmulo de faltas'
-                        subtitle={
-                            'Jogadores com faltas acumuladas por partidas seguidas.' +
-                            ' A contagem é zerada após a presença em uma partida recente.'
-                        }
-                        subtitleNumberOfLines={10}
-                        rightIcon={(
-                            <Button 
-                                title='Listar jogadores' 
-                                onPress={() => this.props.modificaShowModal(true)} 
-                            />
-                        )}
-                    />
-                </List>
-                <AcumFaltas 
-                    showModal={this.props.showModal}
+    render = () => (
+        <View style={styles.viewPrinc}>
+            <List>
+                <ListItem
+                    title='Acúmulo de faltas'
+                    subtitle={
+                        'Jogadores com faltas acumuladas por partidas seguidas.' +
+                        ' A contagem é zerada após a presença em uma partida recente.'
+                    }
+                    subtitleNumberOfLines={10}
+                    rightIcon={(
+                        <Button 
+                            title='Listar jogadores' 
+                            onPress={() => this.props.modificaShowModal(true)} 
+                        />
+                    )}
                 />
-            </View>
-        );
-    }
+            </List>
+            <AcumFaltas 
+                showModal={this.props.showModal}
+            />
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -57,7 +55,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-    showModal: state.AnaliseJogadores.showModal
+    showModal: state.AnaliseJogadoresReducer.showModal
 });
 
 export default connect(mapStateToProps, {

@@ -10,37 +10,65 @@ import {
     Keyboard,
     Text
 } from 'react-native';
-import { SearchBar, List, Icon } from 'react-native-elements';
+import { SearchBar, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import {
     modificaShowModal,
     modificaFilterModalLoad,
     modificaFilterModalStr
-} from '../../../../actions/AnaliseJogadores';
+} from './AnaliseJogadoresActions';
 //import { checkConInfo } from '../../../../utils/jogosUtils';
 
-import perfilUserImg from '../../../../imgs/perfiluserimg.png';
-import { colorAppS } from '../../../../utils/constantes';
-import ListItem from '../../../tools/ListItem';
-import Card from '../../../tools/Card';
+import { colorAppSecondary } from '../../../../../utils/Constantes';
+import ListItem from '../../../../../tools/elements/ListItem';
+import Card from '../../../../../tools/elements/Card';
+import { retrieveUpdUserGroup } from '../../../../../utils/UserUtils';
 
 class AcumFaltas extends React.Component {
-
     constructor(props) {
         super(props);
 
-        this.closeModal = this.closeModal.bind(this);
-        this.onFilterUsuarios = this.onFilterUsuarios.bind(this);
-        this.renderListUsuarios = this.renderListUsuarios.bind(this);
-        this.renderBasedFilterOrNot = this.renderBasedFilterOrNot.bind(this);
+        this.fadeAnimValue = new Animated.Value(0);
 
         this.state = {
-            fadeAnimValue: new Animated.Value(0)
+            listUsuarios: []
         };
     }
 
-    onFilterUsuarios(usuarios, filterModalStr) {
+    componentDidMount = () => {
+        const { grupoSelected } = this.props;
+        if (grupoSelected && grupoSelected.key) {
+            const participantesKeys = _.map(
+                grupoSelected.participantes, 
+                partic => retrieveUpdUserGroup(partic.key, null, null, true)
+            );
+
+            this.setState({ listUsuarios: participantesKeys });
+        }
+    }
+
+    componentDidUpdate = (prevProps) => {
+        const { grupoSelected } = this.props;
+
+        if (grupoSelected && grupoSelected.key) {
+            const stateEqual = _.isEqual(
+                prevProps.grupoSelected.participantes, 
+                grupoSelected.participantes
+            );
+    
+            if (!stateEqual) {
+                const participantesKeys = _.map(
+                    grupoSelected.participantes, 
+                    partic => retrieveUpdUserGroup(partic.key, null, null, true)
+                );
+    
+                this.setState({ listUsuarios: participantesKeys });
+            }
+        }
+    }
+
+    onFilterUsuarios = (usuarios, filterModalStr) => {
         const lowerFilter = filterModalStr.toLowerCase();
         return _.filter(usuarios, (usuario) => (
                 (usuario.email && usuario.email.toLowerCase().includes(lowerFilter)) ||
@@ -57,9 +85,9 @@ class AcumFaltas extends React.Component {
         ));
     }
 
-    closeModal() {
+    closeModal = () => {
         Animated.timing(
-            this.state.fadeAnimValue,
+            this.fadeAnimValue,
             {
                 toValue: 0,
                 duration: 200
@@ -69,7 +97,7 @@ class AcumFaltas extends React.Component {
         });
     }
 
-    renderListUsuarios(usuarios) {
+    renderListUsuarios = (usuarios) => {
         let usuariosView = null;
 
         if (usuarios.length) {
@@ -80,7 +108,7 @@ class AcumFaltas extends React.Component {
             const newSortedUsers = _.orderBy(filtredByUserLogged, ['faltas'], ['desc']);
             usuariosView = (
                 newSortedUsers.map((item, index) => {
-                    const imgAvt = item.imgAvatar ? { uri: item.imgAvatar } : perfilUserImg;
+                    const imgAvt = item.imgAvatar ? { uri: item.imgAvatar } : { uri: '' };
                     return (
                         <View
                             key={index}
@@ -112,7 +140,7 @@ class AcumFaltas extends React.Component {
                                     >
                                         <Text 
                                             style={{ 
-                                                color: colorAppS, 
+                                                color: colorAppSecondary, 
                                                 fontWeight: '500',
                                                 textAlign: 'center' 
                                             }}
@@ -137,7 +165,7 @@ class AcumFaltas extends React.Component {
                                     >
                                         <Text 
                                             style={{ 
-                                                color: colorAppS, 
+                                                color: colorAppSecondary, 
                                                 fontWeight: '500',
                                                 textAlign: 'center' 
                                             }}
@@ -174,8 +202,9 @@ class AcumFaltas extends React.Component {
         return usuariosView;
     }
 
-    renderBasedFilterOrNot() {
-        const { listUsuarios, filterModalStr } = this.props;
+    renderBasedFilterOrNot = () => {
+        const { listUsuarios } = this.state;
+        const { filterModalStr } = this.props;
         let usuariosView = null;
         if (listUsuarios) {
             if (filterModalStr) {
@@ -189,120 +218,118 @@ class AcumFaltas extends React.Component {
         return usuariosView;
     }
 
-    render() {
-        return (
-            <Modal
-                animationType="slide"
-                transparent
-                visible={this.props.showModal}
-                supportedOrientations={['portrait']}
-                onRequestClose={() => this.closeModal()}
-                onShow={() =>
-                    Animated.timing(
-                        this.state.fadeAnimValue,
-                        {
-                            toValue: 0.5,
-                            duration: 800
-                        }
-                    ).start()
-                }
+    render = () => (
+        <Modal
+            animationType="slide"
+            transparent
+            visible={this.props.showModal}
+            supportedOrientations={['portrait']}
+            onRequestClose={() => this.closeModal()}
+            onShow={() =>
+                Animated.timing(
+                    this.fadeAnimValue,
+                    {
+                        toValue: 0.5,
+                        duration: 800
+                    }
+                ).start()
+            }
+        >
+            <TouchableWithoutFeedback
+                onPress={() => this.closeModal()}
             >
-                <TouchableWithoutFeedback
-                    onPress={() => this.closeModal()}
+                <Animated.View
+                    style={{
+                        flex: 1,
+                        backgroundColor: this.fadeAnimValue.interpolate({
+                            inputRange: [0, 0.5],
+                            outputRange: ['rgba(0,0,0,0)', 'rgba(0,0,0,0.5)']
+                        })
+                    }}
                 >
-                    <Animated.View
-                        style={{
-                            flex: 1,
-                            backgroundColor: this.state.fadeAnimValue.interpolate({
-                                inputRange: [0, 0.5],
-                                outputRange: ['rgba(0,0,0,0)', 'rgba(0,0,0,0.5)']
-                            })
+                    <TouchableWithoutFeedback
+                        onPress={() => {
+                            Keyboard.dismiss();
+                            this.closeModal();
                         }}
                     >
-                        <TouchableWithoutFeedback
-                            onPress={() => {
-                                Keyboard.dismiss();
-                                this.closeModal();
-                            }}
-                        >
-                            <View style={styles.viewPricinp} >
-                                <TouchableWithoutFeedback
-                                    onPress={() => Keyboard.dismiss()}
-                                >  
-                                    <Card containerStyle={styles.card}>
-                                        <View 
-                                            style={{ 
-                                                flexDirection: 'row', 
-                                                justifyContent: 'flex-end' 
+                        <View style={styles.viewPricinp} >
+                            <TouchableWithoutFeedback
+                                onPress={() => Keyboard.dismiss()}
+                            >  
+                                <Card containerStyle={styles.card}>
+                                    <View 
+                                        style={{ 
+                                            flexDirection: 'row', 
+                                            justifyContent: 'flex-end' 
+                                        }}
+                                    >
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                Keyboard.dismiss();
+                                                this.closeModal();
                                             }}
-                                        >
-                                            <TouchableOpacity
-                                                onPress={() => {
-                                                    Keyboard.dismiss();
-                                                    this.closeModal();
+                                        >   
+                                            <View 
+                                                style={{  
+                                                    alignItems: 'flex-end',  
                                                 }}
-                                            >   
-                                                <View 
-                                                    style={{  
-                                                        alignItems: 'flex-end',  
-                                                    }}
-                                                >
-                                                    <Icon
-                                                        name='close-box-outline' 
-                                                        type='material-community' 
-                                                        size={28} color='black'
-                                                        iconStyle={{ opacity: 0.8, margin: 5 }}
-                                                    />
-                                                </View>
-                                            </TouchableOpacity>
-                                        </View>
-                                        <SearchBar
-                                            round
-                                            lightTheme
-                                            autoCapitalize={'none'}
-                                            autoCorrect={false}
-                                            clearIcon={!!this.props.filterModalStr}
-                                            showLoadingIcon={
-                                                this.props.listUsuarios &&
-                                                this.props.listUsuarios.length > 0 && 
-                                                this.props.filterModalLoad
-                                            }
-                                            containerStyle={{ 
-                                                backgroundColor: 'transparent',
-                                                borderTopWidth: 0, 
-                                                borderBottomWidth: 0
-                                            }}
-                                            searchIcon={{ size: 26 }}
-                                            value={this.props.filterModalStr}
-                                            onChangeText={(value) => {
-                                                this.props.modificaFilterModalStr(value);
-                                                this.props.modificaFilterModalLoad(true);
-                                            }}
-                                            onClear={() => this.props.modificaFilterModalStr('')}
-                                            placeholder='Buscar jogador...' 
-                                        />
-                                        <TouchableWithoutFeedback>
-                                            <View style={{ height: '72%' }}>
-                                                <ScrollView
-                                                    keyboardShouldPersistTaps={'never'}
-                                                    style={{ flex: 1 }}
-                                                    contentContainerStyle={{
-                                                        flexGrow: 1
-                                                    }}
-                                                >
-                                                    { this.renderBasedFilterOrNot() }
-                                                </ScrollView>
+                                            >
+                                                <Icon
+                                                    name='close-box-outline' 
+                                                    type='material-community' 
+                                                    size={28} color='black'
+                                                    iconStyle={{ opacity: 0.8, margin: 5 }}
+                                                />
                                             </View>
-                                        </TouchableWithoutFeedback>
-                                    </Card>
-                                </TouchableWithoutFeedback>
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </Animated.View>
-                </TouchableWithoutFeedback>
-            </Modal>
-        );
-    }
+                                        </TouchableOpacity>
+                                    </View>
+                                    <SearchBar
+                                        round
+                                        lightTheme
+                                        autoCapitalize={'none'}
+                                        autoCorrect={false}
+                                        clearIcon={!!this.props.filterModalStr}
+                                        showLoadingIcon={
+                                            this.state.listUsuarios &&
+                                            this.state.listUsuarios.length > 0 && 
+                                            this.props.filterModalLoad
+                                        }
+                                        containerStyle={{ 
+                                            backgroundColor: 'transparent',
+                                            borderTopWidth: 0, 
+                                            borderBottomWidth: 0
+                                        }}
+                                        searchIcon={{ size: 26 }}
+                                        value={this.props.filterModalStr}
+                                        onChangeText={(value) => {
+                                            this.props.modificaFilterModalStr(value);
+                                            this.props.modificaFilterModalLoad(true);
+                                        }}
+                                        onClear={() => this.props.modificaFilterModalStr('')}
+                                        placeholder='Buscar jogador...' 
+                                    />
+                                    <TouchableWithoutFeedback>
+                                        <View style={{ height: '72%' }}>
+                                            <ScrollView
+                                                keyboardShouldPersistTaps={'never'}
+                                                style={{ flex: 1 }}
+                                                contentContainerStyle={{
+                                                    flexGrow: 1
+                                                }}
+                                            >
+                                                { this.renderBasedFilterOrNot() }
+                                            </ScrollView>
+                                        </View>
+                                    </TouchableWithoutFeedback>
+                                </Card>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    </TouchableWithoutFeedback>
+                </Animated.View>
+            </TouchableWithoutFeedback>
+        </Modal>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -322,10 +349,10 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-    listUsuarios: state.UsuariosReducer.listUsuarios,
-    filterModalStr: state.AnaliseJogadores.filterModalStr,
-    filterModalLoad: state.AnaliseJogadores.filterModalLoad,
-    userLogged: state.LoginReducer.userLogged
+    filterModalStr: state.AnaliseJogadoresReducer.filterModalStr,
+    filterModalLoad: state.AnaliseJogadoresReducer.filterModalLoad,
+    userLogged: state.LoginReducer.userLogged,
+    grupoSelected: state.GruposReducer.grupoSelected
 });
 
 export default connect(mapStateToProps, { 

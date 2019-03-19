@@ -1,10 +1,11 @@
 import React from 'react';
 import { 
     View,
+    Text,
+    Alert,
+    Platform,
     ScrollView, 
     StyleSheet,
-    Text,
-    Platform,
     TouchableOpacity
 } from 'react-native';
 
@@ -150,14 +151,25 @@ class Admin extends React.Component {
                             </View>
                         </Card>
                     </TouchableOpacity>
-                    <View 
+                    <TouchableOpacity 
                         style={{ flex: 1 }} 
                         onPress={
-                            () => Actions.adminEnquetes(
+                            () => Alert.alert('Em desenvolvimento.')/* Actions.adminParams(
                                 { onBack: () => Actions.popTo('ownerMenuAdmin') }
-                            )
+                            ) */
                         }
-                    />
+                    >
+                        <Card 
+                            containerStyle={{ flex: 1 }}
+                            wrapperStyle={{ flex: 1 }}
+                        >
+                            <View style={styles.viewIconText}>
+                                <Icon name='settings' type='material-community' size={34} />
+                                <View style={{ marginTop: 10 }} />
+                                <Text style={styles.text}>Configurações</Text>
+                            </View>
+                        </Card>
+                    </TouchableOpacity>
                 </View>
                 <View style={{ marginBottom: 100 }} />
             </ScrollView>
