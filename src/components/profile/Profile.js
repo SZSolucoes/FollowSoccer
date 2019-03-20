@@ -17,7 +17,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import { Dialog } from 'react-native-simple-dialogs';
 import ParallaxMenuView from '../../tools/parallaxmenuview/ParallaxMenuView';
 import { showAlert, mappedKeyStorage } from '../../utils/Storage';
-import { colorAppPrimary, colorAppSecondary } from '../../utils/Constantes';
+import { colorAppPrimary, colorAppSecondary, APP_VERSION } from '../../utils/Constantes';
 import firebase from '../../utils/Firebase';
 import { checkConInfo } from '../../utils/SystemEvents';
 import { modifyCleanLogin } from '../login/LoginActions';
@@ -206,14 +206,14 @@ class Profile extends React.Component {
                             onPress={() => Actions.profileEditPerfil()}
                         />
                         <ListItem
-                            key={'Notificações'}
-                            title={'Notificações'}
-                            leftIcon={{ name: 'bell', type: 'material-community' }}
+                            key={'Modalidades'}
+                            title={'Modalidades'}
+                            leftIcon={{ name: 'gamepad', type: 'material-community' }}
                             titleStyle={{ 
                                 fontFamily: 'OpenSans-Regular', 
                                 color: 'black'
                             }}
-                            onPress={() => Actions.profileNotifiations()}
+                            onPress={() => Actions.profileModalidades()}
                         />
                         <ListItem
                             key={'Preferências'}
@@ -250,6 +250,9 @@ class Profile extends React.Component {
                     animationType={'fade'}
                     visible={this.state.showAbout}
                     title={'FollowSoccer'}
+                    titleStyle={{
+                        fontFamily: 'OpenSans-SemiBold'
+                    }}
                     onTouchOutside={() => this.setState({ showAbout: false })}
                 >
                     <View 
@@ -261,13 +264,13 @@ class Profile extends React.Component {
                     >
                         <View style={{ marginVertical: 20, flexDirection: 'row' }}>
                             <View style={{ marginHorizontal: 10 }}>
-                                <Text style={{ fontSize: 16, color: 'black' }}>
+                                <Text style={styles.versionBtn}>
                                     Versão:
                                 </Text>
                             </View>
                             <View style={{ marginHorizontal: 10 }}>
-                                <Text style={{ fontSize: 16, color: 'black' }}>
-                                    1.0.0
+                                <Text style={styles.versionBtn}>
+                                    {APP_VERSION}
                                 </Text>
                             </View>
                         </View>
@@ -292,6 +295,11 @@ const styles = StyleSheet.create({
     viewPrinc: {
         flex: 1,
         backgroundColor: '#EEEEEE'
+    },
+    versionBtn: {
+        fontSize: 16,
+        fontFamily: 'OpenSans-Regular',
+        color: 'black'
     }
 });
 

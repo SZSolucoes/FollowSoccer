@@ -11,6 +11,8 @@ export const colorAppTertiary = '#8F742E';
 export const colorAppForeground = '#DCE0E4';
 export const colorAppDark = '#2E3238';
 
+export const APP_VERSION = '1.0.0';
+
 export const BACKENDHOST = 'http://192.168.0.148:8014/';
 
 export const ASSETSTYPES = {
@@ -275,6 +277,10 @@ export const ERROS = {
     enqueteVoting: {
         erro: 'Erro #0050',
         mes: 'Ocorreu um erro na votação. Verifique a conexão.'
+    },
+    profileModaliSave: {
+        erro: 'Erro #0051',
+        mes: 'Falha ao salvar as alterações. Verifique a conexão.'
     }
 
 };

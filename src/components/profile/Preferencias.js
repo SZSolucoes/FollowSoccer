@@ -7,22 +7,20 @@ import {
 
 import { connect } from 'react-redux';
 import { CheckBox, List } from 'react-native-elements';
-import { checkConInfo } from '../../utils/jogosUtils';
-import { mappedKeyStorage } from '../../utils/store';
+import { checkConInfo } from '../../utils/SystemEvents';
+import { mappedKeyStorage } from '../../utils/Storage';
 import ListItem from '../../tools/elements/ListItem';
 
 class Preferencias extends React.Component {
     constructor(props) {
         super(props);
 
-        this.onPressCheck = this.onPressCheck.bind(this);
-
         this.state = {
             loginAutomaticoEnabled: false
         };
     }
 
-    componentDidMount() {
+    componentDidMount = () => {
         AsyncStorage
         .getItem(mappedKeyStorage('loginAutomaticoEnabled')).then((value) => {
             if (value && value === 'yes') {
@@ -31,7 +29,7 @@ class Preferencias extends React.Component {
         });
     }
 
-    onPressCheck(checkName) {
+    onPressCheck = (checkName) => {
         if (checkName === 'loginautomatico') {
             if (this.state.loginAutomaticoEnabled) {
                 AsyncStorage
@@ -47,7 +45,7 @@ class Preferencias extends React.Component {
         }
     }
 
-    render() {
+    render = () => {
         return (
             <View style={styles.viewPrinc}>
                 <List>

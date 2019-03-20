@@ -32,7 +32,7 @@ const optionsEsporte = [
 const optionsEsporteTipo = {
     Futebol: [
         'Campo',
-        'Societ',
+        'Society',
         'Futsal'
     ]
 };
@@ -113,6 +113,7 @@ class CreateGroup extends React.Component {
         // Gravacao de dados no firebase
         const dbGruposRef = this.fbDatabaseRef.child('grupos');
         const fbUsuarioRef = this.fbDatabaseRef.child(`usuarios/${userLogged.key}`);
+        const fbUsuarioGrupoRef = this.fbDatabaseRef.child(`usuarios/${userLogged.key}/grupos`);
         const dataAtual = Moment().format('DD/MM/YYYY HH:mm:ss');
         const twofirstKey = userLogged.key.slice(0, 2);
         const twoLastKey = userLogged.key.slice(-2);
@@ -153,8 +154,8 @@ class CreateGroup extends React.Component {
 
                 if (snapVal) {
                     const newGroup = { [keyGroup]: { groupKey: keyGroup } };
-                    const retA = await fbUsuarioRef.update({
-                        grupos: newGroup
+                    const retA = await fbUsuarioGrupoRef.update({
+                        ...newGroup
                     }).then(() => true).catch(() => false);
 
                     if (retA) {

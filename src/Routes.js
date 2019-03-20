@@ -80,6 +80,8 @@ import JogoH from './components/grupos/gerenciar/plus/historico/JogoH';
 import EscalacaoH from './components/grupos/gerenciar/plus/historico/EscalacaoH';
 import AusentesH from './components/grupos/gerenciar/plus/historico/AusentesH';
 import Mural from './components/grupos/gerenciar/plus/mural/Mural';
+import Preferencias from './components/profile/Preferencias';
+import Modalidades from './components/profile/esportes/Modalidades';
 
 const AnimatedSceneComp = Animated.createAnimatedComponent(AnimatedScene);
 
@@ -990,6 +992,24 @@ class Routes extends React.Component {
                     key={'mural'}
                     title={'Mural'}
                     component={Mural}
+                    titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'profilePreferencias'}
+                    title={'Preferências'}
+                    component={Preferencias}
+                    titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'profileModalidades'}
+                    title={'Modalidades'}
+                    component={Modalidades}
                     titleStyle={styles.title}
                     leftButtonTextStyle={styles.btLeft}
                     backButtonTintColor={'white'}

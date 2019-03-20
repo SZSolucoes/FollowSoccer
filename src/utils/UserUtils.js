@@ -2,6 +2,12 @@ import _ from 'lodash';
 import firebase from './Firebase';
 import { store } from '../App';
 
+const POSICAO_KEY = {
+    campo: 'posicaoFutebolCampo',
+    society: 'posicaoFutebolSociety',
+    futsal: 'posicaoFutebolFutsal',
+};
+
 export const usuarioAttr = {
     userDisabled: 'false',
     email: '',
@@ -29,6 +35,9 @@ export const usuarioAttr = {
     cartoesAmarelos: '0',
     cartoesVermelhos: '0',
     posicao: '',
+    posicaoFutebolCampo: '',
+    posicaoFutebolSociety: '',
+    posicaoFutebolFutsal: '',
     userNotifToken: '',
     infoImgUpdated: 'true', 
     jogosImgUpdated: 'true',
@@ -427,12 +436,29 @@ export const updateUserDB = (
 
 export const retrieveUpdUserGroup = (userKey, objKey, obj, fullObj = false) => {
     if (userKey) {
-        const grupoParticipantes = store.getState().GruposReducer.grupoParticipantes;
+        const gruposReducer = store.getState().GruposReducer;
+        const grupoParticipantes = gruposReducer.grupoParticipantes;
+        const grupoSelected = gruposReducer.grupoSelected;
 
         if (grupoParticipantes && grupoParticipantes.length) {
                 const userFounded = _.find(grupoParticipantes, ita => ita.key === userKey);
 
                 if (fullObj) return { ...userFounded };
+
+                if (objKey === 'posicao' && userFounded) {
+                    let posicao = 'posicao';
+    
+                    if (
+                        grupoSelected && 
+                        grupoSelected.key && 
+                        grupoSelected.esporte === 'Futebol'
+                        ) {
+                        posicao = POSICAO_KEY[grupoSelected.tipo.toLowerCase()];
+                    }
+
+                    return userFounded[posicao];
+                }
+
                 if (userFounded) return userFounded[objKey];
         }
     }

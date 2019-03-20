@@ -1,0 +1,119 @@
+{
+    "campo": [
+        {
+            "value": "Goleiro"
+        },
+        {
+            "value": "Zagueiro"
+        },
+        {
+            "value": "Lateral"
+        },
+        {
+            "value": "Lateral esquerdo"
+        },
+        {
+            "value": "Lateral direito"
+        },
+        {
+            "value": "Ala"
+        },
+        {
+            "value": "Ala esquerdo"
+        },
+        {
+            "value": "Ala direito"
+        },
+        {
+            "value": "Volante"
+        },
+        {
+            "value": "Meia"
+        },
+        {
+            "value": "Meia defensivo"
+        },
+        {
+            "value": "Meia ofensivo"
+        },
+        {
+            "value": "Armador"
+        },
+        {
+            "value": "Atacante"
+        },
+        {
+            "value": "Ponta"
+        },
+        {
+            "value": "Centro-avante"
+        },
+        {
+            "value": "Técnico"
+        }
+    ],
+    "society": [
+        {
+            "value": "Goleiro"
+        },
+        {
+            "value": "Zagueiro"
+        },
+        {
+            "value": "Lateral"
+        },
+        {
+            "value": "Lateral esquerdo"
+        },
+        {
+            "value": "Lateral direito"
+        },
+        {
+            "value": "Meia"
+        },
+        {
+            "value": "Meia defensivo"
+        },
+        {
+            "value": "Meia ofensivo"
+        },
+        {
+            "value": "Atacante"
+        },
+        {
+            "value": "Técnico"
+        }
+    ],
+    "futsal": [
+        {
+            "value": "Goleiro"
+        },
+        {
+            "value": "Fixo"
+        },
+        {
+            "value": "Ala"
+        },
+        {
+            "value": "Ala esquerdo"
+        },
+        {
+            "value": "Ala direito"
+        },
+        {
+            "value": "Marcador"
+        },
+        {
+            "value": "Passador"
+        },
+        {
+            "value": "Armador"
+        },
+        {
+            "value": "Finalizador"
+        },
+        {
+            "value": "Técnico"
+        }
+    ]
+}
