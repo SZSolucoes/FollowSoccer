@@ -29,7 +29,11 @@ class SoccerUserParams extends React.Component {
             showCampoPosIconSuccess: false,
             showCampoPosIconError: false,
             loadingSocietyPos: false,
+            showSocietyPosIconSuccess: false,
+            showSocietyPosIconError: false,
             loadingFutsalPos: false,
+            showFutsalPosIconSuccess: false,
+            showFutsalPosIconError: false,
             inputWidth: '99%'
         };
     }
@@ -70,12 +74,68 @@ class SoccerUserParams extends React.Component {
         }, 1000));
     }
 
-    onEditFormSocietyPos = () => {
+    onEditFormSocietyPos = (value) => {
+        this.setState({ 
+            loadingSocietyPos: true,
+            showSocietyPosIconSuccess: false,
+            showSocietyPosIconError: false
+        });
 
+        const { userLogged } = this.props;
+
+        this.dbFirebaseRef.child(`usuarios/${userLogged.key}`)
+        .update({ posicaoFutebolSociety: value })
+        .then(() => setTimeout(() => {
+            this.setState({ 
+                loadingSocietyPos: false,
+                showSocietyPosIconSuccess: true,
+                showSocietyPosIconError: false
+            });
+        }, 1000))
+        .catch(() => setTimeout(() => {
+            this.setState({ 
+                loadingSocietyPos: false,
+                showSocietyPosIconSuccess: false,
+                showSocietyPosIconError: true
+            });
+            showDropdownAlert(
+                'error',
+                ERROS.profileModaliSave.erro,
+                ERROS.profileModaliSave.mes
+            );
+        }, 1000));
     }
 
-    onEditFormFutsalPos = () => {
+    onEditFormFutsalPos = (value) => {
+        this.setState({ 
+            loadingFutsalPos: true,
+            showFutsalPosIconSuccess: false,
+            showFutsalPosIconError: false
+        });
 
+        const { userLogged } = this.props;
+
+        this.dbFirebaseRef.child(`usuarios/${userLogged.key}`)
+        .update({ posicaoFutebolFutsal: value })
+        .then(() => setTimeout(() => {
+            this.setState({ 
+                loadingFutsalPos: false,
+                showFutsalPosIconSuccess: true,
+                showFutsalPosIconError: false
+            });
+        }, 1000))
+        .catch(() => setTimeout(() => {
+            this.setState({ 
+                loadingFutsalPos: false,
+                showFutsalPosIconSuccess: false,
+                showFutsalPosIconError: true
+            });
+            showDropdownAlert(
+                'error',
+                ERROS.profileModaliSave.erro,
+                ERROS.profileModaliSave.mes
+            );
+        }, 1000));
     }
 
     renderCampoPref = () => (
@@ -181,7 +241,42 @@ class SoccerUserParams extends React.Component {
                 </Text>
             </View>
             <View style={{ marginTop: 5, marginBottom: 15 }}>
-                <FormLabel labelStyle={styles.textForm}>POSIÇÃO</FormLabel>
+                <View
+                    style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}
+                >
+                    <FormLabel 
+                        labelStyle={styles.textForm}
+                        containerStyle={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            marginVertical: 5
+                        }}
+                    >
+                        POSIÇÃO
+                    </FormLabel>
+                    {
+                        this.state.loadingSocietyPos &&
+                        <ActivityIndicator size={'small'} color={colorAppSecondary} />
+                    }
+                    {
+                        this.state.showSocietyPosIconSuccess &&
+                        <Icon 
+                            name='check' 
+                            type='material-community' 
+                            size={22} 
+                            color={colorAppSecondary} 
+                        />
+                    }
+                    {
+                        this.state.showSocietyPosIconError &&
+                        <Icon 
+                            name='alert-circle-outline' 
+                            type='material-community' 
+                            size={22}
+                            color={'red'}
+                        />
+                    }
+                </View>
                 <View 
                     style={[styles.inputContainer, {
                         flexDirection: 'row',
@@ -198,14 +293,17 @@ class SoccerUserParams extends React.Component {
                 >
                     <Dropdown
                         value={this.state.userLogged.posicaoFutebolSociety}
-                        onChangeText={(value) => this.setState(
-                            { 
-                                userLogged: { 
-                                    ...this.state.userLogged,
-                                    posicaoFutebolSociety: value
-                                } 
-                            }
-                        )}
+                        onChangeText={(value) => {
+                            this.setState(
+                                { 
+                                    userLogged: { 
+                                        ...this.state.userLogged,
+                                        posicaoFutebolSociety: value
+                                    } 
+                                }
+                            );
+                            checkConInfo(() => this.onEditFormSocietyPos(value));
+                        }}
                         fontSize={14}
                         style={[styles.textForm, styles.input]}
                         itemTextStyle={{ fontFamily: 'OpenSans-Regular' }}
@@ -236,7 +334,42 @@ class SoccerUserParams extends React.Component {
                 </Text>
             </View>
             <View style={{ marginTop: 5, marginBottom: 15 }}>
-                <FormLabel labelStyle={styles.textForm}>POSIÇÃO</FormLabel>
+                <View
+                    style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}
+                >
+                    <FormLabel 
+                        labelStyle={styles.textForm}
+                        containerStyle={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            marginVertical: 5
+                        }}
+                    >
+                        POSIÇÃO
+                    </FormLabel>
+                    {
+                        this.state.loadingFutsalPos &&
+                        <ActivityIndicator size={'small'} color={colorAppSecondary} />
+                    }
+                    {
+                        this.state.showFutsalPosIconSuccess &&
+                        <Icon 
+                            name='check' 
+                            type='material-community' 
+                            size={22} 
+                            color={colorAppSecondary} 
+                        />
+                    }
+                    {
+                        this.state.showFutsalPosIconError &&
+                        <Icon 
+                            name='alert-circle-outline' 
+                            type='material-community' 
+                            size={22}
+                            color={'red'}
+                        />
+                    }
+                </View>
                 <View 
                     style={[styles.inputContainer, {
                         flexDirection: 'row',
@@ -253,14 +386,17 @@ class SoccerUserParams extends React.Component {
                 >
                     <Dropdown
                         value={this.state.userLogged.posicaoFutebolFutsal}
-                        onChangeText={(value) => this.setState(
-                            { 
-                                userLogged: { 
-                                    ...this.state.userLogged,
-                                    posicaoFutebolFutsal: value
-                                } 
-                            }
-                        )}
+                        onChangeText={(value) => {
+                            this.setState(
+                                { 
+                                    userLogged: { 
+                                        ...this.state.userLogged,
+                                        posicaoFutebolFutsal: value
+                                    } 
+                                }
+                            );
+                            checkConInfo(() => this.onEditFormFutsalPos(value));
+                        }}
                         fontSize={14}
                         style={[styles.textForm, styles.input]}
                         itemTextStyle={{ fontFamily: 'OpenSans-Regular' }}
@@ -317,6 +453,7 @@ const styles = StyleSheet.create({
     },
     modalidadesText: {
         backgroundColor: colorAppSecondary,
+        marginHorizontal: 5,
         paddingVertical: 15,
         paddingHorizontal: 10,
     },

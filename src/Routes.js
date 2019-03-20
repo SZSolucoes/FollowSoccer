@@ -520,16 +520,14 @@ class Routes extends React.Component {
                             name='soccer'
                             type='material-community'
                         />
-                        { focused && 
                         <Text
                             style={{
                                 color: focused ? 'white' : 'black',
-                                fontWeight: 'bold',
-                                fontFamily: 'OpenSans-Regular'
+                                fontFamily: focused ? 'OpenSans-Bold' : 'OpenSans-SemiBold'
                             }}
                         >
                             Jogos
-                        </Text>}
+                        </Text>
                     </View>
                 )} 
             />
@@ -545,17 +543,15 @@ class Routes extends React.Component {
                             name='clipboard'
                             type='font-awesome'
                             size={22}
-                        />
-                        { focused && 
+                        /> 
                         <Text
                             style={{
                                 color: focused ? 'white' : 'black',
-                                fontWeight: 'bold',
-                                fontFamily: 'OpenSans-Regular'
+                                fontFamily: focused ? 'OpenSans-Bold' : 'OpenSans-SemiBold'
                             }}
                         >
-                            Info
-                        </Text>}
+                            Informativos
+                        </Text>
                     </View>
                 )} 
             />
@@ -571,16 +567,14 @@ class Routes extends React.Component {
                             name='google-analytics'
                             type='material-community'
                         />
-                        { focused && 
                         <Text
                             style={{
                                 color: focused ? 'white' : 'black',
-                                fontWeight: 'bold',
-                                fontFamily: 'OpenSans-Regular'
+                                fontFamily: focused ? 'OpenSans-Bold' : 'OpenSans-SemiBold'
                             }}
                         >
                             Mais
-                        </Text>}
+                        </Text>
                     </View>
                 )} 
             />

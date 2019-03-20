@@ -2,11 +2,12 @@
 import React from 'react';
 import { 
     View,
-    StyleSheet,
     Animated,
-    ActivityIndicator,
+    StyleSheet,
+    ScrollView,
+    AsyncStorage,
     TouchableOpacity,
-    AsyncStorage
+    ActivityIndicator
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -34,6 +35,7 @@ import firebase from '../../utils/Firebase';
 import AvatarSync from './AvatarSync';
 import Card from '../../tools/elements/Card';
 
+import ModalDetails from './ModalDetails';
 import { modificaGrupoSelected } from './GruposActions';
 import { mappedKeyStorage } from '../../utils/Storage';
 
@@ -92,7 +94,9 @@ class Grupos extends React.Component {
         this.state = {
             groups: [],
             loading: true,
-            showModalCodeGroup: false
+            showModalCodeGroup: false,
+            showModalDetails: false,
+            grupoSelectedToDetails: {}
         };
     }
 
@@ -244,9 +248,9 @@ class Grupos extends React.Component {
                             );
 
                             const newState = [...this.state.groups];
-
+                            
                             if (indexF !== -1) {
-                                newState[indexF] = { key: element.groupKey, ...snapVal };
+                                newState.splice(indexF, 1, { key: element.groupKey, ...snapVal });
                             } else {
                                 newState.push({ key: element.groupKey, ...snapVal });
                             }
@@ -333,7 +337,29 @@ class Grupos extends React.Component {
     }
 
     dataSourceControl = (grupos, filter) => {
-        let newGroups = _.reverse(grupos);
+        /* let newGroups = grupos.sort(
+            (a, b) => {
+
+                const aTime = Moment(a.dtcriacao, 'DD-MM-YYY HH:mm:ss');
+                const bTime = Moment(b.dtcriacao, 'DD-MM-YYY HH:mm:ss');
+                if (aTime.isAfter(bTime)) {
+                    console.log('after');
+                    return -1;
+                } 
+                if (aTime.isBefore(bTime)) {
+                    console.log('before');
+                    return 1;
+                } 
+               
+                return 0;  
+            }
+        ); */
+
+        let newGroups = _.orderBy(
+            grupos, 
+            [dt => Moment(dt.dtcriacao, 'DD-MM-YYYY HH:mm:ss')], 
+            ['desc']
+        );
         
         if (filter.trim()) {
             const toLowerSearchValue = filter.trim().toLowerCase();
@@ -424,8 +450,10 @@ class Grupos extends React.Component {
 
         if (participantes.length) {
             viewParticipantes = (
-                <View 
-                    style={{ 
+                <ScrollView
+                    horizontal
+                    contentContainerStyle={{
+                        flexGrow: 1,
                         flexDirection: 'row', 
                         alignItems: 'center', 
                         justifyContent: 'center',
@@ -434,13 +462,21 @@ class Grupos extends React.Component {
                 >
                     {
                         _.map(participantes, (mprtc, index) => (
-                            <AvatarSync
+                            <View
                                 key={index}
-                                keyUser={mprtc.key}
-                            />
+                                style={{ 
+                                    flex: 1,
+                                    alignItems: 'center', 
+                                    justifyContent: 'center'
+                                }}
+                            >
+                                <AvatarSync
+                                    keyUser={mprtc.key}
+                                />
+                            </View>
                         ))
                     }
-                </View>
+                </ScrollView>
             );
         }
 
@@ -498,6 +534,22 @@ class Grupos extends React.Component {
                                         right: rightView
                                     }), 500);
                                 }}
+                            />
+                            <Button
+                                backgroundColor={colorAppSecondary}
+                                buttonStyle={{
+                                    marginTop: 5,
+                                    borderRadius: 0, 
+                                    marginLeft: 0, 
+                                    marginRight: 0, 
+                                    marginBottom: 0
+                                }}
+                                title='DETALHES'
+                                fontFamily='OpenSans-SemiBold'
+                                onPress={() => this.setState({
+                                    grupoSelectedToDetails: item,
+                                    showModalDetails: true
+                                })}
                             />
                         </View>
                     </View>
@@ -575,6 +627,13 @@ class Grupos extends React.Component {
                     hint={'Código do grupo'}
                     cancelText={'Cancelar'}
                     submitText={'Confirmar'}
+                />
+                <ModalDetails
+                    showModal={this.state.showModalDetails}
+                    closeModalToggle={
+                        () => this.setState({ showModalDetails: !this.state.showModalDetails })
+                    }
+                    grupoSelectedToDetails={this.state.grupoSelectedToDetails}
                 />
             </View>
         )

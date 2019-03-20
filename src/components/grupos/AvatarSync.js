@@ -6,6 +6,8 @@ export default class AvatarSync extends React.Component {
     constructor(props) {
         super(props);
 
+        this.dbFirebaseRef = firebase.database().ref();
+
         this.state = {
             imgAvatar: null
         };
@@ -14,7 +16,7 @@ export default class AvatarSync extends React.Component {
     componentDidMount = () => {
         const { keyUser } = this.props;
 
-        const dbFirebaseChildRef = firebase.database().ref().child(`usuarios/${keyUser}`);
+        const dbFirebaseChildRef = this.dbFirebaseRef.child(`usuarios/${keyUser}`);
 
         dbFirebaseChildRef.once('value', snap => {
             if (snap) {
