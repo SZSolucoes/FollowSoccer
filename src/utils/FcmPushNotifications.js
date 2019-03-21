@@ -268,7 +268,7 @@ export const sendMuralPushNotifForTopic = (grupo) => {
                     to: k,
                     notification: {
                         title: `Grupo "${grupo.nome}"`,
-                        body: 'Mural! Foi realizado uma nova publicação no mural.',
+                        body: 'Mural! Foi realizada uma nova publicação no mural.',
                         show_in_foreground: true,
                         targetScreen: 'mural'
                     }, 

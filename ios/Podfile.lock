@@ -1,4 +1,45 @@
 PODS:
+  - Firebase (5.4.0):
+    - Firebase/Core (= 5.4.0)
+  - Firebase/Core (5.4.0):
+    - Firebase/CoreOnly
+    - FirebaseAnalytics (= 5.0.1)
+  - Firebase/CoreOnly (5.4.0):
+    - FirebaseCore (= 5.0.5)
+  - Firebase/Messaging (5.4.0):
+    - Firebase/CoreOnly
+    - FirebaseMessaging (= 3.0.3)
+  - FirebaseAnalytics (5.0.1):
+    - FirebaseCore (~> 5.0)
+    - FirebaseInstanceID (~> 3.0)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+    - nanopb (~> 0.3)
+  - FirebaseCore (5.0.5):
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+  - FirebaseInstanceID (3.1.1):
+    - FirebaseCore (~> 5.0)
+  - FirebaseMessaging (3.0.3):
+    - FirebaseCore (~> 5.0)
+    - FirebaseInstanceID (~> 3.0)
+    - GoogleToolboxForMac/Logger (~> 2.1)
+    - Protobuf (~> 3.1)
+  - GoogleToolboxForMac/Defines (2.1.4)
+  - GoogleToolboxForMac/Logger (2.1.4):
+    - GoogleToolboxForMac/Defines (= 2.1.4)
+  - "GoogleToolboxForMac/NSData+zlib (2.1.4)":
+    - GoogleToolboxForMac/Defines (= 2.1.4)
+  - nanopb (0.3.8):
+    - nanopb/decode (= 0.3.8)
+    - nanopb/encode (= 0.3.8)
+  - nanopb/decode (0.3.8)
+  - nanopb/encode (0.3.8)
+  - Protobuf (3.6.0)
+  - QBImagePickerController (3.4.0)
+  - React (0.57.8):
+    - React/Core (= 0.57.8)
+  - react-native-fcm (16.2.4):
+    - Firebase/Messaging
+    - React
   - React/ART (0.57.8):
     - React/Core
   - React/Core (0.57.8):
@@ -29,9 +70,25 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
+  - rn-fetch-blob (0.10.6):
+    - React/Core
+  - RNImageCropPicker (0.22.0):
+    - QBImagePickerController
+    - React/Core
+    - RSKImageCropper
+  - RNShare (1.1.3):
+    - React
+  - RNSVG (9.0.0):
+    - React
+  - RNVectorIcons (6.2.0):
+    - React
+  - RSKImageCropper (2.1.0)
   - yoga (0.57.8.React)
 
 DEPENDENCIES:
+  - Firebase
+  - Firebase/Messaging
+  - react-native-fcm (from `../node_modules/react-native-fcm`)
   - React/ART (from `../node_modules/react-native`)
   - React/Core (from `../node_modules/react-native`)
   - React/RCTActionSheet (from `../node_modules/react-native`)
@@ -44,18 +101,64 @@ DEPENDENCIES:
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
+  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
+  - RNShare (from `../node_modules/react-native-share`)
+  - RNSVG (from `../node_modules/react-native-svg`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga/yoga.podspec`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Firebase
+    - FirebaseAnalytics
+    - FirebaseCore
+    - FirebaseInstanceID
+    - FirebaseMessaging
+    - GoogleToolboxForMac
+    - nanopb
+    - Protobuf
+    - QBImagePickerController
+    - RSKImageCropper
 
 EXTERNAL SOURCES:
   React:
     :path: "../node_modules/react-native"
+  react-native-fcm:
+    :path: "../node_modules/react-native-fcm"
+  rn-fetch-blob:
+    :path: "../node_modules/rn-fetch-blob"
+  RNImageCropPicker:
+    :path: "../node_modules/react-native-image-crop-picker"
+  RNShare:
+    :path: "../node_modules/react-native-share"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
+  RNVectorIcons:
+    :path: "../node_modules/react-native-vector-icons"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga/yoga.podspec"
 
 SPEC CHECKSUMS:
+  Firebase: d66f4f29c23f22d96808d9abc174d81d8eee968f
+  FirebaseAnalytics: b3628aea54c50464c32c393fb2ea032566e7ecc2
+  FirebaseCore: 42b3267233bd21a5abd54117ccc38ca3dd0f8e83
+  FirebaseInstanceID: f3f0657372592ecdfdfe2cac604a5a75758376a6
+  FirebaseMessaging: f43eb0c0e1da096e659de6f713038e74862a62cd
+  GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
+  nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
+  Protobuf: 0fc0ad8bec688b2a3017a139953e01374fedbd5f
+  QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
+  react-native-fcm: 7de3ba1108aba709c3d2b4237594554eb5f6f026
+  rn-fetch-blob: 76a8f798dae965bbcd146a2438f2e1d381c91ae3
+  RNImageCropPicker: 32ca4b9fef4e1b7b85ba69494242122948117e06
+  RNShare: d875e8e37f3e5e8eb7a103ae01e06490af1796f6
+  RNSVG: 4834be1d644eb77f0e3f6de851881b83758a3124
+  RNVectorIcons: 8c52e1e8da1153613fdef44748e865c25556cb9c
+  RSKImageCropper: 0d0c6d8525a2381f03fde32a47c6703817a2feed
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: d91771399735396626afce9806f10d442cfba064
+PODFILE CHECKSUM: cfad4da632819e7a8d8567e7e4daa51e59c9b3a5
 
 COCOAPODS: 1.5.3

@@ -19,7 +19,7 @@ import { Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import { showDropdownAlert } from '../../utils/SystemEvents';
 
-import imgLogo from '../../assets/imgs/patinhasfclogo.png';
+import imgLogo from '../../assets/imgs/logo.png';
 import { colorAppPrimary, colorAppSecondary } from '../../utils/Constantes';
 
 import {
@@ -266,8 +266,7 @@ const styles = StyleSheet.create({
         width: 250,
         height: 240,
         marginBottom: 10,
-        resizeMode: 'stretch',
-        tintColor: 'black'
+        resizeMode: 'stretch'
     },
     loginBtn: {
         marginLeft: 50,

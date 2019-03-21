@@ -5,7 +5,6 @@ import {
     Animated,
     StyleSheet,
     ScrollView,
-    AsyncStorage,
     TouchableOpacity,
     ActivityIndicator
 } from 'react-native';
@@ -37,11 +36,11 @@ import Card from '../../tools/elements/Card';
 
 import ModalDetails from './ModalDetails';
 import { modificaGrupoSelected } from './GruposActions';
-import { mappedKeyStorage } from '../../utils/Storage';
 
 import imgSoccerGroup from '../../assets/imgs/soccergroup.jpg';
 import ModalCodeGroupInput from '../../tools/modalinput/ModalCodeGroupInput';
 import { showDropdownAlert, checkConInfo } from '../../utils/SystemEvents';
+import refreshTokenAndHour from '../../utils/Singletons';
 
 const floatBtnActions = [
     {
@@ -215,6 +214,7 @@ class Grupos extends React.Component {
 
     onInitializeListeners = () => {
         const { userLogged } = this.props;
+        let lastGroup = 0;
 
         // ######### FETCH GROUPS ################
         const filtredGroupKeys = _.filter(userLogged.grupos, ita => ita.groupKey);
@@ -239,9 +239,12 @@ class Grupos extends React.Component {
                     const dbGroupsRef = this.fbDatabaseRef
                     .child(`grupos/${element.groupKey}`);
                     
+                    // eslint-disable-next-line no-loop-func
                     dbGroupsRef.on('value', (snapshot) => {
                         const snapVal = snapshot ? snapshot.val() : null;
-            
+                        
+                        lastGroup++;
+
                         if (snapVal) {
                             const indexF = _.findIndex(
                                 this.state.groups, itb => itb.key === element.groupKey
@@ -255,7 +258,10 @@ class Grupos extends React.Component {
                                 newState.push({ key: element.groupKey, ...snapVal });
                             }
 
-                            this.setState({ groups: newState, loading: false });
+                            this.setState({ 
+                                groups: newState, 
+                                loading: !(lastGroup === numGroups)
+                            });
                         } else {
                             const indexF = _.findIndex(
                                 this.state.groups, itc => itc.key === element.groupKey
@@ -267,7 +273,10 @@ class Grupos extends React.Component {
                                 newState.splice(indexF, 1);
                             }
 
-                            this.setState({ groups: newState, loading: false });
+                            this.setState({ 
+                                groups: newState, 
+                                loading: !(lastGroup === numGroups)
+                            });
                         }
                     });
                     
@@ -281,7 +290,7 @@ class Grupos extends React.Component {
         }
 
         // ######### UPDATE TOKEN NOTIFICATION ################
-        const userNode = this.fbDatabaseRef.child(`usuarios/${userLogged.key}`);
+        /* const userNode = this.fbDatabaseRef.child(`usuarios/${userLogged.key}`);
             
         AsyncStorage.getItem(mappedKeyStorage('userNotifToken')).then((userNotifToken) => {
             const dataAtual = Moment().format('DD/MM/YYYY HH:mm:ss');
@@ -299,7 +308,8 @@ class Grupos extends React.Component {
                 .then(() => true)
                 .catch(() => true);
             }
-        });
+        }); */
+        refreshTokenAndHour.updateTokenAndHour(this.fbDatabaseRef, userLogged);
     }
 
     onChooseOptionFloatBtn = (btnName) => {

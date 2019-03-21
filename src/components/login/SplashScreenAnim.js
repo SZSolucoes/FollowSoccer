@@ -7,7 +7,7 @@ import {
     Easing
 } from 'react-native';
 
-import imgLogo from '../../assets/imgs/patinhasfclogo.png';
+import imgLogo from '../../assets/imgs/logo.png';
 
 export default class SplashScreenAnim extends React.Component {
     constructor(props) {

@@ -32,7 +32,7 @@ import { doEndGame } from './utils/JogosUtils';
 
 import imgFinishFlag from './assets/imgs/finishflag.png';
 
-//import SplashScreenAnim from './components/login/SplashScreenAnim';
+import SplashScreenAnim from './components/login/SplashScreenAnim';
 import MainDrawerMenu from './components/drawersmenu/MainDrawerMenu';
 
 import Login from './components/login/Login';
@@ -101,7 +101,7 @@ class Routes extends React.Component {
     }
 
     componentDidMount = () => {
-        //setTimeout(() => this.setState({ timingNotEnd: false }), 10000);
+        setTimeout(() => this.setState({ timingNotEnd: false }), 6000);
 
         this.checkLogin();
 
@@ -1053,11 +1053,11 @@ class Routes extends React.Component {
     )
 
     render = () => {
-        /* if (this.state.loading || this.state.timingNotEnd) {
+        if (this.state.loading || this.state.timingNotEnd) {
             return (
                 <SplashScreenAnim />
             );
-        } */
+        }
 
         return (
             <View style={{ flex: 1 }}>

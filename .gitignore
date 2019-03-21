@@ -57,3 +57,4 @@ buck-out/
 android/gradle.properties
 android/app/google-services.json
 src/utils/Firebase.js
+ios/FollowSoccer/GoogleService-Info.plist

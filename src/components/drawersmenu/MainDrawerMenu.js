@@ -13,7 +13,7 @@ import { colorAppSecondary, colorAppForeground } from '../../utils/Constantes';
 import { modifyMenuChoosed, modifyMenuClean } from './MainDrawerMenuActions';
 
 import { showDropdownAlert } from '../../utils/SystemEvents';
-import imgAvatar from '../../assets/imgs/patinhasfclogo.png';
+import imgAvatar from '../../assets/imgs/logo.png';
 import Avatar from '../../tools/elements/Avatar';
 import ListItem from '../../tools/elements/ListItem';
 
