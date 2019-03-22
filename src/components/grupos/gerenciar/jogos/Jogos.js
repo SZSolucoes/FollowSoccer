@@ -41,7 +41,6 @@ import { checkConInfo, showDropdownAlert } from '../../../../utils/SystemEvents'
 import { modificaGrupoSelected, modificaGrupoParticipantes } from '../../GruposActions';
 
 import imgCampoBackground from '../../../../assets/imgs/campojogos.png';
-import imgJogo from '../../../../assets/imgs/jogo.jpg';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
@@ -103,18 +102,22 @@ class Jogos extends React.Component {
     }
 
     componentDidMount = () => {
-        const { grupoSelected } = this.props;
+        const { grupoSelectedKey } = this.props;
 
         // LISTENER PARA ATUALIZACAO DO GRUPO
         this.fbGroupSelectedRef = this.fbDatabaseRef
-        .child(`grupos/${grupoSelected.key}`);
-
+        .child(`grupos/${grupoSelectedKey}`);
+        
         this.fbGroupSelectedRef.on('value', snap => {
             if (snap) {
                 const snapVal = snap.val();
 
                 if (snapVal) {
-                    this.props.modificaGrupoSelected({ key: snap.key, ...snapVal });
+                    const grupoSelected = { key: snap.key, ...snapVal };
+
+                    this.props.modificaGrupoSelected(grupoSelected);
+                    this.onInitializeListeners(grupoSelected);
+
                     return;
                 }
             }
@@ -143,74 +146,80 @@ class Jogos extends React.Component {
         if (this.fbGroupSelectedRef) this.fbGroupSelectedRef.off();
         
         this.removeFbListeners();
+
+        if (this.props.gruposListener) this.props.gruposListener();
     }
 
-    onInitializeListeners = () => {
+    onInitializeListeners = (grupoParam = false) => {
         const { grupoSelected } = this.props;
 
-        // ######### FETCH GROUPS ################
-        const filtredParticKeys = _.filter(grupoSelected.participantes, ita => ita.key);
-        const numPartics = filtredParticKeys.length;
+        const grupoFound = grupoParam || grupoSelected;
 
-        const newPartics = _.filter(this.props.grupoParticipantes, itd => {
-            if (_.findIndex(filtredParticKeys, itf => itf.key === itd.key) === -1) {
-                return false;
-            }
-
-            return true;
-        });
-
-        this.props.modificaGrupoParticipantes(newPartics);
-
-        if (numPartics) {
-            this.removeFbListeners();
-
-            const asyncFunExec = async () => {
-                for (let index = 0; index < numPartics; index++) {
-                    const element = filtredParticKeys[index];
-                    const dbParticRef = this.fbDatabaseRef
-                    .child(`usuarios/${element.key}`);
-                    
-                    dbParticRef.on('value', (snapshot) => {
-                        const snapVal = snapshot ? snapshot.val() : null;
-            
-                        if (snapVal) {
-                            const indexF = _.findIndex(
-                                this.props.grupoParticipantes, itb => itb.key === element.key
-                            );
-
-                            const newState = [...this.props.grupoParticipantes];
-
-                            if (indexF !== -1) {
-                                newState[indexF] = { key: element.key, ...snapVal };
-                            } else {
-                                newState.push({ key: element.key, ...snapVal });
-                            }
-
-                            this.props.modificaGrupoParticipantes(newState);
-                        } else {
-                            const indexF = _.findIndex(
-                                this.props.grupoParticipantes, itc => itc.key === element.key
-                            );
-
-                            const newState = [...this.props.grupoParticipantes];
-
-                            if (indexF !== -1) {
-                                newState.splice(indexF, 1);
-                            }
-
-                            this.props.modificaGrupoParticipantes(newState);
-                        }
-                    });
-                    
-                    this.firebaseUsersListeners.push({ 
-                        listener: dbParticRef, key: element.key
-                    });
+        if (grupoFound) {
+            // ######### FETCH GROUPS ################
+            const filtredParticKeys = _.filter(grupoFound.participantes, ita => ita.key);
+            const numPartics = filtredParticKeys.length;
+    
+            const newPartics = _.filter(this.props.grupoParticipantes, itd => {
+                if (_.findIndex(filtredParticKeys, itf => itf.key === itd.key) === -1) {
+                    return false;
                 }
-            };
-
-            asyncFunExec();
-        } 
+    
+                return true;
+            });
+    
+            this.props.modificaGrupoParticipantes(newPartics);
+    
+            if (numPartics) {
+                this.removeFbListeners();
+    
+                const asyncFunExec = async () => {
+                    for (let index = 0; index < numPartics; index++) {
+                        const element = filtredParticKeys[index];
+                        const dbParticRef = this.fbDatabaseRef
+                        .child(`usuarios/${element.key}`);
+                        
+                        dbParticRef.on('value', (snapshot) => {
+                            const snapVal = snapshot ? snapshot.val() : null;
+                
+                            if (snapVal) {
+                                const indexF = _.findIndex(
+                                    this.props.grupoParticipantes, itb => itb.key === element.key
+                                );
+    
+                                const newState = [...this.props.grupoParticipantes];
+    
+                                if (indexF !== -1) {
+                                    newState[indexF] = { key: element.key, ...snapVal };
+                                } else {
+                                    newState.push({ key: element.key, ...snapVal });
+                                }
+    
+                                this.props.modificaGrupoParticipantes(newState);
+                            } else {
+                                const indexF = _.findIndex(
+                                    this.props.grupoParticipantes, itc => itc.key === element.key
+                                );
+    
+                                const newState = [...this.props.grupoParticipantes];
+    
+                                if (indexF !== -1) {
+                                    newState.splice(indexF, 1);
+                                }
+    
+                                this.props.modificaGrupoParticipantes(newState);
+                            }
+                        });
+                        
+                        this.firebaseUsersListeners.push({ 
+                            listener: dbParticRef, key: element.key
+                        });
+                    }
+                };
+    
+                asyncFunExec();
+            } 
+        }
     }
 
     onChangeDimensions = () => {
@@ -525,7 +534,8 @@ class Jogos extends React.Component {
                                 borderRadius: 5,
                                 backgroundColor: color,
                                 marginTop: 5,
-                                paddingVertical: 2
+                                paddingVertical: 2,
+                                marginHorizontal: 5
                             }}
                         >
                             <CheckBox
@@ -596,7 +606,8 @@ class Jogos extends React.Component {
                                 borderRadius: 5,
                                 backgroundColor: colorA,
                                 marginTop: 5,
-                                paddingVertical: 2
+                                paddingVertical: 2,
+                                marginHorizontal: 5
                             }}
                         >
                             <CheckBox
@@ -632,6 +643,7 @@ class Jogos extends React.Component {
                             </Text>
                         </View>
                     </TouchableOpacity>
+                    <View style={{ marginBottom: 5 }} />
                 </View>
             );
         }
@@ -642,7 +654,6 @@ class Jogos extends React.Component {
     renderCardsJogos = ({ item, index }) => {
         const titulo = item.titulo ? item.titulo : ' ';
         const data = item.data ? item.data : ' ';
-        const imagem = item.imagem ? { uri: item.imagem } : imgJogo;
         const descricao = item.descricao ? item.descricao : ' ';
         const placarCasa = item.placarCasa ? item.placarCasa : '0'; 
         const placarVisit = item.placarVisit ? item.placarVisit : '0';
@@ -650,6 +661,8 @@ class Jogos extends React.Component {
         if (this.lastIndexListJogos === index) {
             setTimeout(() => this.props.modificaFilterLoad(false), 1000);
         }
+
+        const imageProps = item.imagem ? { image: { uri: item.imagem } } : {}
 
         return (
             <View>
@@ -660,7 +673,7 @@ class Jogos extends React.Component {
                     <Card 
                         title={titulo} 
                         containerStyle={[styles.card, styles.shadowCard]}
-                        image={imagem}
+                        {...imageProps}
                         featuredSubtitle={descricao}
                     >
                         {
@@ -913,7 +926,7 @@ const styles = StyleSheet.create({
         backgroundColor: colorAppForeground
     },
     card: {
-        padding: 0,
+        padding: 5,
         margin: 10,
         marginHorizontal: 10,
         marginVertical: 15,
@@ -945,6 +958,8 @@ const mapStateToProps = (state) => ({
     username: state.LoginReducer.username,
     password: state.LoginReducer.password,
     grupoSelected: state.GruposReducer.grupoSelected,
+    grupoSelectedKey: state.GruposReducer.grupoSelectedKey,
+    gruposListener: state.GruposReducer.gruposListener,
     grupoParticipantes: state.GruposReducer.grupoParticipantes,
     filterStr: state.JogosReducer.filterStr,
     loadingFooter: state.JogosReducer.loadingFooter,

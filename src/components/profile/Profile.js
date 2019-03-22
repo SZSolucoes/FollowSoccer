@@ -25,6 +25,8 @@ import { modifyCleanLogin } from '../login/LoginActions';
 import ListItem from '../../tools/elements/ListItem';
 import { stopFbListener } from '../../utils/FirebaseListeners';
 
+import imgUserBackground from '../../assets/imgs/userbackground.png';
+
 class Profile extends React.Component {
     constructor(props) {
         super(props);
@@ -161,7 +163,7 @@ class Profile extends React.Component {
         const { userLogged } = this.props;
         const userImg = userLogged.imgAvatar ? { uri: userLogged.imgAvatar } : { uri: '' };
         const imgBg = userLogged.imgBackground ? 
-            { uri: userLogged.imgBackground } : { uri: '' };
+            { uri: userLogged.imgBackground } : imgUserBackground;
         const username = userLogged.nome ? userLogged.nome : 'Patinhas';
 
         return (

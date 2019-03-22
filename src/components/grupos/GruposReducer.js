@@ -1,5 +1,7 @@
 const INITIAL_STATE = {
     grupoSelected: {},
+    grupoSelectedKey: '',
+    gruposListener: () => false,
     grupoParticipantes: []
 };
 
@@ -10,6 +12,16 @@ export default (state = INITIAL_STATE, action) => {
                 ...state, 
                 grupoSelected: { ...action.payload }
             };
+        case 'modifica_gruposelectedkey_grupos':
+            return { 
+                ...state, 
+                grupoSelectedKey: action.payload
+            };
+        case 'modifica_gruposlistener_grupos':
+            return { 
+                ...state, 
+                gruposListener: action.payload
+            };
         case 'modifica_grupoparticipantes_grupos':
             return { 
                 ...state, 
@@ -19,6 +31,8 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 grupoSelected: {},
+                grupoSelectedKey: '',
+                gruposListener: () => false,
                 grupoParticipantes: []
             };
         default:

@@ -353,7 +353,8 @@ class EditPerfil extends React.Component {
                                 { 
                                     userLogged: { 
                                         ...this.state.userLogged, 
-                                        estado: this.onValidField(value, 'estado') 
+                                        estado: this.onValidField(value, 'estado'),
+                                        cidade: ''
                                     } 
                                 }
                             )}
@@ -400,6 +401,8 @@ class EditPerfil extends React.Component {
                                 }
                             )}
                             fontSize={14}
+                            dropdownPosition={4}
+                            itemCount={10}
                             style={[styles.text, styles.input]}
                             itemTextStyle={{ fontFamily: 'OpenSans-Regular' }}
                             data={cidades}

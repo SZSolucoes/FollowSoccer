@@ -60,6 +60,7 @@ class Info extends React.Component {
     }
 
     onPressBack = (refresh = false) => {
+        const { grupoSelected } = this.props;
         this.scrollView.scrollTo({
             y: 0,
             duration: 0,
@@ -72,7 +73,8 @@ class Info extends React.Component {
                 idxMdl: 1,
                 refresh: true
             });
-            this.dbFirebaseRef.child('informativos').once('value', snap => {
+            this.dbFirebaseRef
+            .child(`grupos/${grupoSelected.key}/informativos`).once('value', snap => {
                 let snapVal = null;
                 if (snap) {
                     snapVal = snap.val();
@@ -101,7 +103,7 @@ class Info extends React.Component {
         try {
             const asyncFunExec = async () => {
                 const { grupoSelected } = this.props;
-        
+
                 const dbItemRef = this.dbFirebaseRef
                 .child(`grupos/${grupoSelected.key}/informativos/${item.key}`);
         
@@ -567,7 +569,7 @@ const mapStateToProps = (state) => ({
     filterStr: state.InfoReducer.filterStr,
     filterLoad: state.InfoReducer.filterLoad,
     conInfo: state.LoginReducer.conInfo,
-    grupoSelected: state.GerenciarReducer.grupoSelected
+    grupoSelected: state.GruposReducer.grupoSelected
 });
 
 export default connect(mapStateToProps, {

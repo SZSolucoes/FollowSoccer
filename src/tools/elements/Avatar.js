@@ -15,6 +15,8 @@ import {
 import { Icon, Text } from 'react-native-elements';
 import FastImage from 'react-native-fast-image';
 
+import imgUserAvatar from '../../assets/imgs/useravatar.png';
+
 const ViewPropTypes = RNViewPropTypes || View.propTypes;
 
 const DEFAULT_COLORS = ['#000', '#333', '#555', '#888', '#aaa', '#ddd'];
@@ -121,7 +123,7 @@ const Avatar = props => {
             rounded && { borderRadius: width / 2 },
             avatarStyle && avatarStyle,
           ]}
-          source={source}
+          source={source.uri ? source : imgUserAvatar}
           {...imageProps}
         />
       );
@@ -232,7 +234,7 @@ const defaultProps = {
     iconColor: '#fff',
     underlayColor: DEFAULT_COLORS[0],
     style: null,
-  },
+  }
 };
 
 Avatar.propTypes = {

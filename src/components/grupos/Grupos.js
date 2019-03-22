@@ -35,7 +35,11 @@ import AvatarSync from './AvatarSync';
 import Card from '../../tools/elements/Card';
 
 import ModalDetails from './ModalDetails';
-import { modificaGrupoSelected } from './GruposActions';
+import {
+    modificaGrupoSelected,
+    modificaGrupoSelectedKey,
+    modificaListenerGroups 
+} from './GruposActions';
 
 import imgSoccerGroup from '../../assets/imgs/soccergroup.jpg';
 import ModalCodeGroupInput from '../../tools/modalinput/ModalCodeGroupInput';
@@ -115,6 +119,8 @@ class Grupos extends React.Component {
                 }).start();
             }
         });
+
+        this.props.modificaListenerGroups(this.onInitializeListeners);
     }
 
     componentDidUpdate = (prevProps) => {
@@ -154,8 +160,7 @@ class Grupos extends React.Component {
 
                                 return;
                             }
-                            
-                            
+
                             ret = await snap.ref.child(`${snapKey[0]}/participantes`).update({
                                 [userLogged.key]: {
                                     imgAvatar: userLogged.imgAvatar,
@@ -539,7 +544,9 @@ class Grupos extends React.Component {
                                             </View>
                                         );
                                     }
-                                    this.props.modificaGrupoSelected(item);
+                                    this.props.modificaGrupoSelected({});
+                                    this.props.modificaGrupoSelectedKey(item.key);
+                                    this.removeFbListeners();
                                     setTimeout(() => Actions.gerenciarGrupo({
                                         right: rightView
                                     }), 500);
@@ -664,5 +671,7 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, {
-    modificaGrupoSelected 
+    modificaGrupoSelected,
+    modificaGrupoSelectedKey,
+    modificaListenerGroups
 })(Grupos);

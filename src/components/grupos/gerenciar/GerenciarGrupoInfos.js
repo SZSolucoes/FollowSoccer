@@ -18,11 +18,11 @@ class GerenciarGrupoInfos extends React.Component {
     }
 
     componentDidMount = () => {
-        const { grupoSelected } = this.props;
+        const { grupoSelectedKey } = this.props;
 
-        if (grupoSelected) {
+        if (grupoSelectedKey) {
             this.dbFirebaseChildRef = firebase
-            .database().ref().child(`grupos/${grupoSelected.key}/informativos`);
+            .database().ref().child(`grupos/${grupoSelectedKey}/informativos`);
     
             this.dbFirebaseChildRef.on('value', snap => {
                 if (snap) {
@@ -31,7 +31,7 @@ class GerenciarGrupoInfos extends React.Component {
                         const filtredVal = _.pickBy(snapVal, ita => !ita.push);
                         const mapped = _.map(
                             filtredVal, 
-                            (value, key) => ({ key, ...value, groupkey: grupoSelected.key })
+                            (value, key) => ({ key, ...value, groupkey: grupoSelectedKey })
                         );
                         this.setState({ 
                             listInfos: mapped
@@ -68,7 +68,7 @@ class GerenciarGrupoInfos extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-    grupoSelected: state.GruposReducer.grupoSelected
+    grupoSelectedKey: state.GruposReducer.grupoSelectedKey
 });
 
 export default connect(mapStateToProps)(GerenciarGrupoInfos);
