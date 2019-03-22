@@ -2,7 +2,8 @@ import React from 'react';
 import { 
     View,
     StyleSheet,
-    ScrollView
+    ScrollView,
+    AsyncStorage
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -12,15 +13,17 @@ import _ from 'lodash';
 import { colorAppSecondary, colorAppForeground } from '../../utils/Constantes';
 import { modifyMenuChoosed, modifyMenuClean } from './MainDrawerMenuActions';
 
-import { showDropdownAlert } from '../../utils/SystemEvents';
 import Avatar from '../../tools/elements/Avatar';
 import ListItem from '../../tools/elements/ListItem';
+import { modifyCleanLogin } from '../login/LoginActions';
+import { mappedKeyStorage } from '../../utils/Storage';
+import { stopFbListener } from '../../utils/FirebaseListeners';
 
 const CADGRUP = 'Grupos';
 const MINHPART = 'Partidas';
 const PERFIL = 'Perfil';
 const CONVITES = 'Convites';
-const SOBRE = 'Sobre';
+const SAIR = 'Sair';
 
 class MainDrawerMenu extends React.Component {
     constructor(props) {
@@ -35,6 +38,17 @@ class MainDrawerMenu extends React.Component {
 
     componentWillUnmount = () => {
         this.props.modifyMenuClean();
+    }
+
+    onPressLogout = () => {
+        AsyncStorage.removeItem(mappedKeyStorage('username'));
+        AsyncStorage.removeItem(mappedKeyStorage('password'));
+
+        this.props.modifyCleanLogin();
+
+        stopFbListener('usuario');
+
+        Actions.reset('login');
     }
 
     onMenuItemPress = (menuKey) => {
@@ -54,9 +68,6 @@ class MainDrawerMenu extends React.Component {
             case CONVITES:
                 setTimeout(() => this.props.modifyMenuChoosed(CONVITES), 500);
                 Actions.convites();
-                break;
-            case SOBRE:
-                this.props.modifyMenuChoosed(SOBRE);
                 break;
             default:
                 this.props.modifyMenuChoosed('');
@@ -271,8 +282,8 @@ class MainDrawerMenu extends React.Component {
                     >
                         <ListItem
                             hideChevron
-                            key={SOBRE}
-                            title={SOBRE}
+                            key={SAIR}
+                            title={SAIR}
                             containerStyle={{
                                 borderBottomWidth: 0
                             }}
@@ -285,7 +296,7 @@ class MainDrawerMenu extends React.Component {
                                 fontWeight: '400'
                             }}
                             leftIcon={{
-                                name: 'information',
+                                name: 'logout',
                                 type: 'material-community',
                                 size: 28,
                                 color: 'grey',
@@ -294,7 +305,7 @@ class MainDrawerMenu extends React.Component {
                                 }
                             }}
                             onPress={() => {
-                                showDropdownAlert();
+                                this.onPressLogout();
                             }}
                         />
                     </List>
@@ -317,6 +328,7 @@ const mapStateToProps = (state) => ({
 
 
 export default connect(mapStateToProps, {
+    modifyCleanLogin,
     modifyMenuChoosed,
     modifyMenuClean
 })(MainDrawerMenu);
