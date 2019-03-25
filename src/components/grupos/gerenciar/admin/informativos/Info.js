@@ -240,7 +240,7 @@ class Info extends React.Component {
             infosView = (
                 reverseInfos.map((item, index) => {
                     const imgAvt = item.imgAvatar ? { uri: item.imgAvatar } : { uri: '' };
-                    const nomeUser = item.nomeUser ? item.nomeUser : 'Patinhas';
+                    const nomeUser = item.nomeUser ? item.nomeUser : '';
                     const perfilUser = item.perfilUser ? item.perfilUser : 'Administrador';
                     return (
                         <View key={index}>

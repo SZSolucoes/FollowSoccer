@@ -524,7 +524,7 @@ class Informativos extends React.Component {
     
     renderInfos = ({ item, index }) => {
         const imgAvt = item.imgAvatar ? { uri: item.imgAvatar } : null;
-        const nomeUser = item.nomeUser ? item.nomeUser : 'Patinhas';
+        const nomeUser = item.nomeUser ? item.nomeUser : '';
         let perfilUser = item.perfilUser ? item.perfilUser : 'Administrador';
 
         if (this.lastIndexListInfos === index) {
@@ -697,7 +697,7 @@ class Informativos extends React.Component {
 
     render = () => {
         const { userLogged, listInfos } = this.props;
-        const userImg = userLogged.imgAvatar ? { uri: userLogged.imgAvatar } : null;
+        const userImg = userLogged.imgAvatar ? { uri: userLogged.imgAvatar } : { uri: '' };
         let dates = ['Todo o Período'];
 
         if (this.props.listInfos.length) {
@@ -765,7 +765,6 @@ class Informativos extends React.Component {
                                 <Avatar
                                     small
                                     rounded
-                                    title={'GO'}
                                     source={userImg}
                                     /* onPress={() => { 
                                         Keyboard.dismiss();

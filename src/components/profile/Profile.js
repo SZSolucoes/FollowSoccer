@@ -1,10 +1,11 @@
 import React from 'react';
 import { 
-    View, 
-    StyleSheet,
-    AsyncStorage,
+    Text,
+    View,
+    Alert,
     Dimensions,
-    Text
+    StyleSheet,
+    AsyncStorage
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -38,14 +39,29 @@ class Profile extends React.Component {
     }
 
     onPressLogout = () => {
-        AsyncStorage.removeItem(mappedKeyStorage('username'));
-        AsyncStorage.removeItem(mappedKeyStorage('password'));
+        const funExec = () => {
+            AsyncStorage.removeItem(mappedKeyStorage('username'));
+            AsyncStorage.removeItem(mappedKeyStorage('password'));
+    
+            this.props.modifyCleanLogin();
+    
+            stopFbListener('usuario');
+    
+            Actions.reset('login');
+        };
 
-        this.props.modifyCleanLogin();
-
-        stopFbListener('usuario');
-
-        Actions.reset('login');
+        Alert.alert(
+            'Aviso', 
+            'Desejar sair para a tela de login ?',
+            [
+                { text: 'Cancelar', onPress: () => false },
+                { 
+                    text: 'Sim', 
+                    onPress: () => funExec() 
+                }
+            ],
+            { cancelable: true }
+        );
     }
 
     onPressUserImg = (type) => {
@@ -164,7 +180,7 @@ class Profile extends React.Component {
         const userImg = userLogged.imgAvatar ? { uri: userLogged.imgAvatar } : { uri: '' };
         const imgBg = userLogged.imgBackground ? 
             { uri: userLogged.imgBackground } : imgUserBackground;
-        const username = userLogged.nome ? userLogged.nome : 'Patinhas';
+        const username = userLogged.nome ? userLogged.nome : '';
 
         return (
             <View style={styles.viewPrinc}>

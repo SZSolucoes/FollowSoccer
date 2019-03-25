@@ -150,7 +150,8 @@ class EditPerfil extends React.Component {
         .then(() => {
             user.updatePassword(novaSenha).then(() => {
                 dbUsuariosRef.update({
-                    senha: novaSenha
+                    senha: novaSenha,
+                    pwRecover: ''
                 })
                 .then(() => {
                     AsyncStorage.setItem(mappedKeyStorage('password'), novaSenha);

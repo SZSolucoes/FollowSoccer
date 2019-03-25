@@ -417,7 +417,7 @@ const htmlTemplateRecoverPw = (user) => (
                             <td class="content-cell">
                             <h1>Olá,</h1>
                             <p>Foi solicitado recentemente a recuperação de senha para o aplicativo FollowSoccer. 
-                            A senha abaixo foi gerada para um novo acesso.
+                            Logo abaixo está disponível uma nova senha para o acesso.
                             <!-- Action -->
                             <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
@@ -441,7 +441,7 @@ const htmlTemplateRecoverPw = (user) => (
                                 </td>
                                 </tr>
                             </table>
-                            <p>Por segurança, essa solicitação foi efetuada através de um dispositivo ${user.device}. Se caso você não solicitou essa recuperação de senha, por favor ignore esse e-mail ou <a href="mailto:suporte@szsolucoes.com.br">Contate o nosso suporte</a> em caso de dúvidas.</p>
+                            <p>Por segurança, essa solicitação foi efetuada através de um dispositivo ${user.device}. Se caso você não solicitou essa recuperação de senha, por favor ignore esse e-mail ou <a href="mailto:suporte@szsolucoes.com.br">contate o nosso suporte</a> em caso de dúvidas.</p>
                             <p>Agradecimentos,
                                 <br>SZ Soluções</p>
                             </td>

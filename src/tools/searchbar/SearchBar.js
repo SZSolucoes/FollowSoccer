@@ -4,8 +4,7 @@ import {
     Animated,
     TextInput,
     Dimensions,
-    Keyboard,
-    TouchableNativeFeedback
+    Keyboard
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Icon } from 'react-native-elements';
@@ -15,6 +14,7 @@ import {
     modifySearchValue,
     modifyShowInputText
 } from './SearchBarActions';
+import TouchableByPlatform from '../touchables/TouchableByPlatform';
 
 const MIN_ICON_WIDTH = 70;
 const MAX_BORDER_RADIUS = 20;
@@ -91,7 +91,7 @@ class SearchBar extends React.Component {
                 borderBottomRightRadius: MAX_BORDER_RADIUS
             }}
         >
-            <TouchableNativeFeedback
+            <TouchableByPlatform
                 onPress={() => this.onShowInput()}
             >
                 <Icon
@@ -104,7 +104,7 @@ class SearchBar extends React.Component {
                     type='material-community'
                     size={28}
                 />
-            </TouchableNativeFeedback>
+            </TouchableByPlatform>
             <Animated.View
                 style={{
                     flexDirection: 'row',
@@ -144,7 +144,7 @@ class SearchBar extends React.Component {
                         borderBottomRightRadius: MAX_BORDER_RADIUS
                     }}
                 >
-                    <TouchableNativeFeedback
+                    <TouchableByPlatform
                         onPress={() => this.onHideInput()}
                     >
                         <Icon
@@ -154,7 +154,7 @@ class SearchBar extends React.Component {
                             type='material-community' 
                             size={28}
                         />
-                    </TouchableNativeFeedback>
+                    </TouchableByPlatform>
                 </View>
                 <View style={{ flex: 3 }}>
                     <TextInput

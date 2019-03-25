@@ -1,6 +1,7 @@
 import React from 'react';
 import { 
     View,
+    Alert,
     StyleSheet,
     ScrollView,
     AsyncStorage
@@ -41,14 +42,29 @@ class MainDrawerMenu extends React.Component {
     }
 
     onPressLogout = () => {
-        AsyncStorage.removeItem(mappedKeyStorage('username'));
-        AsyncStorage.removeItem(mappedKeyStorage('password'));
+        const funExec = () => {
+            AsyncStorage.removeItem(mappedKeyStorage('username'));
+            AsyncStorage.removeItem(mappedKeyStorage('password'));
+    
+            this.props.modifyCleanLogin();
+    
+            stopFbListener('usuario');
+    
+            Actions.reset('login');
+        };
 
-        this.props.modifyCleanLogin();
-
-        stopFbListener('usuario');
-
-        Actions.reset('login');
+        Alert.alert(
+            'Aviso', 
+            'Desejar sair para a tela de login ?',
+            [
+                { text: 'Cancelar', onPress: () => false },
+                { 
+                    text: 'Sim', 
+                    onPress: () => funExec() 
+                }
+            ],
+            { cancelable: true }
+        );
     }
 
     onMenuItemPress = (menuKey) => {

@@ -8,7 +8,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   TouchableHighlight,
-  TouchableNativeFeedback,
   TouchableWithoutFeedback,
   ViewPropTypes as RNViewPropTypes
 } from 'react-native';
@@ -16,6 +15,7 @@ import { Icon, Text } from 'react-native-elements';
 import FastImage from 'react-native-fast-image';
 
 import imgUserAvatar from '../../assets/imgs/useravatar.png';
+import TouchableByPlatform from '../touchables/TouchableByPlatform';
 
 const ViewPropTypes = RNViewPropTypes || View.propTypes;
 
@@ -242,7 +242,7 @@ Avatar.propTypes = {
     View,
     TouchableOpacity,
     TouchableHighlight,
-    TouchableNativeFeedback,
+    TouchableByPlatform,
     TouchableWithoutFeedback,
   ]),
   width: PropTypes.number,

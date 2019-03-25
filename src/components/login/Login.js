@@ -7,7 +7,6 @@ import {
     Image,
     Keyboard,
     TouchableOpacity,
-    TouchableNativeFeedback,
     TextInput,
     ActivityIndicator,
     Text,
@@ -32,33 +31,28 @@ import {
     modifyUserToken,
     doLogin
 } from './LoginActions';
+import TouchableByPlatform from '../../tools/touchables/TouchableByPlatform';
 
 class Login extends React.Component {
-
     constructor(props) {
         super(props);
 
-        this.onTouchLogin = this.onTouchLogin.bind(this);
-        this.onPressEnterBtn = this.onPressEnterBtn.bind(this);
-        this.renderAnimLogin = this.renderAnimLogin.bind(this);
-        this.keyboardShow = this.keyboardShow.bind(this);
-        this.keyboardHide = this.keyboardHide.bind(this);
         this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardShow);
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardHide);
 
         this.state = { marginTop: 0, marginBottom: 0 };
     }
 
-    componentWillUnmount() {
+    componentWillUnmount = () => {
         this.keyboardDidShowListener.remove();
         this.keyboardDidHideListener.remove();
     }
 
-    onTouchLogin() {
+    onTouchLogin = () => {
         Keyboard.dismiss();
     }
 
-    onPressEnterBtn() {
+    onPressEnterBtn = () => {
         const { username, password } = this.props;
 
         Keyboard.dismiss();
@@ -76,7 +70,7 @@ class Login extends React.Component {
         }
     }
 
-    keyboardShow(e) {
+    keyboardShow = (e) => {
         this.props.modifyShowLogoLogin(false);
         if (Platform.OS === 'ios') {
             this.setState({ 
@@ -89,12 +83,12 @@ class Login extends React.Component {
         }
     }
     
-    keyboardHide() {
+    keyboardHide = () => {
         this.props.modifyShowLogoLogin(true);
         this.setState({ ...this.state, marginTop: 0, marginBottom: 0 });
     }
 
-    renderAnimLogin() {
+    renderAnimLogin = () => {
         if (this.props.indicator) {
             return (
                 <View style={styles.loading}>
@@ -107,8 +101,8 @@ class Login extends React.Component {
         );
     }
 
-    render() {
-        return (
+    render = () => (
+        <View style={styles.viewMain}>
             <TouchableWithoutFeedback
                 onPress={() => this.onTouchLogin()}
             >
@@ -179,24 +173,31 @@ class Login extends React.Component {
                                         onPressIn={() => this.props.modifyHidePw(false)}
                                         onPressOut={() => this.props.modifyHidePw(true)}
                                     >
-                                       
-                                        <Icon
-                                            name='eye'
-                                            type='material-community'
-                                            color='grey'
-                                            size={26}
-                                            containerStyle={styles.imageStyle}
-                                        />
+                                        <View
+                                            style={{ 
+                                                marginHorizontal: 15,
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}
+                                        >
+                                            <Icon
+                                                name='eye'
+                                                type='material-community'
+                                                color='grey'
+                                                size={24}
+                                                containerStyle={styles.imageStyle}
+                                            />
+                                        </View>
                                     </TouchableOpacity>
                                 </View>
                                 <View style={styles.loginBtn}>
-                                    <TouchableNativeFeedback 
+                                    <TouchableByPlatform 
                                         onPress={() => this.onPressEnterBtn()}
                                     >
                                         <View style={styles.menu}>
                                             {this.renderAnimLogin()}
                                         </View>
-                                    </TouchableNativeFeedback>
+                                    </TouchableByPlatform>
                                 </View>
                                 <View style={styles.loginBtnTwo}>
                                     <TouchableOpacity 
@@ -248,8 +249,8 @@ class Login extends React.Component {
                     </ScrollView>
                 {/* </ImageBackground> */}
             </TouchableWithoutFeedback>
-        );
-    }
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -307,9 +308,8 @@ const styles = StyleSheet.create({
         })
     },
     imageStyle: {
-        padding: 10,
-        margin: 5,
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     loading: {
         left: 0,

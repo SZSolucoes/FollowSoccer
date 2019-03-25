@@ -223,7 +223,6 @@ class ShareModal extends React.Component {
                                             <Avatar
                                                 small
                                                 rounded
-                                                title={'avatar'}
                                                 source={userImg}
                                                 onPress={() => false}
                                             />
