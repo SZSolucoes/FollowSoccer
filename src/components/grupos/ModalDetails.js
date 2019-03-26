@@ -14,7 +14,7 @@ import { Icon } from 'react-native-elements';
 import { TextMask } from 'react-native-masked-text';
 import Moment from 'moment';
 import _ from 'lodash';
-import { colorAppF, colorAppSecondary } from '../../utils/Constantes';
+import { colorAppSecondary } from '../../utils/Constantes';
 import Card from '../../tools/elements/Card';
 
 export default class ModalDetails extends React.Component {
@@ -227,32 +227,33 @@ export default class ModalDetails extends React.Component {
                                                     {grupoSelectedToDetails.nome || ''}
                                                 </Text>
                                             </View>
-                                            <TouchableOpacity
-                                                onPress={() => {
-                                                    Keyboard.dismiss();
-                                                    this.closeModalToggle();
+                                            <View 
+                                                style={{
+                                                    flex: 0.5,
+                                                    paddingVertical: 10,
+                                                    alignItems: 'flex-end'
                                                 }}
-                                            >   
-                                                <View 
-                                                    style={{
-                                                        flex: 0.5,
-                                                        padding: 5,
-                                                        alignItems: 'flex-end',  
+                                            >
+                                                <TouchableOpacity
+                                                    onPress={() => {
+                                                        Keyboard.dismiss();
+                                                        this.closeModalToggle();
                                                     }}
-                                                >
+                                                >   
                                                     <Icon
                                                         name='close-box-outline' 
                                                         type='material-community' 
                                                         size={28} color='black'
                                                         iconStyle={{ opacity: 0.8, margin: 5 }}
                                                     />
-                                                </View>
-                                            </TouchableOpacity>
+                                                </TouchableOpacity>
+                                            </View>
                                         </View>
                                         <ScrollView
-                                            style={{ height: '82%', backgroundColor: colorAppF }}
+                                            style={styles.container}
                                         >
                                             {this.renderBody(grupoSelectedToDetails)}
+                                            <View style={{ marginVertical: 20 }} />
                                         </ScrollView>
                                     </Card>
                                 </TouchableWithoutFeedback>
@@ -271,6 +272,14 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    container: {
+        height: '82%',
+        backgroundColor: 'white',
+        borderColor: '#e1e8ee',
+        borderWidth: 1.5,
+        padding: 5,
+        margin: 5
     },
     card: {
         width: '90%',

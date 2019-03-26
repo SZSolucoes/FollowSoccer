@@ -114,8 +114,8 @@ class EditPerfil extends React.Component {
             this.setState({ loadingEditP: false, isTelefoneValid: true });
             showDropdownAlert(
                 'success', 
-                'Sucesso!', 
-                'Edição realizada com sucesso.'
+                'Sucesso', 
+                'Edição realizada com sucesso'
             );
         })
         .catch(() => {
@@ -132,12 +132,12 @@ class EditPerfil extends React.Component {
         const { novaSenha, novaSenhaRep, userLogged } = this.state;
 
         if (novaSenha.trim() !== novaSenhaRep.trim()) {
-            Alert.alert('Aviso!', 'As senhas informadas devem ser iguais.');
+            Alert.alert('Aviso', 'As senhas informadas devem ser iguais.');
             return;
         }
 
         if (novaSenha.trim().length < 6) {
-            Alert.alert('Aviso!', 'As senha devem possuir 6 ou mais caracteres.');
+            Alert.alert('Aviso', 'As senha devem possuir 6 ou mais caracteres.');
             return;
         }
 
@@ -334,9 +334,11 @@ class EditPerfil extends React.Component {
                     </View>
                     <FormLabel labelStyle={styles.text}>ESTADO</FormLabel>
                     <View 
-                        style={[styles.inputContainer, { 
+                        style={{ 
                             flex: 1,
                             flexDirection: 'row',
+                            borderBottomWidth: 1,
+                            borderBottomColor: '#9E9E9E',
                             ...Platform.select({
                             android: {
                                 marginHorizontal: 16,
@@ -344,9 +346,10 @@ class EditPerfil extends React.Component {
                             },
                             ios: {
                                 marginHorizontal: 20,
-                                paddingHorizontal: 6
+                                paddingHorizontal: 0,
+                                paddingBottom: 2
                             }
-                        }) }]}
+                        }) }}
                     >
                         <Dropdown
                             value={this.state.userLogged.estado}
@@ -364,12 +367,13 @@ class EditPerfil extends React.Component {
                             itemTextStyle={{ fontFamily: 'OpenSans-Regular' }}
                             data={ESTADOS}
                             containerStyle={{
-                                width: this.state.inputWidth
+                                width: this.state.inputWidth,
+                                height: 40
                             }}
                             inputContainerStyle={{
                                 borderBottomColor: 'transparent',
                                 borderBottomWidth: 0,
-                                paddingTop: 8,
+                                paddingTop: 0,
                                 paddingBottom: 0
                             }}
                             rippleInsets={{ top: 0, bottom: -8 }}
@@ -377,9 +381,11 @@ class EditPerfil extends React.Component {
                     </View>
                     <FormLabel labelStyle={styles.text}>CIDADE</FormLabel>
                     <View 
-                        style={[styles.inputContainer, { 
+                        style={{ 
                             flex: 1,
                             flexDirection: 'row',
+                            borderBottomWidth: 1,
+                            borderBottomColor: '#9E9E9E',
                             ...Platform.select({
                             android: {
                                 marginHorizontal: 16,
@@ -387,9 +393,10 @@ class EditPerfil extends React.Component {
                             },
                             ios: {
                                 marginHorizontal: 20,
-                                paddingHorizontal: 6
+                                paddingHorizontal: 0,
+                                paddingBottom: 2
                             }
-                        }) }]}
+                        }) }}
                     >
                         <Dropdown
                             value={this.state.userLogged.cidade}
@@ -408,12 +415,13 @@ class EditPerfil extends React.Component {
                             itemTextStyle={{ fontFamily: 'OpenSans-Regular' }}
                             data={cidades}
                             containerStyle={{
-                                width: this.state.inputWidth
+                                width: this.state.inputWidth,
+                                height: 40
                             }}
                             inputContainerStyle={{
                                 borderBottomColor: 'transparent',
                                 borderBottomWidth: 0,
-                                paddingTop: 8,
+                                paddingTop: 0,
                                 paddingBottom: 0
                             }}
                             rippleInsets={{ top: 0, bottom: -8 }}
@@ -450,6 +458,14 @@ class EditPerfil extends React.Component {
                             inputStyle: [styles.text, styles.input]
                         }}
                         underlineColorAndroid={'transparent'}
+                        onChangeText={(value) => this.setState(
+                            { 
+                                userLogged: { 
+                                    ...this.state.userLogged, 
+                                    telefone: value
+                                } 
+                            }
+                        )}
                         value={this.state.userLogged.telefone}
                     />
                     { 
@@ -561,7 +577,8 @@ class EditPerfil extends React.Component {
                         buttonStyle={{ width: '100%', marginVertical: 10 }}
                         onPress={() => this.setState({
                             senhaAtual: '',
-                            novaSenha: ''
+                            novaSenha: '',
+                            novaSenhaRep: ''
                         })}
                     />
                 </Card>
@@ -583,7 +600,7 @@ const styles = StyleSheet.create({
     inputContainer: {
         borderBottomWidth: 1,
         borderBottomColor: '#9E9E9E',
-        height: Platform.OS === 'android' ? 45 : 40,
+        height: Platform.OS === 'android' ? 45 : 40
     },
     input: {
         paddingBottom: 0, 

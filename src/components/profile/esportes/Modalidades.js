@@ -27,7 +27,7 @@ class Modalidades extends React.Component {
         this.animValueSoccer = new Animated.Value();
 
         this.state = {
-            isSoccerExpanded: true
+            isSoccerExpanded: false
         };
     }
 
@@ -115,7 +115,7 @@ class Modalidades extends React.Component {
                                                 color: 'black' 
                                             }}
                                         >
-                                            Futebol
+                                            Complementos
                                         </Text>
                                     </View>
                                     <TouchableWithoutFeedback

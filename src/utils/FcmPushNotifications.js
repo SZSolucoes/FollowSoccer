@@ -76,10 +76,10 @@ export const sendCadJogoPushNotifForAll = (jogo, grupo) => {
 };
 
 export const sendReminderJogoPushNotifForAll = async (jogo, grupo) => { 
-    const message = `Lembrete! O jogo (${jogo}) está chegando. Aproveite e confirme sua presença o quanto antes.`;
+    const message = `O jogo (${jogo}) está chegando. Aproveite e confirme sua presença o quanto antes.`;
     const participantesKeys = [];
     const participantes = _.filter(
-        grupo.participantes, 
+        grupo.participantes,
         itc => itc.jogoNotifReminder && itc.jogoNotifReminder === 'on'
     );
 
@@ -268,7 +268,7 @@ export const sendMuralPushNotifForTopic = (grupo) => {
                     to: k,
                     notification: {
                         title: `Grupo "${grupo.nome}"`,
-                        body: 'Mural! Foi realizada uma nova publicação no mural.',
+                        body: 'Foi realizada uma nova publicação no mural.',
                         show_in_foreground: true,
                         targetScreen: 'mural'
                     }, 

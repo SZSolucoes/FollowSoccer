@@ -144,7 +144,7 @@ class JogoEdit extends React.Component {
         if ((homeshirt && visitshirt) && homeshirt === visitshirt) {
             Alert.alert(
                 'Aviso', 
-                'A camisa do time da casa deverá ser diferente da camisa do time de visitantes.'
+                'A camisa do time da casa deverá ser diferente da camisa do time de visitantes'
             );
 
             this.setState({ loading: false, isTitValid: false });
@@ -483,27 +483,6 @@ class JogoEdit extends React.Component {
                         }}
                     />
                 </View>
-                <FormLabel labelStyle={styles.text}>DESCRIÇÃO</FormLabel>
-                <FormInput
-                    ref={(ref) => {
-                        this.descricao = ref;
-                    }}
-                    selectTextOnFocus
-                    containerStyle={styles.inputContainer}
-                    inputStyle={[styles.text, styles.input]} 
-                    value={this.state.descricao}
-                    onChangeText={(value) => {
-                        if (this.props.keyItem) {
-                            this.setState({ descricao: value });
-                        } else {
-                            this.setState({ descricao: value });
-                            this.props.onChangeSuperState({ descricao: value });
-                        }
-                    }}
-                    underlineColorAndroid={'transparent'}
-                    multiline
-                    onSubmitEditing={() => this.timeCasa.focus()}
-                />
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <FormLabel labelStyle={styles.text}>TIME CASA</FormLabel>
                     <TouchableOpacity
@@ -637,6 +616,27 @@ class JogoEdit extends React.Component {
                         </View>
                     </TouchableOpacity>
                 </View>
+                <FormLabel labelStyle={styles.text}>TEXTO DE SOBREPOSIÇÃO</FormLabel>
+                <FormInput
+                    ref={(ref) => {
+                        this.descricao = ref;
+                    }}
+                    selectTextOnFocus
+                    containerStyle={styles.inputContainer}
+                    inputStyle={[styles.text, styles.input]} 
+                    value={this.state.descricao}
+                    onChangeText={(value) => {
+                        if (this.props.keyItem) {
+                            this.setState({ descricao: value });
+                        } else {
+                            this.setState({ descricao: value });
+                            this.props.onChangeSuperState({ descricao: value });
+                        }
+                    }}
+                    underlineColorAndroid={'transparent'}
+                    multiline
+                    onSubmitEditing={() => this.timeCasa.focus()}
+                />
                 <Button 
                     small
                     loading={this.state.loading}

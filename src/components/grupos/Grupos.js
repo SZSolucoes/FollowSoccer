@@ -83,10 +83,6 @@ class Grupos extends React.Component {
     constructor(props) {
         super(props);
 
-        this.renderGroup = this.renderGroup.bind(this);
-        this.onScrollFlatList = this.onScrollFlatList.bind(this);
-        this.onChooseOptionFloatBtn = this.onChooseOptionFloatBtn.bind(this);
-
         this.scrollY = new Animated.Value(0);
         this.scrollYCurrentOffset = 0;
         this.floatBtnPositionYAnim = new Animated.Value(0);
@@ -111,7 +107,7 @@ class Grupos extends React.Component {
         }
 
         this.scrollY.addListener(value => {
-            if (value.value <= 5) {
+            if (value.value <= 10) {
                 Animated.spring(this.floatBtnPositionYAnim, {
                     useNativeDriver: true,
                     toValue: 0,
@@ -155,7 +151,7 @@ class Grupos extends React.Component {
                                 showDropdownAlert(
                                     'warn', 
                                     'Aviso',
-                                    'Você já ingressou no grupo informado.'
+                                    'Você já ingressou no grupo informado'
                                 );
 
                                 return;

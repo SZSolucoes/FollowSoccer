@@ -2078,9 +2078,9 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         ...Platform.select({
             ios: {
-                shadowColor: 'rgba(0,0,0, .2)',
-                shadowOffset: { height: 0, width: 0 },
-                shadowOpacity: 1,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.5,
                 shadowRadius: 1,
             },
             android: {
@@ -2112,9 +2112,9 @@ const styles = StyleSheet.create({
         borderColor: '#e1e8ee',
         ...Platform.select({
             ios: {
-                shadowColor: 'rgba(0,0,0, .2)',
-                shadowOffset: { height: 0, width: 0 },
-                shadowOpacity: 1,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.5,
                 shadowRadius: 1,
             },
             android: {

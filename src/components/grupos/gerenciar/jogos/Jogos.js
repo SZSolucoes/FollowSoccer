@@ -17,7 +17,6 @@ import {
 import _ from 'lodash';
 
 import Moment from 'moment';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Divider, SearchBar, CheckBox } from 'react-native-elements';
@@ -662,7 +661,7 @@ class Jogos extends React.Component {
             setTimeout(() => this.props.modificaFilterLoad(false), 1000);
         }
 
-        const imageProps = item.imagem ? { image: { uri: item.imagem } } : {}
+        const imageProps = item.imagem ? { image: { uri: item.imagem } } : {};
 
         return (
             <View>
@@ -839,10 +838,10 @@ class Jogos extends React.Component {
                                 ],
                                 ...Platform.select({
                                     ios: {
-                                      shadowColor: 'rgba(0,0,0, .2)',
-                                      shadowOffset: { height: 0, width: 0 },
-                                      shadowOpacity: 1,
-                                      shadowRadius: 1,
+                                        shadowColor: '#000',
+                                        shadowOffset: { width: 0, height: 1 },
+                                        shadowOpacity: 0.5,
+                                        shadowRadius: 1,
                                     },
                                     android: {
                                       elevation: 1
@@ -850,15 +849,6 @@ class Jogos extends React.Component {
                                 })
                             }}
                         >
-                            {
-                                Platform.OS === 'ios' && this.state.isPortraitMode &&
-                                <View 
-                                    style={{ 
-                                        height: getStatusBarHeight(true), 
-                                        backgroundColor: colorAppTertiary 
-                                    }} 
-                                />
-                            }
                             <View 
                                 style={{
                                     flexDirection: 'row',
@@ -871,13 +861,17 @@ class Jogos extends React.Component {
                                         rounded
                                         title={'  '}
                                         source={userImg}
-                                        onPress={() => { 
+                                        /* onPress={() => {
                                             Keyboard.dismiss();
-                                        }}
+                                        }} */
                                         activeOpacity={0.7}
                                     /> 
                                 </View>
-                                <View style={{ flex: 2.5 }}>
+                                <View 
+                                    style={{ 
+                                        flex: 2.5
+                                    }}
+                                >
                                     <SearchBar
                                         autoCapitalize={'none'}
                                         autoCorrect={false}

@@ -152,11 +152,12 @@ class Jogo extends React.Component {
             containerStyle={styles.card}
         >
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                <View style={styles.topViewPlacar} />
-                <View style={{ position: 'absolute', alignSelf: 'center' }}>
-                    <Text style={{ color: 'white', fontWeight: 'bold' }}>
-                        { limitDotText(jogo.titulo, 25) }
-                    </Text>
+                <View style={styles.topViewPlacar}>
+                    <View style={{ position: 'absolute', alignSelf: 'center' }}>
+                        <Text style={{ color: 'white', fontWeight: 'bold' }}>
+                            { limitDotText(jogo.titulo, 25) }
+                        </Text>
+                    </View>
                 </View>
             </View>
             <View style={{ marginTop: 20 }} />
@@ -2078,9 +2079,9 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         ...Platform.select({
             ios: {
-                shadowColor: 'rgba(0,0,0, .2)',
-                shadowOffset: { height: 0, width: 0 },
-                shadowOpacity: 1,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.5,
                 shadowRadius: 1,
             },
             android: {
@@ -2112,9 +2113,9 @@ const styles = StyleSheet.create({
         borderColor: '#e1e8ee',
         ...Platform.select({
             ios: {
-                shadowColor: 'rgba(0,0,0, .2)',
-                shadowOffset: { height: 0, width: 0 },
-                shadowOpacity: 1,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.5,
                 shadowRadius: 1,
             },
             android: {

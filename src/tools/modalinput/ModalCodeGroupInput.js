@@ -218,7 +218,6 @@ const styles = StyleSheet.create({
       ...Platform.select({
         ios: {
           fontSize: 18,
-          fontFamily: 'OpenSans-Regular',
           color: '#2699FF',
           textAlign: 'center',
           borderRightWidth: 5,

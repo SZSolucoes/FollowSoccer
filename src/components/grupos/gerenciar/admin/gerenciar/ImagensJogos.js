@@ -1,13 +1,14 @@
 import React from 'react';
 import { 
     View,
+    Text,
+    Modal,
+    Alert,
     ScrollView, 
     StyleSheet,
     TouchableOpacity,
-    TouchableWithoutFeedback,
-    Modal,
-    Text,
-    ActivityIndicator
+    ActivityIndicator,
+    TouchableWithoutFeedback
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -102,41 +103,57 @@ class ImagensJogos extends React.Component {
     }
 
     onPressRemoveImage = (image, loadingState) => {
-        this.setState({ [loadingState]: true });
-        const { grupoSelected } = this.props;
-
-        const databaseRef = this.dbFirebaseRef;
-        const dbJogosRef = databaseRef
-        .child(`grupos/${grupoSelected.key}/jogos/${this.props.jogo.key}`);
-
-        const newImages = _.filter(
-            this.state.jogo.imagens, (img) => !typeof img === 'string' || img !== image
-        );
-
-        dbJogosRef.update({
-            imagens: newImages
-        })
-        .then(() => {
-            firebase.storage().refFromURL(image).delete()
+        const funExec = () => {
+            this.setState({ [loadingState]: true });
+            const { grupoSelected } = this.props;
+    
+            const databaseRef = this.dbFirebaseRef;
+            const dbJogosRef = databaseRef
+            .child(`grupos/${grupoSelected.key}/jogos/${this.props.jogo.key}`);
+    
+            const newImages = _.filter(
+                this.state.jogo.imagens, (img) => !typeof img === 'string' || img !== image
+            );
+    
+            dbJogosRef.update({
+                imagens: newImages
+            })
             .then(() => {
-                const newJogo = { ...this.state.jogo, imagens: newImages };
-                this.setState({ [loadingState]: false, jogo: newJogo });
-                this.updateProps();
-                showDropdownAlert(
-                    'success',
-                    'Imagem removida',
-                    ''
-                );
+                firebase.storage().refFromURL(image).delete()
+                .then(() => {
+                    const newJogo = { ...this.state.jogo, imagens: newImages };
+                    this.setState({ [loadingState]: false, jogo: newJogo });
+                    this.updateProps();
+                    showDropdownAlert(
+                        'success',
+                        'Imagem removida',
+                        ''
+                    );
+                })
+                .catch(() => { 
+                    this.setState({ [loadingState]: false });
+                    this.updateProps();
+                });
             })
             .catch(() => { 
                 this.setState({ [loadingState]: false });
                 this.updateProps();
             });
-        })
-        .catch(() => { 
-            this.setState({ [loadingState]: false });
-            this.updateProps();
-        });
+        };
+
+        Alert.alert(
+            'Aviso', 
+            'Confirma a remoção da imagem selecionada ?',
+            [
+                { text: 'Cancelar', onPress: () => false },
+                { 
+                    text: 'Sim', 
+                    onPress: () => checkConInfo(
+                    () => funExec()) 
+                }
+            ],
+            { cancelable: true }
+        );
     }
 
     doUploadImageCamera = (image) => {

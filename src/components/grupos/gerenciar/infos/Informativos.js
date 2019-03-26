@@ -18,7 +18,6 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { Icon } from 'react-native-elements';
 import ModalDropdown from 'react-native-modal-dropdown';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import FastImage from 'react-native-fast-image';
 import InfoActionsBar from './InfoActionsBar';
@@ -735,10 +734,10 @@ class Informativos extends React.Component {
                             ],
                             ...Platform.select({
                                 ios: {
-                                  shadowColor: 'rgba(0,0,0, .2)',
-                                  shadowOffset: { height: 0, width: 0 },
-                                  shadowOpacity: 1,
-                                  shadowRadius: 1,
+                                    shadowColor: '#000',
+                                    shadowOffset: { width: 0, height: 1 },
+                                    shadowOpacity: 0.5,
+                                    shadowRadius: 1,
                                 },
                                 android: {
                                   elevation: 1
@@ -746,15 +745,6 @@ class Informativos extends React.Component {
                             })
                         }}
                     >
-                        {
-                            Platform.OS === 'ios' && this.state.isPortraitMode &&
-                            <View 
-                                style={{ 
-                                    height: getStatusBarHeight(true),
-                                    backgroundColor: colorAppTertiary
-                                }} 
-                            />
-                        }
                         <View 
                             style={{
                                 flexDirection: 'row',
@@ -765,6 +755,7 @@ class Informativos extends React.Component {
                                 <Avatar
                                     small
                                     rounded
+                                    title={'  '}
                                     source={userImg}
                                     /* onPress={() => { 
                                         Keyboard.dismiss();
@@ -778,7 +769,7 @@ class Informativos extends React.Component {
                                     flex: 2.5, 
                                     alignItems: 'center', 
                                     justifyContent: 'center', 
-                                    padding: 10
+                                    padding: 5
                                 }}
                                 onLayout={
                                     (event) =>

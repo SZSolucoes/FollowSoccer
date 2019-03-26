@@ -194,7 +194,8 @@ class SoccerUserParams extends React.Component {
                         },
                         ios: {
                             marginHorizontal: 20,
-                            paddingHorizontal: 6
+                            paddingHorizontal: 0,
+                            paddingBottom: 2
                         }
                     }) }]}
                 >
@@ -216,12 +217,13 @@ class SoccerUserParams extends React.Component {
                         itemTextStyle={{ fontFamily: 'OpenSans-Regular' }}
                         data={SoccerPositions.campo}
                         containerStyle={{
-                            width: this.state.inputWidth
+                            width: this.state.inputWidth,
+                            height: Platform.OS === 'android' ? 45 : 40
                         }}
                         inputContainerStyle={{
                             borderBottomColor: 'transparent',
                             borderBottomWidth: 0,
-                            paddingTop: 8,
+                            paddingTop: 0,
                             paddingBottom: 0
                         }}
                         rippleInsets={{ top: 0, bottom: -8 }}
@@ -287,7 +289,8 @@ class SoccerUserParams extends React.Component {
                         },
                         ios: {
                             marginHorizontal: 20,
-                            paddingHorizontal: 6
+                            paddingHorizontal: 0,
+                            paddingBottom: 2
                         }
                     }) }]}
                 >
@@ -309,12 +312,13 @@ class SoccerUserParams extends React.Component {
                         itemTextStyle={{ fontFamily: 'OpenSans-Regular' }}
                         data={SoccerPositions.society}
                         containerStyle={{
-                            width: this.state.inputWidth
+                            width: this.state.inputWidth,
+                            height: Platform.OS === 'android' ? 45 : 40
                         }}
                         inputContainerStyle={{
                             borderBottomColor: 'transparent',
                             borderBottomWidth: 0,
-                            paddingTop: 8,
+                            paddingTop: 0,
                             paddingBottom: 0
                         }}
                         rippleInsets={{ top: 0, bottom: -8 }}
@@ -380,7 +384,8 @@ class SoccerUserParams extends React.Component {
                         },
                         ios: {
                             marginHorizontal: 20,
-                            paddingHorizontal: 6
+                            paddingHorizontal: 0,
+                            paddingBottom: 2
                         }
                     }) }]}
                 >
@@ -402,12 +407,13 @@ class SoccerUserParams extends React.Component {
                         itemTextStyle={{ fontFamily: 'OpenSans-Regular' }}
                         data={SoccerPositions.futsal}
                         containerStyle={{
-                            width: this.state.inputWidth
+                            width: this.state.inputWidth,
+                            height: Platform.OS === 'android' ? 45 : 40
                         }}
                         inputContainerStyle={{
                             borderBottomColor: 'transparent',
                             borderBottomWidth: 0,
-                            paddingTop: 8,
+                            paddingTop: 0,
                             paddingBottom: 0
                         }}
                         rippleInsets={{ top: 0, bottom: -8 }}
@@ -435,15 +441,6 @@ const styles = StyleSheet.create({
         fontFamily: 'OpenSans-SemiBold',
         color: 'white' 
     },
-    card: {
-        flex: 1,
-        padding: 5,
-        margin: 0,
-        marginHorizontal: 5,
-        marginVertical: 15,
-        borderRadius: 5,
-        overflow: 'hidden'
-    },
     titleContainer: {
         flexDirection: 'row',
         paddingVertical: 10,
@@ -460,7 +457,6 @@ const styles = StyleSheet.create({
     inputContainer: {
         borderBottomWidth: 1,
         borderBottomColor: '#9E9E9E',
-        height: Platform.OS === 'android' ? 45 : 40,
     },
     input: {
         paddingBottom: 0, 

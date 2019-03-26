@@ -32,6 +32,7 @@ import {
     doLogin
 } from './LoginActions';
 import TouchableByPlatform from '../../tools/touchables/TouchableByPlatform';
+import { normalize } from '../../utils/StrComplex';
 
 class Login extends React.Component {
     constructor(props) {
@@ -297,10 +298,10 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         ...Platform.select({
             ios: {
-              shadowColor: 'rgba(0,0,0, .2)',
-              shadowOffset: { height: 0, width: 0 },
-              shadowOpacity: 1,
-              shadowRadius: 1,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.5,
+                shadowRadius: 6,
             },
             android: {
               elevation: 6
@@ -332,10 +333,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         ...Platform.select({
             ios: {
-              shadowColor: 'rgba(0,0,0, .2)',
-              shadowOffset: { height: 0, width: 0 },
-              shadowOpacity: 1,
-              shadowRadius: 1,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.5,
+                shadowRadius: 6,
             },
             android: {
               elevation: 6
@@ -353,10 +354,10 @@ const styles = StyleSheet.create({
         backgroundColor: colorAppSecondary,
         ...Platform.select({
             ios: {
-              shadowColor: 'rgba(0,0,0, .2)',
-              shadowOffset: { height: 0, width: 0 },
-              shadowOpacity: 1,
-              shadowRadius: 1,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.5,
+                shadowRadius: 4,
             },
             android: {
               elevation: 4
@@ -364,7 +365,7 @@ const styles = StyleSheet.create({
         })
     },
     txtMenu: {
-        fontSize: 16,
+        fontSize: normalize(16),
         padding: 5,
         color: 'white',
         fontFamily: 'OpenSans-Bold'

@@ -241,7 +241,13 @@ class CreateGroup extends React.Component {
         return (
             <Picker
                 selectedValue={this.state.esporte}
-                style={{ height: 50, width: '105%', marginLeft: -4 }}
+                style={{ 
+                    height: 50, 
+                    width: '105%', 
+                    marginLeft: -4,
+                    fontSize: 14,
+                    fontFamily: 'OpenSans-Regular'
+                }}
                 onValueChange={(value) => this.setState({ esporte: value })}
             >
                 {
@@ -282,7 +288,13 @@ class CreateGroup extends React.Component {
         return (
             <Picker
                 selectedValue={this.state.tipo}
-                style={{ height: 50, width: '105%', marginLeft: -4 }}
+                style={{ 
+                    height: 50, 
+                    width: '105%', 
+                    marginLeft: -4,
+                    fontSize: 14,
+                    fontFamily: 'OpenSans-Regular'
+                }}
                 onValueChange={(value) => this.setState({ tipo: value })}
             >
                 {
@@ -323,7 +335,13 @@ class CreateGroup extends React.Component {
         return (
             <Picker
                 selectedValue={this.state.periodicidade}
-                style={{ height: 50, width: '105%', marginLeft: -4 }}
+                style={{ 
+                    height: 50, 
+                    width: '105%', 
+                    marginLeft: -4,
+                    fontSize: 14,
+                    fontFamily: 'OpenSans-Regular'
+                }}
                 onValueChange={(value) => this.setState({ periodicidade: value })}
             >
                 {
@@ -364,7 +382,13 @@ class CreateGroup extends React.Component {
         return (
             <Picker
                 selectedValue={this.state.tipocobranca}
-                style={{ height: 50, width: '105%', marginLeft: -4 }}
+                style={{ 
+                    height: 50, 
+                    width: '105%', 
+                    marginLeft: -4,
+                    fontSize: 14,
+                    fontFamily: 'OpenSans-Regular'
+                }}
                 onValueChange={(value) => this.setState({ tipocobranca: value })}
             >
                 {
@@ -518,7 +542,7 @@ class CreateGroup extends React.Component {
                         fontFamily={'OpenSans-SemiBold'}
                     />
                 </Card>
-                <View style={{ marginBottom: 30 }} />
+                <View style={{ marginVertical: 60 }} />
             </View>
         </ScrollView>
     )

@@ -47,10 +47,10 @@ class Convites extends React.Component {
     }
 
     onPressAcceptGroupInvite = async (item) => {
-        this.setState({ enabledButtons: false });
-
         try {
             const asyncFunExec = async () => {
+                this.setState({ enabledButtons: false });
+
                 const { userLogged } = this.props;
                 const grupos = _.filter(_.values(userLogged.grupos), ita => !ita.push);
         
@@ -60,7 +60,7 @@ class Convites extends React.Component {
                     showDropdownAlert(
                         'warn', 
                         'Aviso',
-                        'Você já ingressou ao grupo informado.'
+                        'Você já ingressou ao grupo informado'
                     );
         
                     return;
@@ -139,10 +139,10 @@ class Convites extends React.Component {
     }
 
     onPressRejectGroupInvite = async (item) => {
-        this.setState({ enabledButtons: false });
-
         try {
             const asyncFunExec = async () => {
+                this.setState({ enabledButtons: false });
+                
                 const { userLogged } = this.props;
                 let ret = false;
 

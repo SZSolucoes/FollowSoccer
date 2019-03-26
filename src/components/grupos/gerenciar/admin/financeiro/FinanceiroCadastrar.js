@@ -264,7 +264,13 @@ class FinanceiroCadastrar extends React.Component {
                             <Picker
                                 ref={(ref) => { this.inputTipoOpe = ref; }}
                                 selectedValue={this.state.tipoOpe}
-                                style={{ height: 50, width: '105%', marginLeft: -4 }}
+                                style={{ 
+                                    height: 50, 
+                                    width: '105%', 
+                                    marginLeft: -4,
+                                    fontSize: 14,
+                                    fontFamily: 'OpenSans-Regular'
+                                }}
                                 onValueChange={(value) => this.setState({ tipoOpe: value })}
                             >
                                 <Picker.Item label={'Receita'} value={'receita'} />
@@ -324,6 +330,7 @@ class FinanceiroCadastrar extends React.Component {
                             unit: 'R$ '
                         }}
                         underlineColorAndroid={'transparent'}
+                        onChangeText={value => this.setState({ valor: value })}
                         value={this.state.valor}
                     />
                     { 

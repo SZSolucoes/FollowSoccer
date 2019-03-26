@@ -540,9 +540,8 @@ class Routes extends React.Component {
                     <View>
                         <Icon
                             color={focused ? 'white' : 'black'}
-                            name='clipboard'
-                            type='font-awesome'
-                            size={22}
+                            name='monitor-dashboard'
+                            type='material-community'
                         /> 
                         <Text
                             style={{
@@ -1077,10 +1076,10 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0,
         ...Platform.select({
             ios: {
-              shadowColor: 'rgba(0,0,0, .2)',
-              shadowOffset: { height: 0, width: 0 },
-              shadowOpacity: 1,
-              shadowRadius: 1,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.5,
+                shadowRadius: 2,
             },
             android: {
               elevation: 4
