@@ -427,7 +427,7 @@ class CreateGroup extends React.Component {
                         !this.state.validFields.nome &&
                         <FormValidationMessage>Campo obrigatório</FormValidationMessage> 
                     }
-                    <FormLabel labelStyle={styles.textLabel}>ESPORTE</FormLabel>
+                    {/* <FormLabel labelStyle={styles.textLabel}>ESPORTE</FormLabel>
                     <View
                         style={[styles.inputContainer, { 
                             flex: 1, 
@@ -446,7 +446,7 @@ class CreateGroup extends React.Component {
                     { 
                         !this.state.validFields.esporte &&
                         <FormValidationMessage>Campo obrigatório</FormValidationMessage> 
-                    }
+                    } */}
                     <FormLabel labelStyle={styles.textLabel}>TIPO</FormLabel>
                     <View
                         style={[styles.inputContainer, { 

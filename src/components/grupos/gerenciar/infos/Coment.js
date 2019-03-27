@@ -16,7 +16,6 @@ import {
     KeyboardAvoidingView
 } from 'react-native';
 import _ from 'lodash';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
 import Moment from 'moment';
 import { Icon, Divider } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -41,7 +40,8 @@ class Coment extends React.Component {
             maxHeight: Dimensions.get('window').height,
             animScreenT: new Animated.Value(Dimensions.get('window').height),
             comentario: '',
-            maxWidthText: Dimensions.get('window').width / 1.3
+            maxWidthText: Dimensions.get('window').width / 1.3,
+            offKey: isPortrait() ? 64 : 32
         };
     }
 
@@ -78,10 +78,12 @@ class Coment extends React.Component {
     onChangeDimension = (event) => {
         if (isPortrait()) {
             this.setState({ 
-                maxHeight: event.window.height, maxWidthText: event.window.width / 1.3 
+                maxHeight: event.window.height, 
+                maxWidthText: event.window.width / 1.3,
+                offKey: 64
             });
         } else {
-            this.setState({ maxWidthText: event.window.width / 1.3 });
+            this.setState({ maxWidthText: event.window.width / 1.3, offKey: 32 });
         }
     }
 
@@ -296,6 +298,7 @@ class Coment extends React.Component {
             return (
                 <KeyboardAvoidingView
                     behavior={'position'}
+                    keyboardVerticalOffset={this.state.offKey}
                 >
                     <View style={styles.inputMsg}>
                         <Divider />
@@ -390,7 +393,7 @@ class Coment extends React.Component {
                     top: 0,
                     right: 0,
                     bottom: 0,
-                    zIndex: 900
+                    zIndex: 800
                 }} 
             >
                 <View style={styles.containerPrincip}>
@@ -483,12 +486,7 @@ const styles = StyleSheet.create({
         height: '100%',
         zIndex: 800,
         borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-        ...Platform.select({
-            ios: {
-                paddingTop: getStatusBarHeight(true)
-            }
-        })
+        borderTopRightRadius: 10
     },
     inputMsg: {
         backgroundColor: 'white',

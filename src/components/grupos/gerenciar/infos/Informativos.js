@@ -70,7 +70,8 @@ class Informativos extends React.Component {
             animTools: new Animated.Value(0),
             isPortraitMode: true,
             dropWidth: 0,
-            maxWidth: Dimensions.get('screen').width
+            maxWidth: isPortrait() ? Dimensions.get('screen').height
+            : Dimensions.get('screen').width
         };
 
         this.scrollY = new Animated.Value(0);
@@ -178,7 +179,7 @@ class Informativos extends React.Component {
 
     onChangeDimensions = (dim) => {
         if (isPortrait()) {
-            this.setState({ isPortraitMode: true, maxWidth: dim.screen.width });
+            this.setState({ isPortraitMode: true, maxWidth: dim.screen.height });
         } else {
             this.setState({ isPortraitMode: false, maxWidth: dim.screen.width });
         }
@@ -620,11 +621,7 @@ class Informativos extends React.Component {
                 ListHeaderComponent={
                     (
                     <View 
-                        style={{ 
-                            ...Platform.select({ 
-                                ios: { marginTop: 80 }, 
-                                android: { marginTop: 60 } 
-                            }) }} 
+                        style={{ marginTop: 60 }} 
                     />
                     )
                 }

@@ -92,7 +92,7 @@ class Grupos extends React.Component {
 
         this.state = {
             groups: [],
-            loading: true,
+            loading: false,
             showModalCodeGroup: false,
             showModalDetails: false,
             grupoSelectedToDetails: {}
@@ -229,7 +229,7 @@ class Grupos extends React.Component {
             return true;
         });
 
-        this.setState({ groups: newGroups });
+        this.setState({ groups: newGroups, loading: true });
 
         if (numGroups) {
             this.removeFbListeners();
@@ -260,8 +260,7 @@ class Grupos extends React.Component {
                             }
 
                             this.setState({ 
-                                groups: newState, 
-                                loading: !(lastGroup === numGroups)
+                                groups: newState
                             });
                         } else {
                             const indexF = _.findIndex(
@@ -275,8 +274,7 @@ class Grupos extends React.Component {
                             }
 
                             this.setState({ 
-                                groups: newState, 
-                                loading: !(lastGroup === numGroups)
+                                groups: newState
                             });
                         }
                     });
@@ -286,6 +284,13 @@ class Grupos extends React.Component {
             };
 
             asyncFunExec();
+
+            const checkRefresh = setInterval(() => {
+                if (lastGroup === numGroups) {
+                    this.setState({ loading: false });
+                    this.clearIntervals(checkRefresh);
+                }
+            }, 500);
         } else {
             this.setState({ loading: false });
         }
@@ -346,6 +351,10 @@ class Grupos extends React.Component {
             }).start(() => { this.inAnimation = false; });
         }
     }
+
+    clearIntervals = (interval) => (
+        clearInterval(interval)
+    )
 
     dataSourceControl = (grupos, filter) => {
         /* let newGroups = grupos.sort(
@@ -545,7 +554,8 @@ class Grupos extends React.Component {
                                     this.removeFbListeners();
                                     setTimeout(() => Actions.gerenciarGrupo({
                                         right: rightView
-                                    }), 500);
+                                    }), 200);
+                                    setTimeout(() => this.setState({ groups: [] }), 1000);
                                 }}
                             />
                             <Button
@@ -591,6 +601,8 @@ class Grupos extends React.Component {
                     keyExtractor={(item, index) => index.toString()}
                     ListFooterComponent={(<View style={{ marginVertical: 50 }} />)}
                     scrollEventThrottle={16}
+                    onRefresh={() => this.onInitializeListeners()}
+                    refreshing={false}
                     onScroll={
                         Animated.event(
                             [{

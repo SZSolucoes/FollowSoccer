@@ -68,7 +68,7 @@ export default class ModalDetails extends React.Component {
                             }
                         </Text>
                     </View>
-                    <View 
+                    {/* <View 
                         style={styles.viewFields}
                     >
                         <Text 
@@ -81,7 +81,7 @@ export default class ModalDetails extends React.Component {
                         >
                             {grupoSelectedToDetails.esporte}
                         </Text>
-                    </View>
+                    </View> */}
                     <View 
                         style={styles.viewFields}
                     >

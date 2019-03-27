@@ -313,8 +313,15 @@ class Jogadores extends React.Component {
         if (showInputText) {
             if (this.state.loadingInvite) {
                 return (
-                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                        <ActivityIndicator size={'large'} color={colorAppPrimary} />
+                    <View style={{ flex: 1 }}>
+                        <View style={{ flex: 1 }}>
+                            <View 
+                                style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+                            >
+                                <ActivityIndicator size={'large'} color={colorAppPrimary} />
+                            </View>
+                        </View>
+                        <View style={{ flex: 1 }} />
                     </View>
                 );
             }
@@ -347,7 +354,7 @@ class Jogadores extends React.Component {
                                             textAlign: 'center'
                                         }}
                                     >
-                                        Deseja convidar um jogador ainda não cadastrado 
+                                        Deseja convidar um jogador ainda não cadastrado no aplicativo
                                         para participar do grupo ?
                                     </Text>
                                     <Button
@@ -365,8 +372,8 @@ class Jogadores extends React.Component {
                                             Share.open(
                                                 {
                                                     title: SHARE_INVITE.shareTitle,
-                                                    message: `${SHARE_INVITE.shareMessage}${grupoSelected.groupInviteKey}\n\n`,
-                                                    url: SHARE_INVITE.fullUrls,
+                                                    message: 
+                                                    `${SHARE_INVITE.shareMessage}${grupoSelected.groupInviteKey}\n\n${SHARE_INVITE.fullUrls}`,
                                                     subject: SHARE_INVITE.shareSubject
                                                 }
                                             ).then(() => true).catch(() => false);
@@ -525,8 +532,15 @@ class Jogadores extends React.Component {
 
         if (!(listUsuarios.length > 0)) {
             return (
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <ActivityIndicator size={'large'} color={colorAppPrimary} />
+                <View style={{ flex: 1 }}>
+                    <View style={{ flex: 1 }}>
+                        <View 
+                            style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+                        >
+                            <ActivityIndicator size={'large'} color={colorAppPrimary} />
+                        </View>
+                    </View>
+                    <View style={{ flex: 1 }} />
                 </View>
             );
         } 
@@ -561,7 +575,7 @@ class Jogadores extends React.Component {
                                     textAlign: 'center'
                                 }}
                             >
-                                Deseja convidar um jogador ainda não cadastrado 
+                                Deseja convidar um jogador ainda não cadastrado no aplicativo
                                 para participar do grupo ?
                             </Text>
                             <Button
@@ -579,8 +593,8 @@ class Jogadores extends React.Component {
                                     Share.open(
                                         {
                                             title: SHARE_INVITE.shareTitle,
-                                            message: `${SHARE_INVITE.shareMessage}${grupoSelected.groupInviteKey}\n\n`,
-                                            url: SHARE_INVITE.fullUrls,
+                                            message: 
+                                            `${SHARE_INVITE.shareMessage}${grupoSelected.groupInviteKey}\n\n${SHARE_INVITE.fullUrls}`,
                                             subject: SHARE_INVITE.shareSubject
                                         }
                                     ).then(() => true).catch(() => false);

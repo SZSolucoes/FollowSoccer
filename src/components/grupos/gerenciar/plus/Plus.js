@@ -41,11 +41,11 @@ class Plus extends React.Component {
     }
 
     onStartListener = () => {
-        const { grupoSelected, userLogged } = this.props;
+        const { grupoSelectedKey, userLogged } = this.props;
 
-        if (grupoSelected && grupoSelected.key) {
+        if (grupoSelectedKey) {
             this.enquetesListener = this.dbFirebaseRef
-            .child(`grupos/${grupoSelected.key}/enquetes`);
+            .child(`grupos/${grupoSelectedKey}/enquetes`);
 
             this.enquetesListener.on('value', (snapshot) => {
                 let snapVal = null;
@@ -102,16 +102,16 @@ class Plus extends React.Component {
     onPressExitGroup = () => {
         try {
             const asyncFunExec = async () => {
-                const { grupoSelected, userLogged } = this.props;
+                const { grupoSelectedKey, userLogged } = this.props;
                 let ret = false;
 
                 ret = await this.dbFirebaseRef
-                .child(`grupos/${grupoSelected.key}/participantes/${userLogged.key}`)
+                .child(`grupos/${grupoSelectedKey}/participantes/${userLogged.key}`)
                 .remove().then(() => true).catch(() => false);
 
                 if (ret) {
                     ret = await this.dbFirebaseRef
-                    .child(`usuarios/${userLogged.key}/grupos/${grupoSelected.key}`)
+                    .child(`usuarios/${userLogged.key}/grupos/${grupoSelectedKey}`)
                     .remove().then(() => true).catch(() => false);
                 }
     
@@ -333,6 +333,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => ({
     userLogged: state.LoginReducer.userLogged,
     grupoSelected: state.GruposReducer.grupoSelected,
+    grupoSelectedKey: state.GruposReducer.grupoSelectedKey,
     userLevel: state.LoginReducer.userLevel,
     username: state.LoginReducer.username,
     enqueteProps: state.EnquetesReducer.enqueteProps

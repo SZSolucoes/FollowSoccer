@@ -1,15 +1,16 @@
 import React from 'react';
 import { 
     View,
+    Text,
+    Alert,
+    Image,
+    Animated,
+    Keyboard,
+    Dimensions,
     ScrollView, 
     StyleSheet,
     TouchableOpacity,
-    TouchableWithoutFeedback,
-    Text,
-    Image,
-    Animated,
-    Dimensions,
-    Alert
+    TouchableWithoutFeedback
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -37,6 +38,7 @@ import {
     modificaFilterLoad, 
     modificaClean
  } from './CadastroJogosActions';
+import { isPortrait } from '../../../../../utils/Screen';
 
 class CadastroJogos extends React.Component {
     constructor(props) {
@@ -68,7 +70,8 @@ class CadastroJogos extends React.Component {
         this.isVisitShow = false;
         this.sideShirt = '';
         this.funExecOnEndAnimCustom = false;
-        this.screenWidth = Dimensions.get('screen').width;
+        this.screenWidth = isPortrait() ? Dimensions.get('screen').height
+        : Dimensions.get('screen').width;
         this.animShirtView = new Animated.Value(this.screenWidth);
         this.animFadeInorOut = new Animated.Value(0);
         this.animFadeView = new Animated.Value(this.screenWidth);
@@ -188,6 +191,8 @@ class CadastroJogos extends React.Component {
     }
 
     onAnimShirtView = (side, funExecOnEndAnim = false) => {
+        Keyboard.dismiss();
+
         if (!this.isAnimating) {
             this.isAnimating = true;
 
