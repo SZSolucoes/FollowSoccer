@@ -507,7 +507,7 @@ class JogoG extends React.Component {
                             'cartoesAmarelos' : 'cartoesVermelhos';
                             showDropdownAlert(
                                 'info',
-                                `Cartão ${color} aplicado.`,
+                                `Cartão ${color} aplicado`,
                                 ''
                             );
                             this.fbDatabaseRef
@@ -581,7 +581,7 @@ class JogoG extends React.Component {
                             'cartoesAmarelos' : 'cartoesVermelhos';
                             showDropdownAlert(
                                 'info',
-                                `Cartão ${jogador.color} removido.`,
+                                `Cartão ${jogador.color} removido`,
                                 ''
                             );
                             this.fbDatabaseRef
@@ -3216,6 +3216,7 @@ class JogoG extends React.Component {
 
         const jogadoresCasaFt = _.filter(jogo.escalacao.casa, (jgCasa) => !jgCasa.push);
         const jogadoresVisitFt = _.filter(jogo.escalacao.visit, (jgVisit) => !jgVisit.push);
+        const confirmados = _.values(jogo.confirmados);
 
         return (
             <View style={{ flex: 1 }}>
@@ -3237,6 +3238,7 @@ class JogoG extends React.Component {
                     jogadoresCasaFt={jogadoresCasaFt}
                     jogadoresVisitFt={jogadoresVisitFt}
                     listUsuarios={this.props.grupoParticipantes}
+                    confirmados={confirmados}
                 />
                 <Dialog
                     animationType={'fade'} 

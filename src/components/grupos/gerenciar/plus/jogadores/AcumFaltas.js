@@ -220,7 +220,7 @@ class AcumFaltas extends React.Component {
 
     render = () => (
         <Modal
-            animationType="slide"
+            animationType={'slide'}
             transparent
             visible={this.props.showModal}
             supportedOrientations={['portrait']}
@@ -343,7 +343,6 @@ const styles = StyleSheet.create({
         width: '90%',
         height: '70%',
         borderRadius: 5,
-        overflow: 'hidden',
         padding: 5,
     }
 });

@@ -487,8 +487,8 @@ class EscalacaoG extends React.Component {
                                 this.setState({ removePlayer: false });
                                 showDropdownAlert(
                                     'info',
-                                    'Jogador removido da lista de confirmados',
-                                    ''
+                                    '',
+                                    'Jogador removido da lista de confirmados'
                                 );
                             })
                             .catch(
@@ -549,9 +549,9 @@ class EscalacaoG extends React.Component {
         const { grupoSelected } = this.props;
         const jogadores = jogador instanceof Array ? jogador : [jogador];
         const successT = `${jogadores.length > 1 ? 
-            'Jogadores escalados' : 'Jogador escalado'} com sucesso.`;
+            'Jogadores escalados' : 'Jogador escalado'} com sucesso`;
         const errorT = 'Falha ao escalar ' +
-        `${jogadores.length > 1 ? 'jogadores' : 'jogador'}. Verifique a conexão.`;
+        `${jogadores.length > 1 ? 'jogadores' : 'jogador'}. Verifique a conexão`;
 
         if (inOrOut) {
             const { side } = jogadores[0];
@@ -1211,6 +1211,7 @@ class EscalacaoG extends React.Component {
         
         const jogadoresCasaFt = _.filter(jogo.escalacao.casa, (jgCasa) => !jgCasa.push);
         const jogadoresVisitFt = _.filter(jogo.escalacao.visit, (jgVisit) => !jgVisit.push);
+        const confirmados = _.values(jogo.confirmados);
 
         return (
             <View style={{ flex: 1 }}>
@@ -1384,6 +1385,7 @@ class EscalacaoG extends React.Component {
                     jogadoresCasaFt={jogadoresCasaFt}
                     jogadoresVisitFt={jogadoresVisitFt}
                     listUsuarios={this.props.grupoParticipantes}
+                    confirmados={confirmados}
                 />
                 <Dialog
                     animationType={'fade'}
@@ -1452,8 +1454,7 @@ const styles = StyleSheet.create({
         margin: 0,
         marginHorizontal: 5,
         marginVertical: 15,
-        borderRadius: 5,
-        overflow: 'hidden'
+        borderRadius: 5
     },
     titleContainer: {
         flexDirection: 'row',

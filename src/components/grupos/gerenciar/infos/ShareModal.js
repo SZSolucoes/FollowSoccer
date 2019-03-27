@@ -180,7 +180,7 @@ class ShareModal extends React.Component {
         );
         return (
             <Modal
-                animationType="slide"
+                animationType={'slide'}
                 transparent
                 visible={this.props.showShareModal}
                 supportedOrientations={['portrait', 'landscape']}

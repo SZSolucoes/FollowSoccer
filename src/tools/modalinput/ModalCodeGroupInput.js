@@ -26,7 +26,7 @@ class ModalCodeGroupInput extends React.Component {
 
     render = () => (
         <Modal
-            animationType="fade"
+            animationType={'fade'}
             transparent
             supportedOrientations={['portrait']}
             visible={this.props.isDialogVisible}

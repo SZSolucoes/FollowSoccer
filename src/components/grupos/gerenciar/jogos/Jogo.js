@@ -152,12 +152,11 @@ class Jogo extends React.Component {
             containerStyle={styles.card}
         >
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                <View style={styles.topViewPlacar}>
-                    <View style={{ position: 'absolute', alignSelf: 'center' }}>
-                        <Text style={{ color: 'white', fontWeight: 'bold' }}>
-                            { limitDotText(jogo.titulo, 25) }
-                        </Text>
-                    </View>
+                <View style={styles.topViewPlacar} />
+                <View style={{ position: 'absolute', alignSelf: 'center' }}>
+                    <Text style={{ color: 'white', fontWeight: 'bold' }}>
+                        { limitDotText(jogo.titulo, 25) }
+                    </Text>
                 </View>
             </View>
             <View style={{ marginTop: 20 }} />

@@ -257,7 +257,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
         marginVertical: 15,
         borderRadius: 5,
-        overflow: 'hidden',
         backgroundColor: 'white'
     },
     titleContainer: {

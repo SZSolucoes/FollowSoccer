@@ -492,7 +492,8 @@ class ImagensJogos extends React.Component {
                     <View style={{ marginVertical: 20 }} />
                 </ScrollView>
                 <Modal 
-                    visible={this.props.showImageView} 
+                    visible={this.props.showImageView}
+                    animationType={'slide'}
                     transparent
                     onRequestClose={() => this.props.modificaShowImageView(false)}
                 >

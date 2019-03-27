@@ -128,7 +128,7 @@ class PlayersModal extends React.Component {
 
         return (
             <Modal
-                animationType="slide"
+                animationType={'slide'}
                 transparent
                 visible={this.props.showUsersModal}
                 supportedOrientations={['portrait']}
@@ -261,7 +261,6 @@ const styles = StyleSheet.create({
         width: '80%',
         height: '70%',
         borderRadius: 5,
-        overflow: 'hidden',
         padding: 5,
     }
 });

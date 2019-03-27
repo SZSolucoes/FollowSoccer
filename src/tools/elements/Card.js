@@ -182,6 +182,7 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     backgroundColor: 'transparent',
+    overflow: 'hidden'
   },
   divider: {
     marginBottom: 15,

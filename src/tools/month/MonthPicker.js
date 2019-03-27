@@ -177,7 +177,6 @@ const styles = StyleSheet.create({
         borderLeftWidth: 2,
         borderTopColor: '#DCE0E4',
         borderLeftColor: '#DCE0E4',
-        overflow: 'hidden',
         padding: 15,
         backgroundColor: colorAppDark
     },

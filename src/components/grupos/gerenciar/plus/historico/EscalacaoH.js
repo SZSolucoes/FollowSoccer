@@ -570,8 +570,7 @@ const styles = StyleSheet.create({
         margin: 0,
         marginHorizontal: 5,
         marginVertical: 15,
-        borderRadius: 5,
-        overflow: 'hidden'
+        borderRadius: 5
     },
     titleContainer: {
         flexDirection: 'row',

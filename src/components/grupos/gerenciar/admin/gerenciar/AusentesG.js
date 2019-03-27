@@ -12,14 +12,14 @@ import { List, Badge, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import Moment from 'moment';
-import { colorAppForeground } from '../../../../../utils/Constantes';
+import { colorAppForeground, ERROS } from '../../../../../utils/Constantes';
 import Card from '../../../../../tools/elements/Card';
 import ListItem from '../../../../../tools/elements/ListItem';
 //import Campo from '../../../campo/Campo';
 import imgTeam from '../../../../../assets/imgs/team.png';
 import firebase from '../../../../../utils/Firebase';
 import { retrieveUpdUserGroup } from '../../../../../utils/UserUtils';
-import { checkConInfo } from '../../../../../utils/SystemEvents';
+import { checkConInfo, showDropdownAlert } from '../../../../../utils/SystemEvents';
 
 class AusentesG extends React.Component {
     constructor(props) {
@@ -81,8 +81,16 @@ class AusentesG extends React.Component {
                 confirmados: newConfirmadosList,
                 ...ausentes
             })
-            .then(() => true)
-            .catch(() => true);
+            .then(() => showDropdownAlert(
+                'info',
+                'Confirmação efetuada',
+                ''
+            ))
+            .catch(() => showDropdownAlert(
+                'error',
+                ERROS.ausentesConfirm.erro,
+                ERROS.ausentesConfirm.mes
+            ));
         };
 
         if (userAusenteIndex !== -1) {
@@ -348,7 +356,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
         marginVertical: 15,
         borderRadius: 5,
-        overflow: 'hidden',
         backgroundColor: 'white'
     },
     titleContainer: {

@@ -22,7 +22,7 @@ class DialogInput extends React.Component {
     render() {
         return (
             <Modal
-                animationType="fade"
+                animationType={'fade'}
                 transparent
                 supportedOrientations={['portrait']}
                 visible={this.props.isDialogVisible}

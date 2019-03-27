@@ -165,7 +165,7 @@ export default class ModalDetails extends React.Component {
 
         return (
             <Modal
-                animationType="slide"
+                animationType={'slide'}
                 transparent
                 visible={this.props.showModal}
                 supportedOrientations={['portrait']}
@@ -285,7 +285,6 @@ const styles = StyleSheet.create({
         width: '90%',
         height: '80%',
         borderRadius: 5,
-        overflow: 'hidden',
         padding: 0
     },
     viewFields: { 

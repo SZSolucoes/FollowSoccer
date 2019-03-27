@@ -602,7 +602,8 @@ class InfoEdit extends React.Component {
                     />
                 </Card>
                 <Modal 
-                    visible={this.state.showImageView} 
+                    visible={this.state.showImageView}
+                    animationType={'slide'} 
                     transparent
                     onRequestClose={() => this.setState({ showImageView: false })}
                 >

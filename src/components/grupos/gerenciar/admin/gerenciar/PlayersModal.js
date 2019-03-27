@@ -27,6 +27,7 @@ import { checkConInfo } from '../../../../../utils/SystemEvents';
 import { colorAppSecondary } from '../../../../../utils/Constantes';
 import ListItem from '../../../../../tools/elements/ListItem';
 import Card from '../../../../../tools/elements/Card';
+import { retrieveUpdUserGroup } from '../../../../../utils/UserUtils';
 
 class PlayersModal extends React.Component {
     constructor(props) {
@@ -122,129 +123,153 @@ class PlayersModal extends React.Component {
         });
     }
 
-    renderListUsuarios = (usuarios, jogadoresCasaFt, jogadoresVisitFt) => {
+    renderListUsuarios = (usuarios, confirmados, jogadoresCasaFt, jogadoresVisitFt) => {
         const { isSubstitute } = this.props;
+        let usuariosFiltred = [];
         let usuariosView = null;
 
-        if (usuarios.length) {
-            const filterInPlayers = _.filter(usuarios, (user) => {
-                const indexCasa = _.findIndex(
-                    jogadoresCasaFt, (jogador) => jogador.key === user.key
-                );
-                const indexVisit = _.findIndex(
-                    jogadoresVisitFt, (jogador) => jogador.key === user.key
-                );
+        if (confirmados && confirmados.length && usuarios.length) {
+            const confirmadosFiltred = _.filter(confirmados, ite => !!ite.key);
+            usuariosFiltred = _.filter(usuarios, itd => {
+                if (_.findIndex(
+                    confirmadosFiltred, ite => ite.key && ite.key === itd.key
+                    ) !== -1) return true;
 
-                return !(indexCasa !== -1 || indexVisit !== -1);
+                return false;
             });
-            const newSortedUsers = _.orderBy(filterInPlayers, ['nome', 'emai'], ['asc', 'asc']);
-            usuariosView = (
-                <List containerStyle={{ marginBottom: 20 }}>
-                {
-                    newSortedUsers.map((item, index) => {
-                        const imgAvt = item.imgAvatar ? { uri: item.imgAvatar } : { uri: '' };
-                        const checkedIdx = _.findIndex(
-                            this.state.checkeds, itc => itc.key === item.key
-                        );
-
-                        let leftIcon = (<View />);
-
-                        if (!isSubstitute) {
-                            leftIcon = (
-                                <View
-                                    style={{
-                                        width: 50,
-                                        height: 50
-                                    }}
-                                >
-                                    <CheckBox
-                                        center
-                                        containerStyle={{
-                                            marginLeft: 0,
-                                            marginRight: 0,
-                                            position: 'absolute'
-                                        }}
-                                        title={(<View />)}
-                                        checked={checkedIdx !== -1}
-                                        onPress={() => {
-                                            Keyboard.dismiss();
-                                            if (checkedIdx !== -1) {
-                                                const newCheckeds = [...this.state.checkeds];
-                                                newCheckeds.splice(checkedIdx, 1);
-                                                this.setState({ 
-                                                    checkeds: newCheckeds
-                                                });
-                                            } else {
-                                                this.setState({ 
-                                                    checkeds: [
-                                                        ...this.state.checkeds, 
-                                                        { key: item.key, item }
-                                                    ]
-                                                });
-                                            }
-                                        }}
-                                    />
-                                </View>
+            
+            if (usuariosFiltred.length) {
+                const filterInPlayers = _.filter(usuariosFiltred, (user) => {
+                    const indexCasa = _.findIndex(
+                        jogadoresCasaFt, (jogador) => jogador.key === user.key
+                    );
+                    const indexVisit = _.findIndex(
+                        jogadoresVisitFt, (jogador) => jogador.key === user.key
+                    );
+    
+                    return !(indexCasa !== -1 || indexVisit !== -1);
+                });
+                const newSortedUsers = _.orderBy(filterInPlayers, ['nome', 'emai'], ['asc', 'asc']);
+                usuariosView = (
+                    <List containerStyle={{ marginBottom: 20 }}>
+                    {
+                        newSortedUsers.map((item, index) => {
+                            const imgAvt = item.imgAvatar ? { uri: item.imgAvatar } : { uri: '' };
+                            const checkedIdx = _.findIndex(
+                                this.state.checkeds, itc => itc.key === item.key
                             );
-                        }
-                        
-                        return (
-                            <ListItem
-                                roundAvatar
-                                avatar={imgAvt}
-                                avatarContainerStyle={{ marginRight: 5 }}
-                                key={index}
-                                title={item.nome}
-                                subtitle={item.posicao}
-                                leftIcon={leftIcon}
-                                rightIcon={(<View />)}
-                                onPress={() => {
-                                    Keyboard.dismiss();
-                                    if (isSubstitute) {
-                                        checkConInfo(() => this.onChoosePlayer(item));
-                                        return;
-                                    }
-
-                                    if (checkedIdx !== -1) {
-                                        const newCheckeds = [...this.state.checkeds];
-                                        newCheckeds.splice(checkedIdx, 1);
-                                        this.setState({ 
-                                            checkeds: newCheckeds
-                                        });
-                                    } else {
-                                        this.setState({ 
-                                            checkeds: [
-                                                ...this.state.checkeds, 
-                                                { key: item.key, item }
-                                            ]
-                                        });
-                                    }
-                                }}
-                            />
-                        );
-                    })
-                }
-                </List>
-            );
+    
+                            let leftIcon = (<View />);
+    
+                            if (!isSubstitute) {
+                                leftIcon = (
+                                    <View
+                                        style={{
+                                            width: 50,
+                                            height: 50
+                                        }}
+                                    >
+                                        <CheckBox
+                                            center
+                                            containerStyle={{
+                                                marginLeft: 0,
+                                                marginRight: 0,
+                                                position: 'absolute'
+                                            }}
+                                            title={(<View />)}
+                                            checked={checkedIdx !== -1}
+                                            onPress={() => {
+                                                Keyboard.dismiss();
+                                                if (checkedIdx !== -1) {
+                                                    const newCheckeds = [...this.state.checkeds];
+                                                    newCheckeds.splice(checkedIdx, 1);
+                                                    this.setState({ 
+                                                        checkeds: newCheckeds
+                                                    });
+                                                } else {
+                                                    this.setState({ 
+                                                        checkeds: [
+                                                            ...this.state.checkeds, 
+                                                            { key: item.key, item }
+                                                        ]
+                                                    });
+                                                }
+                                            }}
+                                        />
+                                    </View>
+                                );
+                            }
+                            
+                            return (
+                                <ListItem
+                                    roundAvatar
+                                    avatar={imgAvt}
+                                    avatarContainerStyle={{ marginRight: 5 }}
+                                    key={index}
+                                    title={item.nome}
+                                    subtitle={retrieveUpdUserGroup(
+                                        item.key, 
+                                        'posicao', 
+                                        item
+                                    )}
+                                    leftIcon={leftIcon}
+                                    rightIcon={(<View />)}
+                                    onPress={() => {
+                                        Keyboard.dismiss();
+                                        if (isSubstitute) {
+                                            checkConInfo(() => this.onChoosePlayer(item));
+                                            return;
+                                        }
+    
+                                        if (checkedIdx !== -1) {
+                                            const newCheckeds = [...this.state.checkeds];
+                                            newCheckeds.splice(checkedIdx, 1);
+                                            this.setState({ 
+                                                checkeds: newCheckeds
+                                            });
+                                        } else {
+                                            this.setState({ 
+                                                checkeds: [
+                                                    ...this.state.checkeds, 
+                                                    { key: item.key, item }
+                                                ]
+                                            });
+                                        }
+                                    }}
+                                />
+                            );
+                        })
+                    }
+                    </List>
+                );
+            }
         }
+
 
         setTimeout(() => this.props.modificaFilterModalLoad(false), 1000);
         return usuariosView;
     }
 
     renderBasedFilterOrNot = () => {
-        const { listUsuarios, filterModalStr, jogadoresCasaFt, jogadoresVisitFt } = this.props;
+        const { 
+            listUsuarios,
+            confirmados,
+            filterModalStr, 
+            jogadoresCasaFt, 
+            jogadoresVisitFt 
+        } = this.props;
         let usuariosView = null;
         if (listUsuarios) {
             if (filterModalStr) {
                 usuariosView = this.renderListUsuarios(
                     this.onFilterUsuarios(listUsuarios, filterModalStr),
+                    confirmados,
                     jogadoresCasaFt,
                     jogadoresVisitFt
                 );
             } else {
                 usuariosView = this.renderListUsuarios(
-                    listUsuarios, jogadoresCasaFt, jogadoresVisitFt
+                    listUsuarios, confirmados, jogadoresCasaFt, jogadoresVisitFt
                 );
             }
         }
@@ -300,7 +325,7 @@ class PlayersModal extends React.Component {
         }
         return (
             <Modal
-                animationType="slide"
+                animationType={'slide'}
                 transparent
                 visible={this.props.showPlayersModal}
                 supportedOrientations={['portrait']}
@@ -417,7 +442,6 @@ const styles = StyleSheet.create({
         width: '90%',
         height: '70%',
         borderRadius: 5,
-        overflow: 'hidden',
         padding: 5,
     }
 });

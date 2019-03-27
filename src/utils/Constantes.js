@@ -281,6 +281,10 @@ export const ERROS = {
     profileModaliSave: {
         erro: 'Erro #0051',
         mes: 'Falha ao salvar as alterações. Verifique a conexão.'
+    },
+    ausentesConfirm: {
+        erro: 'Erro #0052',
+        mes: 'Falha ao confirmar jogador. Verifique a conexão.'
     }
 
 };
