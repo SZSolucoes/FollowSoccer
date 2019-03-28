@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
 import React from 'react';
 import WebGLTHREE from '../../tools/webglthree/WebGLThree';
-//import { buffer } from './MarioObj';
-import { mtl, obj } from './LuigiObj';
+//import { buffer } from './Obj';
+//import { mtl, obj } from './Obj';
 import { ASSETSTYPES } from '../../utils/Constantes';
 
 class ObjExample extends React.PureComponent {
@@ -10,8 +10,8 @@ class ObjExample extends React.PureComponent {
         <WebGLTHREE
             //textureUrl={'http://192.168.0.6:8082/objs/luigi.mtl'}
             //objUrl={'http://192.168.0.6:8082/objs/luigi.obj'}
-            textureStr={mtl}
-            objStr={obj}
+            //textureStr={mtl}
+            //objStr={obj}
             type={ASSETSTYPES.wavefront}
             width={'100%'}
             height={'100%'}

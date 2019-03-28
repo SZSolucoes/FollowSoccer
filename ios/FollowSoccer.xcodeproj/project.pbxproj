@@ -34,6 +34,7 @@
 		AAA5DD23D332477AA2D8149D /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E8BB423424EA4D818FC01210 /* Entypo.ttf */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		BAB90164513C40C680CEDC0B /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DF3E2F00F628499D8350645C /* FontAwesome.ttf */; };
+		C01D672E224D330500A93C39 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = C01D66EE224D330500A93C39 /* LaunchScreen.xib */; };
 		C02839F422494A4E00AA0F52 /* Montserrat-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C02839D822494A4C00AA0F52 /* Montserrat-Light.ttf */; };
 		C02839F522494A4E00AA0F52 /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C02839D922494A4C00AA0F52 /* Montserrat-Medium.ttf */; };
 		C02839F622494A4E00AA0F52 /* OpenSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C02839DA22494A4C00AA0F52 /* OpenSans-Light.ttf */; };
@@ -546,6 +547,7 @@
 		9C41DBC62D0644069EEBAE35 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		9CA6797298AA4A4B90FFA9AD /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
+		C01D66EF224D330500A93C39 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = FollowSoccer/Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		C02839D822494A4C00AA0F52 /* Montserrat-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Montserrat-Light.ttf"; path = "../src/assets/fonts/Montserrat-Light.ttf"; sourceTree = "<group>"; };
 		C02839D922494A4C00AA0F52 /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Montserrat-Medium.ttf"; path = "../src/assets/fonts/Montserrat-Medium.ttf"; sourceTree = "<group>"; };
 		C02839DA22494A4C00AA0F52 /* OpenSans-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "OpenSans-Light.ttf"; path = "../src/assets/fonts/OpenSans-Light.ttf"; sourceTree = "<group>"; };
@@ -702,6 +704,7 @@
 		13B07FAE1A68108700A75B9A /* FollowSoccer */ = {
 			isa = PBXGroup;
 			children = (
+				C01D66EE224D330500A93C39 /* LaunchScreen.xib */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				C092DED621F8992900D0DF5C /* FollowSoccer.entitlements */,
 				C092DE7A21F895C800D0DF5C /* GoogleService-Info.plist */,
@@ -1561,6 +1564,7 @@
 				C78EEE31231B43B484788A23 /* MaterialIcons.ttf in Resources */,
 				7E3CE53FF9C74C82B0A2E57A /* Octicons.ttf in Resources */,
 				C0283A0422494A4E00AA0F52 /* Montserrat-ThinItalic.ttf in Resources */,
+				C01D672E224D330500A93C39 /* LaunchScreen.xib in Resources */,
 				C02839F422494A4E00AA0F52 /* Montserrat-Light.ttf in Resources */,
 				C0283A0F22494A4E00AA0F52 /* OpenSans-SemiBoldItalic.ttf in Resources */,
 				FAF6CCB910D6452E8ECD5756 /* SimpleLineIcons.ttf in Resources */,
@@ -1669,6 +1673,17 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		C01D66EE224D330500A93C39 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C01D66EF224D330500A93C39 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {

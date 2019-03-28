@@ -576,6 +576,7 @@ class InfoEdit extends React.Component {
                         title={this.state.loading ? ' ' : 'Confirmar'} 
                         buttonStyle={{ width: '100%', marginTop: 30 }}
                         onPress={() => checkConInfo(() => this.onPressConfirmar())}
+                        fontFamily={'OpenSans-SemiBold'}
                     />
                     <Button 
                         small
@@ -599,6 +600,7 @@ class InfoEdit extends React.Component {
                                 this.clearFields();
                             }
                         }}
+                        fontFamily={'OpenSans-SemiBold'}
                     />
                 </Card>
                 <Modal 
@@ -688,6 +690,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 14,
+        fontFamily: 'OpenSans-Regular'
     },
     inputContainer: {
         borderBottomWidth: 1,

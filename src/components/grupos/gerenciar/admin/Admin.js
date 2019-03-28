@@ -154,7 +154,7 @@ class Admin extends React.Component {
                     <TouchableOpacity 
                         style={{ flex: 1 }} 
                         onPress={
-                            () => Alert.alert('Em desenvolvimento.')/* Actions.adminParams(
+                            () => Alert.alert('Em desenvolvimento')/* Actions.adminParams(
                                 { onBack: () => Actions.popTo('ownerMenuAdmin') }
                             ) */
                         }

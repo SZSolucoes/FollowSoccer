@@ -180,6 +180,7 @@ class EnqueteEditModal extends React.Component {
                             title={this.state.loading ? ' ' : 'Confirmar'} 
                             buttonStyle={{ width: '100%', marginTop: 30 }}
                             onPress={() => checkConInfo(() => this.onPressConfirmar())}
+                            fontFamily={'OpenSans-SemiBold'}
                         />
                         <Button 
                             small
@@ -193,6 +194,7 @@ class EnqueteEditModal extends React.Component {
                                     descricao: this.props.itemSelected.descricao,
                                     loading: false
                             })}
+                            fontFamily={'OpenSans-SemiBold'}
                         />
                     </Card>
                     <View style={{ marginBottom: 100 }} />
@@ -209,6 +211,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 14,
+        fontFamily: 'OpenSans-Regular'
     },
     inputContainerMargem: {
         borderWidth: 1,

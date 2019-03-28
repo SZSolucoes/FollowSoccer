@@ -523,7 +523,7 @@ class Informativos extends React.Component {
     renderDots = () => (<View />)
     
     renderInfos = ({ item, index }) => {
-        const imgAvt = item.imgAvatar ? { uri: item.imgAvatar } : null;
+        const imgAvt = item.imgAvatar ? { uri: item.imgAvatar } : { uri: '' };
         const nomeUser = item.nomeUser ? item.nomeUser : '';
         let perfilUser = item.perfilUser ? item.perfilUser : 'Administrador';
 

@@ -297,10 +297,12 @@ const styles = StyleSheet.create({
     textFieldName: {
         color: colorAppSecondary, 
         fontWeight: '500',
-        textAlign: 'center'
+        textAlign: 'center',
+        fontFamily: 'OpenSans-Regular'
     },
     textFieldValue: { 
         fontWeight: '500',
-        textAlign: 'center' 
+        textAlign: 'center',
+        fontFamily: 'OpenSans-Regular'
     }
 });

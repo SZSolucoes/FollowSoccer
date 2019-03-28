@@ -34,10 +34,10 @@ export const SHARE_INVITE = {
     shareTitle: 'Convite para o grupo',
     shareMessage: 'Venha participar do meu grupo de jogos em FollowSoccer App.\n\nCódigo do grupo: ',
     shareUrls: [
-        'https://itunes.apple.com/br/app/patinhasfc/id1440603825',
-        'https://play.google.com/store/apps/details?id=com.szs.patinhasfc'
+        'https://itunes.apple.com/br/app/followsoccer/id1457554655',
+        'https://play.google.com/store/apps/details?id=com.szs.followsoccer'
     ],
-    fullUrls: 'IOS\nhttps://itunes.apple.com/br/app/patinhasfc/id1440603825\n\nAndroid\nhttps://play.google.com/store/apps/details?id=com.szs.patinhasfc',
+    fullUrls: 'IOS\nhttps://itunes.apple.com/br/app/followsoccer/id1457554655\n\nAndroid\nhttps://play.google.com/store/apps/details?id=com.szs.followsoccer',
     shareSubject: 'FollowSoccer App - Convite'
 };
 

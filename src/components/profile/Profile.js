@@ -3,9 +3,11 @@ import {
     Text,
     View,
     Alert,
+    Linking,
     Dimensions,
     StyleSheet,
-    AsyncStorage
+    AsyncStorage,
+    TouchableWithoutFeedback
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -290,6 +292,19 @@ class Profile extends React.Component {
                                 <Text style={styles.versionBtn}>
                                     {APP_VERSION}
                                 </Text>
+                            </View>
+                        </View>
+                        <View style={{ marginBottom: 20, flexDirection: 'row' }}>
+                            <View style={{ marginHorizontal: 5, marginVertical: 5 }}>
+                                <TouchableWithoutFeedback
+                                    onPress={
+                                        () => Linking.openURL('mailto:suporte@szsolucoes.com.br')
+                                    }
+                                >
+                                    <Text style={{ fontSize: 14, color: 'blue' }}>
+                                        suporte@szsolucoes.com.br
+                                    </Text>
+                                </TouchableWithoutFeedback>
                             </View>
                         </View>
                         <View style={{ marginTop: 5 }}>

@@ -4,6 +4,7 @@ import {
     Alert,
     StyleSheet,
     ScrollView,
+    Dimensions,
     AsyncStorage
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -19,6 +20,7 @@ import ListItem from '../../tools/elements/ListItem';
 import { modifyCleanLogin } from '../login/LoginActions';
 import { mappedKeyStorage } from '../../utils/Storage';
 import { stopFbListener } from '../../utils/FirebaseListeners';
+import { isPortrait } from '../../utils/Screen';
 
 const CADGRUP = 'Grupos';
 const MINHPART = 'Partidas';
@@ -30,15 +32,25 @@ class MainDrawerMenu extends React.Component {
     constructor(props) {
         super(props);
 
-        this.onMenuItemPress = this.onMenuItemPress.bind();
+        this.state = {
+            isPortrait: isPortrait()
+        };
     }
 
     componentDidMount = () => {
         setTimeout(() => this.props.modifyMenuChoosed(CADGRUP), 500);
+
+        Dimensions.addEventListener('change', this.onChangeDimensions);
     }
 
     componentWillUnmount = () => {
         this.props.modifyMenuClean();
+
+        Dimensions.removeEventListener('change', this.onChangeDimensions);
+    }
+
+    onChangeDimensions = () => {
+        this.setState({ isPortrait: isPortrait() });
     }
 
     onPressLogout = () => {
@@ -107,10 +119,10 @@ class MainDrawerMenu extends React.Component {
         }
 
         return (
-            <ScrollView contentContainerStyle={styles.viewPrinc}>
+            <View style={styles.viewPrinc}>
                 <View 
                     style={{ 
-                        flex: 1, 
+                        flex: this.state.isPortrait ? 1 : 2, 
                         alignItems: 'center', 
                         justifyContent: 'center',
                         backgroundColor: colorAppSecondary,
@@ -148,192 +160,198 @@ class MainDrawerMenu extends React.Component {
                     </View>
                 </View>
                 <View style={{ flex: 3 }}>
-                    <List 
-                        containerStyle={{ 
-                            marginTop: 0,
-                            borderBottomWidth: 0,
-                            paddingVertical: 15
-                        }}
+                    <ScrollView
+                        contentContainerStyle={{ flexGrow: 1 }}
                     >
-                        <View style={{ paddingVertical: 5 }}>
-                            <ListItem
-                                hideChevron
-                                key={CADGRUP}
-                                title={CADGRUP}
-                                containerStyle={{
+                        <View style={{ flex: 1 }}>
+                            <List 
+                                containerStyle={{ 
+                                    marginTop: 0,
                                     borderBottomWidth: 0,
-                                    backgroundColor: 
-                                        this.props.menuChoosed === CADGRUP ?
-                                        colorAppForeground : 'transparent'
+                                    paddingVertical: 15
                                 }}
-                                titleStyle={{ 
-                                    fontFamily: 'OpenSans-SemiBold', 
-                                    color: 'black',
-                                    fontWeight: '400'
+                            >
+                                <View style={{ paddingVertical: 5 }}>
+                                    <ListItem
+                                        hideChevron
+                                        key={CADGRUP}
+                                        title={CADGRUP}
+                                        containerStyle={{
+                                            borderBottomWidth: 0,
+                                            backgroundColor: 
+                                                this.props.menuChoosed === CADGRUP ?
+                                                colorAppForeground : 'transparent'
+                                        }}
+                                        titleStyle={{ 
+                                            fontFamily: 'OpenSans-SemiBold', 
+                                            color: 'black',
+                                            fontWeight: '400'
+                                        }}
+                                        leftIcon={{
+                                            name: 'account-group',
+                                            type: 'material-community',
+                                            size: 28,
+                                            color: 
+                                                this.props.menuChoosed === CADGRUP ?
+                                                'black' : 'grey',
+                                            style: {
+                                                paddingHorizontal: 5
+                                            }
+                                        }}
+                                        onPress={() => (
+                                            this.props.menuChoosed !== CADGRUP &&
+                                            this.onMenuItemPress(CADGRUP)
+                                        )}
+                                    />
+                                </View>
+                                {/* <View style={{ paddingVertical: 5 }}>
+                                    <ListItem
+                                        hideChevron
+                                        key={MINHPART}
+                                        title={MINHPART}
+                                        containerStyle={{
+                                            borderBottomWidth: 0,
+                                            backgroundColor: 
+                                                this.props.menuChoosed === MINHPART ?
+                                                colorAppForeground : 'transparent'
+                                        }}
+                                        titleStyle={{ 
+                                            fontFamily: 'OpenSans-SemiBold', 
+                                            color: 'black',
+                                            fontWeight: '400'
+                                        }}
+                                        leftIcon={{
+                                            name: 'clipboard-text',
+                                            type: 'material-community',
+                                            size: 28,
+                                            color: 
+                                                this.props.menuChoosed === MINHPART ?
+                                                'black' : 'grey',
+                                            style: {
+                                                paddingHorizontal: 5
+                                            }
+                                        }}
+                                        onPress={() => (
+                                            this.props.menuChoosed !== MINHPART &&
+                                            this.onMenuItemPress(MINHPART)
+                                        )}
+                                    />
+                                </View> */}
+                                <View style={{ paddingVertical: 5 }}>
+                                    <ListItem
+                                        hideChevron
+                                        key={PERFIL}
+                                        title={PERFIL}
+                                        containerStyle={{
+                                            borderBottomWidth: 0,
+                                            backgroundColor: 
+                                                this.props.menuChoosed === PERFIL ?
+                                                colorAppForeground : 'transparent'
+                                        }}
+                                        titleStyle={{ 
+                                            fontFamily: 'OpenSans-SemiBold', 
+                                            color: 'black',
+                                            fontWeight: '400'
+                                        }}
+                                        leftIcon={{
+                                            name: 'account-circle',
+                                            type: 'material-community',
+                                            size: 28,
+                                            color: 
+                                                this.props.menuChoosed === PERFIL ?
+                                                'black' : 'grey',
+                                            style: {
+                                                paddingHorizontal: 5
+                                            }
+                                        }}
+                                        onPress={() => (
+                                            this.props.menuChoosed !== PERFIL &&
+                                            this.onMenuItemPress(PERFIL)
+                                        )}
+                                    />
+                                </View>
+                                <View style={{ paddingVertical: 5 }}>
+                                    <ListItem
+                                        hideChevron
+                                        key={CONVITES}
+                                        title={CONVITES}
+                                        containerStyle={{
+                                            borderBottomWidth: 0,
+                                            backgroundColor: 
+                                                this.props.menuChoosed === CONVITES ?
+                                                colorAppForeground : 'transparent'
+                                        }}
+                                        titleStyle={{ 
+                                            fontFamily: 'OpenSans-SemiBold', 
+                                            color: 'black',
+                                            fontWeight: '400'
+                                        }}
+                                        leftIcon={{
+                                            name: 'email',
+                                            type: 'material-community',
+                                            size: 28,
+                                            color: 
+                                                this.props.menuChoosed === CONVITES ?
+                                                'black' : 'grey',
+                                            style: {
+                                                paddingHorizontal: 5
+                                            }
+                                        }}
+                                        onPress={() => (
+                                            this.props.menuChoosed !== CONVITES &&
+                                            this.onMenuItemPress(CONVITES)
+                                        )}
+                                        {...conviteProps}
+                                    />
+                                </View>
+                            </List>
+                            <List 
+                                containerStyle={{
+                                    marginTop: 0, 
+                                    borderBottomWidth: 0,
+                                    paddingVertical: 15
                                 }}
-                                leftIcon={{
-                                    name: 'account-group',
-                                    type: 'material-community',
-                                    size: 28,
-                                    color: 
-                                        this.props.menuChoosed === CADGRUP ?
-                                        'black' : 'grey',
-                                    style: {
-                                        paddingHorizontal: 5
-                                    }
-                                }}
-                                onPress={() => (
-                                    this.props.menuChoosed !== CADGRUP &&
-                                    this.onMenuItemPress(CADGRUP)
-                                )}
-                            />
+                            >
+                                <ListItem
+                                    hideChevron
+                                    key={SAIR}
+                                    title={SAIR}
+                                    containerStyle={{
+                                        borderBottomWidth: 0
+                                    }}
+                                    wrapperStyle={{
+                                        paddingVertical: 5
+                                    }}
+                                    titleStyle={{ 
+                                        fontFamily: 'OpenSans-SemiBold', 
+                                        color: 'black',
+                                        fontWeight: '400'
+                                    }}
+                                    leftIcon={{
+                                        name: 'logout',
+                                        type: 'material-community',
+                                        size: 28,
+                                        color: 'grey',
+                                        style: {
+                                            paddingHorizontal: 5
+                                        }
+                                    }}
+                                    onPress={() => {
+                                        this.onPressLogout();
+                                    }}
+                                />
+                            </List>
                         </View>
-                        {/* <View style={{ paddingVertical: 5 }}>
-                            <ListItem
-                                hideChevron
-                                key={MINHPART}
-                                title={MINHPART}
-                                containerStyle={{
-                                    borderBottomWidth: 0,
-                                    backgroundColor: 
-                                        this.props.menuChoosed === MINHPART ?
-                                        colorAppForeground : 'transparent'
-                                }}
-                                titleStyle={{ 
-                                    fontFamily: 'OpenSans-SemiBold', 
-                                    color: 'black',
-                                    fontWeight: '400'
-                                }}
-                                leftIcon={{
-                                    name: 'clipboard-text',
-                                    type: 'material-community',
-                                    size: 28,
-                                    color: 
-                                        this.props.menuChoosed === MINHPART ?
-                                        'black' : 'grey',
-                                    style: {
-                                        paddingHorizontal: 5
-                                    }
-                                }}
-                                onPress={() => (
-                                    this.props.menuChoosed !== MINHPART &&
-                                    this.onMenuItemPress(MINHPART)
-                                )}
-                            />
-                        </View> */}
-                        <View style={{ paddingVertical: 5 }}>
-                            <ListItem
-                                hideChevron
-                                key={PERFIL}
-                                title={PERFIL}
-                                containerStyle={{
-                                    borderBottomWidth: 0,
-                                    backgroundColor: 
-                                        this.props.menuChoosed === PERFIL ?
-                                        colorAppForeground : 'transparent'
-                                }}
-                                titleStyle={{ 
-                                    fontFamily: 'OpenSans-SemiBold', 
-                                    color: 'black',
-                                    fontWeight: '400'
-                                }}
-                                leftIcon={{
-                                    name: 'account-circle',
-                                    type: 'material-community',
-                                    size: 28,
-                                    color: 
-                                        this.props.menuChoosed === PERFIL ?
-                                        'black' : 'grey',
-                                    style: {
-                                        paddingHorizontal: 5
-                                    }
-                                }}
-                                onPress={() => (
-                                    this.props.menuChoosed !== PERFIL &&
-                                    this.onMenuItemPress(PERFIL)
-                                )}
-                            />
-                        </View>
-                        <View style={{ paddingVertical: 5 }}>
-                            <ListItem
-                                hideChevron
-                                key={CONVITES}
-                                title={CONVITES}
-                                containerStyle={{
-                                    borderBottomWidth: 0,
-                                    backgroundColor: 
-                                        this.props.menuChoosed === CONVITES ?
-                                        colorAppForeground : 'transparent'
-                                }}
-                                titleStyle={{ 
-                                    fontFamily: 'OpenSans-SemiBold', 
-                                    color: 'black',
-                                    fontWeight: '400'
-                                }}
-                                leftIcon={{
-                                    name: 'email',
-                                    type: 'material-community',
-                                    size: 28,
-                                    color: 
-                                        this.props.menuChoosed === CONVITES ?
-                                        'black' : 'grey',
-                                    style: {
-                                        paddingHorizontal: 5
-                                    }
-                                }}
-                                onPress={() => (
-                                    this.props.menuChoosed !== CONVITES &&
-                                    this.onMenuItemPress(CONVITES)
-                                )}
-                                {...conviteProps}
-                            />
-                        </View>
-                    </List>
-                    <List 
-                        containerStyle={{
-                            marginTop: 0, 
-                            borderBottomWidth: 0,
-                            paddingVertical: 15
-                        }}
-                    >
-                        <ListItem
-                            hideChevron
-                            key={SAIR}
-                            title={SAIR}
-                            containerStyle={{
-                                borderBottomWidth: 0
-                            }}
-                            wrapperStyle={{
-                                paddingVertical: 5
-                            }}
-                            titleStyle={{ 
-                                fontFamily: 'OpenSans-SemiBold', 
-                                color: 'black',
-                                fontWeight: '400'
-                            }}
-                            leftIcon={{
-                                name: 'logout',
-                                type: 'material-community',
-                                size: 28,
-                                color: 'grey',
-                                style: {
-                                    paddingHorizontal: 5
-                                }
-                            }}
-                            onPress={() => {
-                                this.onPressLogout();
-                            }}
-                        />
-                    </List>
+                    </ScrollView>
                 </View>
-            </ScrollView>
+            </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
     viewPrinc: {
-        flexGrow: 1
+        flex: 1
     }
 });
 

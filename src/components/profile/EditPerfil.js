@@ -480,6 +480,7 @@ class EditPerfil extends React.Component {
                         title={this.state.loadingEditP ? ' ' : 'Confirmar'} 
                         buttonStyle={{ width: '100%', marginTop: 30 }}
                         onPress={() => checkConInfo(() => this.onPressConfirmarEdit())}
+                        fontFamily={'OpenSans-SemiBold'}
                     />
                     <Button 
                         small
@@ -499,6 +500,7 @@ class EditPerfil extends React.Component {
                             isTelefoneValid: true,
                             cleanEditPerfil: true
                         })}
+                        fontFamily={'OpenSans-SemiBold'}
                     />
                 </Card>
                 <Card 
@@ -570,6 +572,7 @@ class EditPerfil extends React.Component {
                         title={this.state.loadingSenha ? ' ' : 'Confirmar'} 
                         buttonStyle={{ width: '100%', marginTop: 30 }}
                         onPress={() => checkConInfo(() => this.onPressConfirmarSenha())}
+                        fontFamily={'OpenSans-SemiBold'}
                     />
                     <Button 
                         small
@@ -580,6 +583,7 @@ class EditPerfil extends React.Component {
                             novaSenha: '',
                             novaSenhaRep: ''
                         })}
+                        fontFamily={'OpenSans-SemiBold'}
                     />
                 </Card>
                 <View style={{ marginVertical: 60 }} />

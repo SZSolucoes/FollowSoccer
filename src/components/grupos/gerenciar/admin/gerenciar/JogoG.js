@@ -370,19 +370,38 @@ class JogoG extends React.Component {
             'Aviso',
             `Confirma o gol para o jogador:\n${jogadorNome} ?`,
             [
-                { text: 'Cancelar', 
-                    onPress: () => true, 
-                    style: 'cancel' 
-                },
-                { text: 'Contra',
-                    onPress: () => checkConInfo(() => funExec(
-                        jogador.side === 'casa' ? 'visit' : 'casa'
-                    ))
-                },
-                { 
-                    text: 'Ok', 
-                    onPress: () => checkConInfo(() => funExec())
-                }
+                ...Platform.select({
+                    ios: [
+                        { text: 'Cancelar', 
+                            onPress: () => true, 
+                            style: 'cancel' 
+                        },
+                        { 
+                            text: 'Ok', 
+                            onPress: () => checkConInfo(() => funExec())
+                        },
+                        { text: 'Contra',
+                            onPress: () => checkConInfo(() => funExec(
+                                jogador.side === 'casa' ? 'visit' : 'casa'
+                            ))
+                        }
+                    ],
+                    android: [
+                        { text: 'Cancelar', 
+                            onPress: () => true, 
+                            style: 'cancel' 
+                        },
+                        { text: 'Contra',
+                            onPress: () => checkConInfo(() => funExec(
+                                jogador.side === 'casa' ? 'visit' : 'casa'
+                            ))
+                        },
+                        { 
+                            text: 'Ok', 
+                            onPress: () => checkConInfo(() => funExec())
+                        }
+                    ]
+                })
             ]
         );
     }

@@ -154,6 +154,7 @@ class MuralCadastrar extends React.Component {
                         title={this.state.loading ? ' ' : 'Confirmar'} 
                         buttonStyle={{ width: '100%', marginTop: 30 }}
                         onPress={() => checkConInfo(() => this.onPressConfirmar())}
+                        fontFamily={'OpenSans-SemiBold'}
                     />
                     <Button 
                         small
@@ -167,6 +168,7 @@ class MuralCadastrar extends React.Component {
                                 descricao: '',
                                 loading: false
                         })}
+                        fontFamily={'OpenSans-SemiBold'}
                     />
                 </Card>
                 <View style={{ marginBottom: 100 }} />
@@ -182,6 +184,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 14,
+        fontFamily: 'OpenSans-Regular'
     },
     inputContainer: {
         borderBottomWidth: 1,

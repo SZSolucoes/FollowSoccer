@@ -43,7 +43,6 @@ import Grupos from './components/grupos/Grupos';
 import CreateGroup from './components/grupos/CreateGroup';
 //import GerenciarGrupoPrincipal from './components/grupos/gerenciar/GerenciarGrupoPrincipal';
 import GerenciarGrupoInfos from './components/grupos/gerenciar/GerenciarGrupoInfos';
-import Partidas from './components/partidas/Partidas';
 import AnimatedScene from './tools/animated/AnimatedScene';
 import ListLikes from './components/grupos/gerenciar/infos/ListLikes';
 import Admin from './components/grupos/gerenciar/admin/Admin';
@@ -468,12 +467,6 @@ class Routes extends React.Component {
                     />
                 }
                 inital
-            />
-            <Scene 
-                key='minhasPartidas'
-                title={'Partidas'}
-                component={Partidas}
-                titleStyle={styles.title}
             />
             <Scene 
                 key='profile' 

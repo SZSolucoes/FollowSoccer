@@ -644,7 +644,8 @@ class JogoEdit extends React.Component {
                     loadingProps={{ size: 'large', color: 'rgba(111, 202, 186, 1)' }}
                     title={this.state.loading ? ' ' : 'Confirmar'} 
                     buttonStyle={{ width: '100%', marginTop: 30 }}
-                        onPress={() => checkConInfo(() => this.onPressConfirmar())}
+                    onPress={() => checkConInfo(() => this.onPressConfirmar())}
+                    fontFamily={'OpenSans-SemiBold'}
                 />
                 <Button 
                     small
@@ -677,6 +678,7 @@ class JogoEdit extends React.Component {
                             this.cleanStates();
                         }
                     }}
+                    fontFamily={'OpenSans-SemiBold'}
                 />
             </Card>
             <View style={{ marginVertical: 60 }} />
@@ -691,6 +693,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 14,
+        fontFamily: 'OpenSans-Regular'
     },
     inputContainer: {
         borderBottomWidth: 1,
