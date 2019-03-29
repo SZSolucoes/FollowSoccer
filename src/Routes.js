@@ -81,6 +81,8 @@ import AusentesH from './components/grupos/gerenciar/plus/historico/AusentesH';
 import Mural from './components/grupos/gerenciar/plus/mural/Mural';
 import Preferencias from './components/profile/Preferencias';
 import Modalidades from './components/profile/esportes/Modalidades';
+import EditGroup from './components/grupos/gerenciar/admin/configadmin/EditGroup';
+import MenuGroup from './components/grupos/gerenciar/admin/configadmin/MenuGroup';
 
 const AnimatedSceneComp = Animated.createAnimatedComponent(AnimatedScene);
 
@@ -201,6 +203,11 @@ class Routes extends React.Component {
         }
         
         if ('|_enqueteCadastrar|_enqueteEditar|'.includes(Actions.currentScene)) {
+            Actions.popTo('ownerMenuAdmin');
+            return true;
+        }
+
+        if ('|_configMenu|_configEdit|'.includes(Actions.currentScene)) {
             Actions.popTo('ownerMenuAdmin');
             return true;
         }
@@ -798,6 +805,39 @@ class Routes extends React.Component {
         </Scene>
     )
 
+    renderConfigAdmin = () => (
+        <Scene 
+            key={'configAdmin'}
+            tabs
+            showLabel
+            tabBarPosition={'top'}
+            lazy={false}
+            swipeEnabled
+            title={'Administrativo'}
+            titleStyle={styles.title}
+            leftButtonTextStyle={styles.btLeft}
+            backButtonTintColor={'white'}
+            tabBarStyle={{ backgroundColor: colorAppSecondary }}
+            labelStyle={{ fontSize: normalize(12), fontWeight: 'bold' }}
+        >
+            <Scene 
+                key={'configMenu'}
+                hideNavBar 
+                component={MenuGroup}
+                tabBarLabel={'Menu'}
+                activeTintColor={'white'}
+                initial
+            />
+            <Scene 
+                key={'configEdit'}
+                hideNavBar 
+                component={EditGroup}
+                tabBarLabel={'Editar'}
+                activeTintColor={'white'}
+            />
+        </Scene>
+    )
+
     renderRouter = () => (
         <Router>
             <Scene 
@@ -820,6 +860,7 @@ class Routes extends React.Component {
                 {this.renderFinanceiroAdmin()}
                 {this.renderEnquetesAdmin()}
                 {this.renderHistoricoJogo()}
+                {this.renderConfigAdmin()}
                 <Scene 
                     key='cadastrar'
                     title={'Cadastrar'}

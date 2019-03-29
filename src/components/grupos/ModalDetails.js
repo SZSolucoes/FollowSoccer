@@ -147,7 +147,7 @@ export default class ModalDetails extends React.Component {
                             Valor
                         </Text>
                         <TextMask
-                            value={grupoSelectedToDetails.tipocobranca}
+                            value={grupoSelectedToDetails.valorindividual}
                             type={'money'}
                             style={styles.textFieldValue}
                             options={{

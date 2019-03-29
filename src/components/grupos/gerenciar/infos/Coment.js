@@ -2,18 +2,18 @@
 import React from 'react';
 import {
     View,
-    ScrollView,
-    Animated,
-    StyleSheet,
-    Dimensions,
     Text,
-    TouchableWithoutFeedback,
-    TextInput,
-    Keyboard,
-    TouchableOpacity,
     Alert,
     Platform,
-    KeyboardAvoidingView
+    Animated,
+    Keyboard,
+    TextInput,
+    ScrollView,
+    StyleSheet,
+    Dimensions,
+    TouchableOpacity,
+    KeyboardAvoidingView,
+    TouchableWithoutFeedback,
 } from 'react-native';
 import _ from 'lodash';
 import Moment from 'moment';

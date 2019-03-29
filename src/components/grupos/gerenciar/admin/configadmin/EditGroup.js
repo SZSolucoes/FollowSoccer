@@ -18,13 +18,12 @@ import {
     Button
 } from 'react-native-elements';
 import { TextInputMask } from 'react-native-masked-text';
-import Moment from 'moment';
 import _ from 'lodash';
 
-import firebase from '../../utils/Firebase';
-import { colorAppForeground, ERROS } from '../../utils/Constantes';
-import { checkConInfo, showDropdownAlert } from '../../utils/SystemEvents';
-import Card from '../../tools/elements/Card';
+import firebase from '../../../../../utils/Firebase';
+import { colorAppForeground, ERROS } from '../../../../../utils/Constantes';
+import { checkConInfo, showDropdownAlert } from '../../../../../utils/SystemEvents';
+import Card from '../../../../../tools/elements/Card';
 
 const optionsEsporte = [
     'Futebol'
@@ -48,7 +47,7 @@ const optionsTipoCobranca = [
     'Mensal'
 ];
 
-class CreateGroup extends React.Component {
+class EditGroup extends React.Component {
     constructor(props) {
         super(props);
 
@@ -72,7 +71,23 @@ class CreateGroup extends React.Component {
         this.fbDatabaseRef = firebase.database().ref();
     }
 
-   onPressConfirmar = async () => {
+    componentDidMount = () => {
+        const { grupoSelected } = this.props;
+
+        if (grupoSelected && grupoSelected.key) {
+            this.setState({
+                nome: grupoSelected.nome,
+                esporte: grupoSelected.esporte,
+                tipo: grupoSelected.tipo,
+                periodicidade: grupoSelected.periodicidade,
+                tipocobranca: grupoSelected.tipocobranca,
+                valorindividual: grupoSelected.valorindividual,
+                grupoSelectedCopyMount: { ...grupoSelected }
+            });
+        }
+    }
+
+    onPressConfirmar = () => {
         const {
             nome,
             esporte,
@@ -82,7 +97,7 @@ class CreateGroup extends React.Component {
             validFields
         } = this.state;
 
-        const { userLogged } = this.props;
+        const { grupoSelectedKey } = this.props;
 
         const valorindividual = this.inputValorRef.getRawValue();
 
@@ -111,71 +126,34 @@ class CreateGroup extends React.Component {
         this.setState({ loading: true, validFields: newValidFields });
 
         // Gravacao de dados no firebase
-        const dbGruposRef = this.fbDatabaseRef.child('grupos');
-        const fbUsuarioRef = this.fbDatabaseRef.child(`usuarios/${userLogged.key}`);
-        const fbUsuarioGrupoRef = this.fbDatabaseRef.child(`usuarios/${userLogged.key}/grupos`);
-        const dataAtual = Moment().format('DD/MM/YYYY HH:mm:ss');
-        const twofirstKey = userLogged.key.slice(0, 2);
+        const dbGruposRef = this.fbDatabaseRef.child(`grupos/${grupoSelectedKey}`);
+        /* const twofirstKey = userLogged.key.slice(0, 2);
         const twoLastKey = userLogged.key.slice(-2);
         const medianKey = new Date().getTime().toString(36);
-        const groupInviteKey = `${twofirstKey}${medianKey}${twoLastKey}`.replace(/=/g, '');
+        const groupInviteKey = `${twofirstKey}${medianKey}${twoLastKey}`.replace(/=/g, ''); */
 
-        const ret = await dbGruposRef.push({
+        dbGruposRef.update({
             nome,
             esporte,
             tipo,
             periodicidade,
             tipocobranca,
             valorindividual,
-            userowner: userLogged.key,
-            dtcriacao: dataAtual,
             imgbody: '',
-            groupInviteKey,
-            convites: { push: 'push' },
-            participantes: { [userLogged.key]: {
-                imgAvatar: userLogged.imgAvatar,
-                key: userLogged.key,
-                nome: userLogged.nome,
-                jogoNotifCad: 'on',
-                jogoNotifReminder: 'on',
-                enqueteNotif: 'on',
-                muralNotif: 'on'
-            } }
+            //groupInviteKey,
         })
-        .catch(() => false);
-
-
-        if (ret) {
-            const snap = await fbUsuarioRef.once('value');
-
-            if (snap) {
-                const snapVal = snap.val();
-                const keyGroup = ret.getKey();
-
-                if (snapVal) {
-                    const newGroup = { [keyGroup]: { groupKey: keyGroup } };
-                    const retA = await fbUsuarioGrupoRef.update({
-                        ...newGroup
-                    }).then(() => true).catch(() => false);
-
-                    if (retA) {
-                        showDropdownAlert('success', 'Sucesso', 'Grupo criado com sucesso');
-                        this.cleanStates();
-
-                        return;
-                    }
-
-                    this.fbDatabaseRef.child(`grupos/${keyGroup}`).remove();
-                }
-            }
-        } 
-
-        this.setState({ loading: false });
-        showDropdownAlert(
-            'error', 
-            ERROS.cadGroup.erro, 
-            ERROS.cadGroup.mes
-        );
+        .then(() => {
+            this.setState({ loading: false });
+            showDropdownAlert('success', 'Sucesso', 'Grupo alterado com sucesso');
+        })
+        .catch(() => {
+            this.setState({ loading: false });
+            showDropdownAlert(
+                'error', 
+                ERROS.editGroup.erro, 
+                ERROS.editGroup.mes
+            );
+        });
     }
 
     onValidField = (value, field) => {
@@ -195,12 +173,12 @@ class CreateGroup extends React.Component {
 
     cleanStates = () => {
         this.setState({
-            nome: '',
-            esporte: optionsEsporte[0],
-            tipo: optionsEsporteTipo[optionsEsporte[0]][0],
-            periodicidade: optionsPeriodicidade[0],
-            tipocobranca: optionsTipoCobranca[0],
-            valorindividual: 0,
+            nome: this.state.grupoSelectedCopyMount.nome,
+            esporte: this.state.grupoSelectedCopyMount.esporte,
+            tipo: this.state.grupoSelectedCopyMount.tipo,
+            periodicidade: this.state.grupoSelectedCopyMount.periodicidade,
+            tipocobranca: this.state.grupoSelectedCopyMount.tipocobranca,
+            valorindividual: this.state.grupoSelectedCopyMount.valorindividual,
             loading: false,
             validFields: {
                 nome: true,
@@ -572,7 +550,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     dropdownAlert: state.SystemEventsReducer.dropdownAlert,
+    grupoSelected: state.GruposReducer.grupoSelected,
+    grupoSelectedKey: state.GruposReducer.grupoSelectedKey,
     userLogged: state.LoginReducer.userLogged
 });
 
-export default connect(mapStateToProps)(CreateGroup);
+export default connect(mapStateToProps)(EditGroup);

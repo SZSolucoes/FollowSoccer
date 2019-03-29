@@ -14,7 +14,7 @@ class RefreshTokenAndHour {
     }
 
     updateTokenAndHour = (fbDatabaseRef, userLogged) => {
-        if (!this.hasUpdated) {
+        if (!this.hasUpdated && userLogged && userLogged.key) {
             const userNode = fbDatabaseRef.child(`usuarios/${userLogged.key}`);
             
             AsyncStorage.getItem(mappedKeyStorage('userNotifToken')).then((userNotifToken) => {

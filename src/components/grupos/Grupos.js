@@ -416,7 +416,7 @@ class Grupos extends React.Component {
                         style={{ 
                             height: 150, 
                             width: '100%', 
-                            backgroundColor: colorAppDark 
+                            backgroundColor: colorAppDark
                         }}
                         source={{ uri: item.imgbody }}
                     />
@@ -523,8 +523,16 @@ class Grupos extends React.Component {
                                 title='VISUALIZAR'
                                 fontFamily='OpenSans-SemiBold'
                                 onPress={() => {
+                                    const admins = item.groupAdmins ? 
+                                    _.values(item.groupAdmins) : [];
                                     let rightView = () => <View />;
-                                    if (this.props.userLogged.key === item.userowner) {
+                                    if (
+                                            (this.props.userLogged.key === item.userowner) ||
+                                            (_.findIndex(
+                                                admins, 
+                                                itf => itf.key === this.props.userLogged.key
+                                            ) !== -1)
+                                        ) {
                                         rightView = () => (
                                             <View 
                                                 style={{

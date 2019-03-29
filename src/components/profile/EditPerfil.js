@@ -298,7 +298,7 @@ class EditPerfil extends React.Component {
                         underlineColorAndroid={'transparent'}
                         onSubmitEditing={() => this.inputDate.onPressDate()}
                     />
-                    <FormLabel labelStyle={styles.text}>DATA NASCIMENTO</FormLabel>
+                    <FormLabel labelStyle={styles.text}>DATA DE NASCIMENTO</FormLabel>
                     <View 
                         style={[styles.inputContainer, { 
                             flex: 1, 

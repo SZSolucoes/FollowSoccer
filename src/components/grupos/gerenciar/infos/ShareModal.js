@@ -1,14 +1,14 @@
 import React from 'react';
 import {
-    Modal, 
     Text, 
     View,
-    TouchableWithoutFeedback,
-    TouchableHighlight,
-    StyleSheet,
-    Clipboard,
+    Modal, 
     Animated,
-    ActivityIndicator
+    Clipboard,
+    StyleSheet,
+    ActivityIndicator,
+    TouchableHighlight,
+    TouchableWithoutFeedback
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';

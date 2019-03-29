@@ -283,9 +283,14 @@ class Jogadores extends React.Component {
     onRederRightIconPlayers = (
         ita,
         index,
-        userKey
+        userKey,
+        admins,
+        userOwnerKey
     ) => (
-        ita.key !== userKey ?
+        (ita.key === userOwnerKey) || 
+        _.findIndex(admins, itd => itd.key === ita.key) !== -1 ?
+        (<View />)
+        :
         (
             <TouchableOpacity
                 onPress={() => this.onRemovePlayer(ita, index)}
@@ -297,8 +302,6 @@ class Jogadores extends React.Component {
                 />  
             </TouchableOpacity>
         )  
-        :
-        (<View />)
     )
 
     render = () => {
@@ -307,6 +310,8 @@ class Jogadores extends React.Component {
 
         let listUsuarios = grupoSelected.participantes ? 
         _.values(grupoSelected.participantes) : [];
+        const admins = grupoSelected.groupAdmins ? _.values(grupoSelected.groupAdmins) : [];
+        const userOwnerKey = grupoSelected.userowner;
 
         listUsuarios = _.orderBy(listUsuarios, ['nome'], ['asc']);
 
@@ -476,7 +481,7 @@ class Jogadores extends React.Component {
                                     >
                                         <View style={{ flexDirection: 'row' }}>
                                             <Text style={styles.cardTextUsersBold}>
-                                                {'Email: '} 
+                                                {'E-mail: '}
                                             </Text>
                                             <Text 
                                                 selectable
@@ -685,7 +690,9 @@ class Jogadores extends React.Component {
                                             rightIcon={this.onRederRightIconPlayers(
                                                 ita,
                                                 index,
-                                                userKey
+                                                userKey,
+                                                admins,
+                                                userOwnerKey
                                             )}
                                         />
                                         <Divider />
@@ -694,7 +701,7 @@ class Jogadores extends React.Component {
                                         >
                                             <View style={{ flexDirection: 'row' }}>
                                                 <Text style={styles.cardTextUsersBold}>
-                                                    {'Email: '} 
+                                                    {'E-mail: '} 
                                                 </Text>
                                                 <Text 
                                                     selectable

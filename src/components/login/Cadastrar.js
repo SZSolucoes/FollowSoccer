@@ -19,7 +19,6 @@ import Moment from 'moment';
 import b64 from 'base-64';
 import { Actions } from 'react-native-router-flux';
 
-import DatePicker from 'react-native-datepicker';
 import firebase from '../../utils/Firebase';
 import { colorAppForeground, ERROS } from '../../utils/Constantes';
 import { checkConInfo, showDropdownAlert } from '../../utils/SystemEvents';
@@ -35,7 +34,6 @@ class Cadastrar extends React.Component {
             senha: '',
             nome: '',
             nomeForm: '',
-            data: Moment().format('DD/MM/YYYY'),
             loading: false,
             secureOn: true,
             validFields: {
@@ -55,7 +53,6 @@ class Cadastrar extends React.Component {
             email,
             senha,
             nomeForm,
-            data,
             validFields
         } = this.state;
 
@@ -82,13 +79,6 @@ class Cadastrar extends React.Component {
 
         const emailUser64 = b64.encode(email);
         const dataAtual = Moment().format('DD/MM/YYYY HH:mm:ss');
-        let dataStr = '';
-
-        if (data instanceof Moment) {
-            dataStr = Moment(data).format('DD/MM/YYYY');
-        } else {
-            dataStr = data;
-        }
 
         const dbUsuariosRef = databaseRef.child(`usuarios/${emailUser64}`);
 
@@ -101,7 +91,6 @@ class Cadastrar extends React.Component {
                 senha,
                 nome,
                 nomeForm,
-                dtnasc: dataStr,
                 dataCadastro: dataAtual
             };
             dbUsuariosRef.set({ ...newUser })
@@ -140,7 +129,6 @@ class Cadastrar extends React.Component {
                                 senha,
                                 nome,
                                 nomeForm,
-                                dtnasc: dataStr,
                                 dataCadastro: dataAtual
                             };
                             dbUsuariosRef.set({ ...newUser })
@@ -248,7 +236,7 @@ class Cadastrar extends React.Component {
                         !this.state.validFields.nome &&
                         <FormValidationMessage>Campo obrigatório</FormValidationMessage> 
                     }
-                    <FormLabel labelStyle={styles.textLabel}>EMAIL</FormLabel>
+                    <FormLabel labelStyle={styles.textLabel}>E-MAIL</FormLabel>
                     <FormInput
                         selectTextOnFocus
                         ref={(ref) => { this.inputEmailRef = ref; }}
@@ -317,39 +305,7 @@ class Cadastrar extends React.Component {
                         underlineColorAndroid={'transparent'}
                         onSubmitEditing={() => this.inputDate.onPressDate()}
                     />
-                    <FormLabel labelStyle={styles.textLabel}>DATA ANIVERSÁRIO</FormLabel>
-                    <View 
-                        style={[styles.inputContainer, { 
-                            flex: 1, 
-                            flexDirection: 'row',
-                            ...Platform.select({
-                            android: {
-                                marginHorizontal: 16
-                            },
-                            ios: {
-                                marginHorizontal: 20
-                            }
-                        }) }]}
-                    >
-                        <DatePicker
-                            ref={(ref) => { this.inputDate = ref; }}
-                            style={[styles.inputContainer, { flex: 1 }]}
-                            date={this.state.data}
-                            mode='date'
-                            format='DD/MM/YYYY'
-                            maxDate={Moment().format('DD/MM/YYYY')}
-                            confirmBtnText='Ok'
-                            cancelBtnText='Cancelar'
-                            placeholder=' '
-                            showIcon={false}
-                            customStyles={{
-                                dateInput: StyleSheet.flatten(styles.dateInput),
-                                dateText: StyleSheet.flatten(styles.dateText)
-                            }}
-                            onDateChange={(date) => this.setState({ data: date })}
-                        />
-                    </View>
-                    <Button 
+                    <Button
                         small
                         loading={this.state.loading}
                         disabled={this.state.loading}
@@ -369,7 +325,6 @@ class Cadastrar extends React.Component {
                                 senha: '',
                                 nome: '',
                                 nomeForm: '',
-                                data: Moment().format('DD/MM/YYYY'),
                                 loading: false,
                                 secureOn: true,
                                 validFields: {

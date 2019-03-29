@@ -48,8 +48,9 @@ class Admin extends React.Component {
                             <View style={styles.viewIconText}>
                                 <View style={{ marginTop: 2 }} />
                                 <Icon name='users' type='font-awesome' size={26} />
-                                <View style={{ marginTop: 15 }} />
-                                <Text style={styles.text}>Gerenciar</Text>
+                                <View style={{ marginTop: 10 }} />
+                                <Text style={styles.text}>{'Gerenciar'}</Text>
+                                <Text style={styles.text}>{'Jogos'}</Text>
                             </View>
                         </Card>
                     </TouchableOpacity>
@@ -154,9 +155,9 @@ class Admin extends React.Component {
                     <TouchableOpacity 
                         style={{ flex: 1 }} 
                         onPress={
-                            () => Alert.alert('Em desenvolvimento')/* Actions.adminParams(
+                            () => Actions.configAdmin(
                                 { onBack: () => Actions.popTo('ownerMenuAdmin') }
-                            ) */
+                            )
                         }
                     >
                         <Card 
@@ -164,9 +165,9 @@ class Admin extends React.Component {
                             wrapperStyle={{ flex: 1 }}
                         >
                             <View style={styles.viewIconText}>
-                                <Icon name='settings' type='material-community' size={34} />
+                                <Icon name='webpack' type='material-community' size={34} />
                                 <View style={{ marginTop: 10 }} />
-                                <Text style={styles.text}>Configurações</Text>
+                                <Text style={styles.text}>Administrativo</Text>
                             </View>
                         </Card>
                     </TouchableOpacity>

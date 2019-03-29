@@ -140,7 +140,7 @@ class RecuperarSenha extends React.Component {
         >  
             <View>
                 <Card containerStyle={styles.card}>
-                    <FormLabel labelStyle={styles.textLabel}>EMAIL</FormLabel>
+                    <FormLabel labelStyle={styles.textLabel}>E-MAIL</FormLabel>
                     <FormInput
                         selectTextOnFocus
                         ref={(ref) => { this.inputEmailRef = ref; }}

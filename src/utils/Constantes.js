@@ -84,15 +84,15 @@ export const ERROS = {
     },
     emailNotFound: {
         erro: 'Erro #0004',
-        mes: 'Email não cadastrado.'
+        mes: 'E-mail não cadastrado.'
     },
     emailInvalid: {
         erro: 'Erro #0005',
-        mes: 'Email inválido.'
+        mes: 'E-mail inválido.'
     },
     incorrectLogin: {
         erro: 'Erro #0006',
-        mes: 'Email ou senha incorretos.'
+        mes: 'E-mail ou senha incorretos.'
     },
     cadUser: {
         erro: 'Erro #0007',
@@ -285,6 +285,26 @@ export const ERROS = {
     ausentesConfirm: {
         erro: 'Erro #0052',
         mes: 'Falha ao confirmar jogador. Verifique a conexão.'
+    },
+    editGroup: {
+        erro: 'Erro #0053',
+        mes: 'Ocorreu um erro ao editar o grupo. Verifique a conexão.'
+    },
+    groupGenNewKey: {
+        erro: 'Erro #0054',
+        mes: 'Ocorreu um erro ao gerar um novo código para o grupo. Verifique a conexão.'
+    },
+    groupAdminAdd: {
+        erro: 'Erro #0055',
+        mes: 'Ocorreu um erro ao adicionar o administrador. Verifique a conexão.'
+    },
+    groupAdminRemove: {
+        erro: 'Erro #0056',
+        mes: 'Ocorreu um erro ao remover o administrador. Verifique a conexão.'
+    },
+    groupAdminRemoveUserLooged: {
+        erro: 'Erro #0057',
+        mes: 'Ocorreu um erro ao remover a administração. Verifique a conexão.'
     }
 
 };

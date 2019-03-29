@@ -3,9 +3,9 @@ import React from 'react';
 import {
     View,
     Text,
-    TouchableWithoutFeedback,
     Animated,
-    Platform
+    Platform,
+    TouchableWithoutFeedback
 } from 'react-native';
 import { Icon, Divider } from 'react-native-elements';
 import _ from 'lodash';

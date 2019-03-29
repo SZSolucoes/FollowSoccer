@@ -130,7 +130,7 @@ export default class ShareModal extends Component {
                             }, 300);
                         }}
                     >
-                        Email
+                        E-mail
                     </Button>
                 }
                 {
