@@ -1,25 +1,31 @@
 import React from 'react';
 import { 
+    Text,
     View,
-    StyleSheet,
+    Picker,
     Platform,
     ScrollView,
-    TouchableWithoutFeedback,
-    Picker,
+    StyleSheet,
     ActionSheetIOS,
-    Text
+    TouchableOpacity,
+    TouchableWithoutFeedback
 } from 'react-native';
 
 import { connect } from 'react-redux';
 import { 
+    Icon,
+    Button,
     FormLabel, 
     FormInput, 
-    FormValidationMessage,
-    Button
+    FormValidationMessage
 } from 'react-native-elements';
 import { TextInputMask } from 'react-native-masked-text';
+import FastImage from 'react-native-fast-image';
+import ImagePicker from 'react-native-image-crop-picker';
+import RNFetchBlob from 'rn-fetch-blob';
 import Moment from 'moment';
 import _ from 'lodash';
+import b64 from 'base-64';
 
 import firebase from '../../utils/Firebase';
 import { colorAppForeground, ERROS } from '../../utils/Constantes';
@@ -60,6 +66,9 @@ class CreateGroup extends React.Component {
             tipocobranca: optionsTipoCobranca[0],
             valorindividual: 0,
             loading: false,
+            imgJogoUri: '',
+            b64ImageData: '',
+            b64ImageContentType: '',
             validFields: {
                 nome: true,
                 esporte: true,
@@ -70,6 +79,7 @@ class CreateGroup extends React.Component {
         };
 
         this.fbDatabaseRef = firebase.database().ref();
+        this.fbStorageRef = firebase.storage();
     }
 
    onPressConfirmar = async () => {
@@ -77,9 +87,11 @@ class CreateGroup extends React.Component {
             nome,
             esporte,
             tipo,
-            periodicidade,
+            validFields,
             tipocobranca,
-            validFields
+            b64ImageData,
+            periodicidade,
+            b64ImageContentType,
         } = this.state;
 
         const { userLogged } = this.props;
@@ -110,65 +122,168 @@ class CreateGroup extends React.Component {
 
         this.setState({ loading: true, validFields: newValidFields });
 
-        // Gravacao de dados no firebase
-        const dbGruposRef = this.fbDatabaseRef.child('grupos');
-        const fbUsuarioRef = this.fbDatabaseRef.child(`usuarios/${userLogged.key}`);
-        const fbUsuarioGrupoRef = this.fbDatabaseRef.child(`usuarios/${userLogged.key}/grupos`);
-        const dataAtual = Moment().format('DD/MM/YYYY HH:mm:ss');
-        const twofirstKey = userLogged.key.slice(0, 2);
-        const twoLastKey = userLogged.key.slice(-2);
-        const medianKey = new Date().getTime().toString(36);
-        const groupInviteKey = `${twofirstKey}${medianKey}${twoLastKey}`.replace(/=/g, '');
+        try {
+            // Gravacao de dados no firebase
+            const dbGruposRef = this.fbDatabaseRef.child('grupos');
+            const fbUsuarioRef = this.fbDatabaseRef.child(`usuarios/${userLogged.key}`);
+            const fbUsuarioGrupoRef = this.fbDatabaseRef.child(`usuarios/${userLogged.key}/grupos`);
+            const dataAtual = Moment().format('DD/MM/YYYY HH:mm:ss');
+            const twofirstKey = userLogged.key.slice(0, 2);
+            const twoLastKey = userLogged.key.slice(-2);
+            const medianKey = new Date().getTime().toString(36);
+            const groupInviteKey = `${twofirstKey}${medianKey}${twoLastKey}`.replace(/=/g, '');
 
-        const ret = await dbGruposRef.push({
-            nome,
-            esporte,
-            tipo,
-            periodicidade,
-            tipocobranca,
-            valorindividual,
-            userowner: userLogged.key,
-            dtcriacao: dataAtual,
-            imgbody: '',
-            groupInviteKey,
-            convites: { push: 'push' },
-            participantes: { [userLogged.key]: {
-                imgAvatar: userLogged.imgAvatar,
-                key: userLogged.key,
-                nome: userLogged.nome,
-                jogoNotifCad: 'on',
-                jogoNotifReminder: 'on',
-                enqueteNotif: 'on',
-                muralNotif: 'on'
-            } }
-        })
-        .catch(() => false);
+            const ret = await dbGruposRef.push({
+                nome,
+                esporte,
+                tipo,
+                periodicidade,
+                tipocobranca,
+                valorindividual,
+                userowner: userLogged.key,
+                dtcriacao: dataAtual,
+                imgbody: '',
+                groupInviteKey,
+                convites: { push: 'push' },
+                userKeyLastEdit: userLogged.key,
+                participantes: { [userLogged.key]: {
+                    imgAvatar: userLogged.imgAvatar,
+                    key: userLogged.key,
+                    nome: userLogged.nome,
+                    jogoNotifCad: 'on',
+                    jogoNotifReminder: 'on',
+                    enqueteNotif: 'on',
+                    muralNotif: 'on'
+                } }
+            })
+            .catch(() => false);
 
+            if (ret) {
+                const snap = await fbUsuarioRef.once('value');
 
-        if (ret) {
-            const snap = await fbUsuarioRef.once('value');
+                if (snap) {
+                    const snapVal = snap.val();
+                    const keyGroup = ret.getKey();
 
-            if (snap) {
-                const snapVal = snap.val();
-                const keyGroup = ret.getKey();
+                    if (snapVal) {
+                        let imgbody = '';
 
-                if (snapVal) {
-                    const newGroup = { [keyGroup]: { groupKey: keyGroup } };
-                    const retA = await fbUsuarioGrupoRef.update({
-                        ...newGroup
-                    }).then(() => true).catch(() => false);
+                        if (b64ImageData) {
+                            const Blob = RNFetchBlob.polyfill.Blob;
+                            const glbXMLHttpRequest = global.XMLHttpRequest;
+                            const glbBlob = global.Blob;
+                
+                            global.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+                            global.Blob = Blob;
+                
+                            let uploadBlob = null;
+                
+                            const fileName = b64.encode(new Date().getTime().toString());
+                            const imgExt = b64ImageContentType
+                            .slice(b64ImageContentType.indexOf('/') + 1);
+                            const storageGroupRef = this.fbStorageRef.ref()
+                            .child(`grupos/${keyGroup}/${fileName}.${imgExt}`);
+                
+                            const blob = await Blob.build(
+                                b64ImageData, 
+                                { type: `${b64ImageContentType};BASE64` }
+                            );
+                            uploadBlob = blob;
+            
+                            if (!uploadBlob) {
+                                this.setState({ loading: false });
 
-                    if (retA) {
-                        showDropdownAlert('success', 'Sucesso', 'Grupo criado com sucesso');
-                        this.cleanStates();
+                                showDropdownAlert(
+                                    'error',
+                                    ERROS.groupCadImgPush.erro,
+                                    ERROS.groupCadImgPush.mes
+                                );
+                                global.XMLHttpRequest = glbXMLHttpRequest;
+                                global.Blob = glbBlob;
 
-                        return;
+                                this.fbDatabaseRef.child(`grupos/${keyGroup}`).remove();
+
+                                return false;
+                            }
+
+                            await storageGroupRef.put(blob, { contentType: b64ImageContentType });
+
+                            imgbody = await storageGroupRef.getDownloadURL().then(url => url);
+
+                            global.XMLHttpRequest = glbXMLHttpRequest;
+                            global.Blob = glbBlob;
+
+                            if (uploadBlob) {
+                                uploadBlob.close();
+                            }
+
+                            if (!imgbody) {
+                                this.setState({ loading: false });
+
+                                showDropdownAlert(
+                                    'error',
+                                    ERROS.groupCadImgPush.erro,
+                                    ERROS.groupCadImgPush.mes
+                                );
+                                
+                                this.fbDatabaseRef.child(`grupos/${keyGroup}`).remove();
+    
+                                return false;
+                            }
+                        }
+
+                        const newGroup = { [keyGroup]: { groupKey: keyGroup } };
+                        const retA = await fbUsuarioGrupoRef.update({
+                            ...newGroup
+                        }).then(() => true).catch(() => false);
+
+                        if (retA) {
+                            const retB = !imgbody || await this.fbDatabaseRef
+                            .child(`grupos/${keyGroup}`).update({
+                                imgbody
+                            }).then(() => true).catch(() => false);
+                            
+                            if (retB) {
+                                showDropdownAlert('success', 'Sucesso', 'Grupo criado com sucesso');
+                                this.cleanStates();
+                            } else {
+                                this.setState({ loading: false });
+                                showDropdownAlert(
+                                    'error', 
+                                    ERROS.cadGroup.erro,
+                                    ERROS.cadGroup.mes
+                                );
+                            }
+
+                            return false;
+                        }
+
+                        this.setState({ loading: false });
+                        showDropdownAlert(
+                            'error',
+                            ERROS.groupCadImgPush.erro,
+                            ERROS.groupCadImgPush.mes
+                        );
+
+                        this.fbDatabaseRef.child(`grupos/${keyGroup}`).remove();
+                        if (imgbody) {
+                            this.fbStorageRef.refFromURL(imgbody).delete()
+                            .then(() => true)
+                            .catch(() => true);
+                        }
                     }
-
-                    this.fbDatabaseRef.child(`grupos/${keyGroup}`).remove();
                 }
-            }
-        } 
+            } 
+        } catch (e) {
+            this.setState({ loading: false });
+            showDropdownAlert(
+                'error', 
+                ERROS.cadGroup.erro, 
+                ERROS.cadGroup.mes
+            );
+
+            return false;
+        }
 
         this.setState({ loading: false });
         showDropdownAlert(
@@ -176,6 +291,32 @@ class CreateGroup extends React.Component {
             ERROS.cadGroup.erro, 
             ERROS.cadGroup.mes
         );
+
+        return true;
+    }
+
+    onPressSelectImg = () => {
+        ImagePicker.openPicker({
+            width: 600,
+            height: 400,
+            cropping: true,
+            includeBase64: true,
+            cropperCircleOverlay: false,
+            mediaType: 'photo'
+        }).then(image => {
+            if (image) {
+                let contentType = '';
+                if (image.mime) {
+                    contentType = image.mime;
+                }
+                
+                this.setState({ 
+                    imgJogoUri: `data:${image.mime};base64,${image.data}`,
+                    b64ImageData: image.data,
+                    b64ImageContentType: contentType
+                });
+            }
+        }).catch(() => false);
     }
 
     onValidField = (value, field) => {
@@ -202,6 +343,9 @@ class CreateGroup extends React.Component {
             tipocobranca: optionsTipoCobranca[0],
             valorindividual: 0,
             loading: false,
+            imgJogoUri: '',
+            b64ImageData: '',
+            b64ImageContentType: '',
             validFields: {
                 nome: true,
                 esporte: true,
@@ -516,6 +660,40 @@ class CreateGroup extends React.Component {
                         onChangeText={value => this.setState({ valorindividual: value })}
                         value={this.state.valorindividual}
                     />
+                    <FormLabel labelStyle={styles.text}>IMAGEM DE EXIBIÇÃO</FormLabel>
+                    <View style={{ marginVertical: 20, marginHorizontal: 10 }}>
+                        <TouchableOpacity
+                            onPress={() => this.onPressSelectImg()}
+                        >
+                            <View style={styles.viewImageSelect}>
+                                <Icon 
+                                    name='folder-image' 
+                                    type='material-community' 
+                                    size={34} color='#9E9E9E' 
+                                />
+                                <FormLabel 
+                                    labelStyle={[styles.text, { marginTop: 0, marginBottom: 0 }]}
+                                >
+                                    Selecionar imagem
+                                </FormLabel> 
+                            </View>
+                            <View style={[styles.viewImageSelect, { height: 200 }]}>
+                                { 
+                                    !!this.state.imgJogoUri && 
+                                    (<FastImage
+                                        resizeMode={FastImage.resizeMode.stretch} 
+                                        source={{ uri: this.state.imgJogoUri }}
+                                        style={{
+                                            flex: 1,
+                                            alignSelf: 'stretch',
+                                            width: undefined,
+                                            height: undefined
+                                        }}
+                                    />)
+                                }
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                     <Button 
                         small
                         loading={this.state.loading}
@@ -567,7 +745,15 @@ const styles = StyleSheet.create({
     },
     card: {
         paddingHorizontal: 10
-    }
+    },
+    viewImageSelect: {
+        flexDirection: 'row', 
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 2, 
+        borderColor: '#EEEEEE',
+        borderRadius: 0.9
+    },
 });
 
 const mapStateToProps = state => ({

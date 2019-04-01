@@ -9,7 +9,7 @@ export default class AvatarSync extends React.Component {
         this.dbFirebaseRef = firebase.database().ref();
 
         this.state = {
-            imgAvatar: null
+            imgAvatar: { uri: '' }
         };
     }
 

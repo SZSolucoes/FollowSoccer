@@ -1,24 +1,30 @@
 import React from 'react';
 import { 
     View,
-    StyleSheet,
+    Text,
+    Picker,
     Platform,
     ScrollView,
-    TouchableWithoutFeedback,
-    Picker,
+    StyleSheet,
     ActionSheetIOS,
-    Text
+    TouchableOpacity,
+    TouchableWithoutFeedback
 } from 'react-native';
 
 import { connect } from 'react-redux';
 import { 
+    Icon,
+    Button,
     FormLabel, 
     FormInput, 
-    FormValidationMessage,
-    Button
+    FormValidationMessage
 } from 'react-native-elements';
 import { TextInputMask } from 'react-native-masked-text';
+import FastImage from 'react-native-fast-image';
+import ImagePicker from 'react-native-image-crop-picker';
+import RNFetchBlob from 'rn-fetch-blob';
 import _ from 'lodash';
+import b64 from 'base-64';
 
 import firebase from '../../../../../utils/Firebase';
 import { colorAppForeground, ERROS } from '../../../../../utils/Constantes';
@@ -59,6 +65,9 @@ class EditGroup extends React.Component {
             tipocobranca: optionsTipoCobranca[0],
             valorindividual: 0,
             loading: false,
+            imgbody: '',
+            b64ImageData: '',
+            b64ImageContentType: '',
             validFields: {
                 nome: true,
                 esporte: true,
@@ -69,6 +78,7 @@ class EditGroup extends React.Component {
         };
 
         this.fbDatabaseRef = firebase.database().ref();
+        this.fbStorageRef = firebase.storage();
     }
 
     componentDidMount = () => {
@@ -82,22 +92,69 @@ class EditGroup extends React.Component {
                 periodicidade: grupoSelected.periodicidade,
                 tipocobranca: grupoSelected.tipocobranca,
                 valorindividual: grupoSelected.valorindividual,
+                imgbody: grupoSelected.imgbody,
                 grupoSelectedCopyMount: { ...grupoSelected }
             });
         }
     }
 
-    onPressConfirmar = () => {
+    componentDidUpdate = (prevProps) => {
+        const { grupoSelected, userLogged } = this.props;
+
+        if (grupoSelected && grupoSelected.key) {
+            const isEqualGroup = _.isEqual(
+                [
+                    prevProps.grupoSelected.nome,
+                    prevProps.grupoSelected.esporte,
+                    prevProps.grupoSelected.tipo,
+                    prevProps.grupoSelected.periodicidade,
+                    prevProps.grupoSelected.tipocobranca,
+                    prevProps.grupoSelected.valorindividual,
+                    prevProps.grupoSelected.imgbody
+                ],
+                [
+                    grupoSelected.nome,
+                    grupoSelected.esporte,
+                    grupoSelected.tipo,
+                    grupoSelected.periodicidade,
+                    grupoSelected.tipocobranca,
+                    grupoSelected.valorindividual,
+                    grupoSelected.imgbody
+                ]
+            );
+
+            if (!isEqualGroup && grupoSelected.userKeyLastEdit === userLogged.key) {
+                this.setState({
+                    nome: grupoSelected.nome,
+                    esporte: grupoSelected.esporte,
+                    tipo: grupoSelected.tipo,
+                    periodicidade: grupoSelected.periodicidade,
+                    tipocobranca: grupoSelected.tipocobranca,
+                    valorindividual: grupoSelected.valorindividual,
+                    imgbody: grupoSelected.imgbody,
+                    grupoSelectedCopyMount: { ...grupoSelected }
+                });
+            }
+        }
+    }
+
+    onPressConfirmar = async () => {
         const {
             nome,
             esporte,
             tipo,
-            periodicidade,
+            imgbody,
+            validFields,
             tipocobranca,
-            validFields
+            b64ImageData,
+            periodicidade,
+            b64ImageContentType,
+            grupoSelectedCopyMount
         } = this.state;
 
-        const { grupoSelectedKey } = this.props;
+        const bckImage = grupoSelectedCopyMount.imgbody;
+
+        const { grupoSelectedKey, userLogged } = this.props;
 
         const valorindividual = this.inputValorRef.getRawValue();
 
@@ -131,6 +188,84 @@ class EditGroup extends React.Component {
         const twoLastKey = userLogged.key.slice(-2);
         const medianKey = new Date().getTime().toString(36);
         const groupInviteKey = `${twofirstKey}${medianKey}${twoLastKey}`.replace(/=/g, ''); */
+        let imgbodyEdit = imgbody;
+        let isNewImg = false;
+
+        if (b64ImageData) {
+            const Blob = RNFetchBlob.polyfill.Blob;
+            const glbXMLHttpRequest = global.XMLHttpRequest;
+            const glbBlob = global.Blob;
+
+            global.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+            global.Blob = Blob;
+
+            let uploadBlob = null;
+
+            try {
+                const fileName = b64.encode(new Date().getTime().toString());
+                const imgExt = b64ImageContentType.slice(b64ImageContentType.indexOf('/') + 1);
+                const storageGroupRef = this.fbStorageRef.ref()
+                .child(`grupos/${grupoSelectedKey}/${fileName}.${imgExt}`);
+    
+                const blob = await Blob.build(
+                    b64ImageData, 
+                    { type: `${b64ImageContentType};BASE64` }
+                );
+                uploadBlob = blob;
+    
+                if (!uploadBlob) {
+                    this.setState({ loading: false });
+
+                    showDropdownAlert(
+                        'error',
+                        ERROS.groupCadImgPush.erro,
+                        ERROS.groupCadImgPush.mes
+                    );
+
+                    global.XMLHttpRequest = glbXMLHttpRequest;
+                    global.Blob = glbBlob;
+
+                    return false;
+                }
+                
+                if (uploadBlob) {
+                    await storageGroupRef.put(blob, { contentType: b64ImageContentType });
+                    imgbodyEdit = await storageGroupRef.getDownloadURL().then(url => url);
+
+                    if (imgbodyEdit) isNewImg = true;
+    
+                    global.XMLHttpRequest = glbXMLHttpRequest;
+                    global.Blob = glbBlob;
+    
+                    uploadBlob.close();
+                    uploadBlob = null;
+                }
+            } catch (e) {
+                this.setState({ loading: false });
+
+                showDropdownAlert(
+                    'error',
+                    ERROS.groupCadImgPush.erro,
+                    ERROS.groupCadImgPush.mes
+                );
+
+                global.XMLHttpRequest = glbXMLHttpRequest;
+                global.Blob = glbBlob;
+
+                if (uploadBlob) {
+                    uploadBlob.close();
+                    uploadBlob = null;
+                }
+
+                if (isNewImg) {
+                    this.fbStorageRef.refFromURL(imgbodyEdit).delete()
+                    .then(() => true)
+                    .catch(() => true);
+                }
+
+                return false;
+            }
+        }
 
         dbGruposRef.update({
             nome,
@@ -139,21 +274,62 @@ class EditGroup extends React.Component {
             periodicidade,
             tipocobranca,
             valorindividual,
-            imgbody: '',
+            imgbody: imgbodyEdit,
+            userKeyLastEdit: userLogged.key
             //groupInviteKey,
         })
         .then(() => {
             this.setState({ loading: false });
             showDropdownAlert('success', 'Sucesso', 'Grupo alterado com sucesso');
+
+            // Caso existe uma imagem ja upada, deleta a anterior para manter a nova
+            if (isNewImg && bckImage) {
+                this.fbStorageRef.refFromURL(bckImage).delete()
+                .then(() => true)
+                .catch(() => true);
+            }
         })
-        .catch(() => {
+        .catch((e) => {
+            console.log(e);
             this.setState({ loading: false });
             showDropdownAlert(
                 'error', 
                 ERROS.editGroup.erro, 
                 ERROS.editGroup.mes
             );
+
+            // Se ocorreu erro no processo de gravacao entao realiza o rollback 
+            //deletando a imagem upada no storage
+            if (isNewImg) {
+                this.fbStorageRef.refFromURL(imgbodyEdit).delete()
+                .then(() => true)
+                .catch(() => true);
+            }
         });
+    }
+
+    onPressSelectImg = () => {
+        ImagePicker.openPicker({
+            width: 600,
+            height: 400,
+            cropping: true,
+            includeBase64: true,
+            cropperCircleOverlay: false,
+            mediaType: 'photo'
+        }).then(image => {
+            if (image) {
+                let contentType = '';
+                if (image.mime) {
+                    contentType = image.mime;
+                }
+                
+                this.setState({ 
+                    imgbody: `data:${image.mime};base64,${image.data}`,
+                    b64ImageData: image.data,
+                    b64ImageContentType: contentType
+                });
+            }
+        }).catch(() => false);
     }
 
     onValidField = (value, field) => {
@@ -180,6 +356,9 @@ class EditGroup extends React.Component {
             tipocobranca: this.state.grupoSelectedCopyMount.tipocobranca,
             valorindividual: this.state.grupoSelectedCopyMount.valorindividual,
             loading: false,
+            imgbody: this.state.grupoSelectedCopyMount.imgbody,
+            b64ImageData: '',
+            b64ImageContentType: '',
             validFields: {
                 nome: true,
                 esporte: true,
@@ -494,6 +673,40 @@ class EditGroup extends React.Component {
                         onChangeText={value => this.setState({ valorindividual: value })}
                         value={this.state.valorindividual}
                     />
+                    <FormLabel labelStyle={styles.text}>IMAGEM DE EXIBIÇÃO</FormLabel>
+                    <View style={{ marginVertical: 20, marginHorizontal: 10 }}>
+                        <TouchableOpacity
+                            onPress={() => this.onPressSelectImg()}
+                        >
+                            <View style={styles.viewImageSelect}>
+                                <Icon 
+                                    name='folder-image' 
+                                    type='material-community' 
+                                    size={34} color='#9E9E9E' 
+                                />
+                                <FormLabel 
+                                    labelStyle={[styles.text, { marginTop: 0, marginBottom: 0 }]}
+                                >
+                                    Selecionar imagem
+                                </FormLabel> 
+                            </View>
+                            <View style={[styles.viewImageSelect, { height: 200 }]}>
+                                { 
+                                    !!this.state.imgbody && 
+                                    (<FastImage
+                                        resizeMode={FastImage.resizeMode.stretch} 
+                                        source={{ uri: this.state.imgbody }}
+                                        style={{
+                                            flex: 1,
+                                            alignSelf: 'stretch',
+                                            width: undefined,
+                                            height: undefined
+                                        }}
+                                    />)
+                                }
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                     <Button 
                         small
                         loading={this.state.loading}
@@ -506,7 +719,7 @@ class EditGroup extends React.Component {
                     />
                     <Button 
                         small
-                        title={'Limpar'}
+                        title={'Restaurar'}
                         buttonStyle={{ width: '100%', marginVertical: 10 }}
                         onPress={() => this.cleanStates()}
                         fontFamily={'OpenSans-SemiBold'}
@@ -545,6 +758,14 @@ const styles = StyleSheet.create({
     },
     card: {
         paddingHorizontal: 10
+    },
+    viewImageSelect: {
+        flexDirection: 'row', 
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 2, 
+        borderColor: '#EEEEEE',
+        borderRadius: 0.9
     }
 });
 

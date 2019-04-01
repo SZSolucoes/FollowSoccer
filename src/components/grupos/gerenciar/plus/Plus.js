@@ -160,6 +160,57 @@ class Plus extends React.Component {
                     containerStyle={{ marginHorizontal: 0 }}
                 >
                     <ListItem
+                        key={'Histórico de Jogos'}
+                        title={'Histórico de Jogos'}
+                        titleStyle={styles.titleStyle}
+                        containerStyle={{ borderBottomWidth: 0 }}
+                        leftIcon={{ 
+                            name: 'history', 
+                            type: 'material-community', 
+                            color: colorAppSecondary,
+                            size: 28 
+                        }}
+                        onPress={() => Actions.historico()}
+                    />
+                </Card>
+                <Card
+                    containerStyle={{ marginHorizontal: 0 }}
+                >
+                    <ListItem
+                        key={'Financeiro'}
+                        title={'Financeiro'}
+                        titleStyle={styles.titleStyle}
+                        containerStyle={{ borderBottomWidth: 0 }}
+                        leftIcon={{ 
+                            name: 'cash-multiple', 
+                            type: 'material-community', 
+                            color: colorAppSecondary,
+                            size: 28 
+                        }}
+                        onPress={() => Actions.profileFinanceiro()}
+                    />
+                </Card>
+                <Card
+                    containerStyle={{ marginHorizontal: 0 }}
+                >
+                    <ListItem
+                        key={'Mural'}
+                        title={'Mural'}
+                        titleStyle={styles.titleStyle}
+                        containerStyle={{ borderBottomWidth: 0 }}
+                        leftIcon={{ 
+                            name: 'chart-timeline', 
+                            type: 'material-community', 
+                            color: colorAppSecondary,
+                            size: 28 
+                        }}
+                        onPress={() => Actions.mural()}
+                    />
+                </Card>
+                <Card
+                    containerStyle={{ marginHorizontal: 0 }}
+                >
+                    <ListItem
                         key={'Enquetes'}
                         title={'Enquetes'}
                         titleStyle={styles.titleStyle}
@@ -178,23 +229,6 @@ class Plus extends React.Component {
                             } });
                         }}
                         {...enqueteProps}
-                    />
-                </Card>
-                <Card
-                    containerStyle={{ marginHorizontal: 0 }}
-                >
-                    <ListItem
-                        key={'Financeiro'}
-                        title={'Financeiro'}
-                        titleStyle={styles.titleStyle}
-                        containerStyle={{ borderBottomWidth: 0 }}
-                        leftIcon={{ 
-                            name: 'cash-multiple', 
-                            type: 'material-community', 
-                            color: colorAppSecondary,
-                            size: 28 
-                        }}
-                        onPress={() => Actions.profileFinanceiro()}
                     />
                 </Card>
                 <Card
@@ -237,40 +271,6 @@ class Plus extends React.Component {
                         onPress={
                             () => Actions.analisejogadores({ title: 'Histórico de Faltas' })
                         }
-                    />
-                </Card>
-                <Card
-                    containerStyle={{ marginHorizontal: 0 }}
-                >
-                    <ListItem
-                        key={'Histórico de Jogos'}
-                        title={'Histórico de Jogos'}
-                        titleStyle={styles.titleStyle}
-                        containerStyle={{ borderBottomWidth: 0 }}
-                        leftIcon={{ 
-                            name: 'history', 
-                            type: 'material-community', 
-                            color: colorAppSecondary,
-                            size: 28 
-                        }}
-                        onPress={() => Actions.historico()}
-                    />
-                </Card>
-                <Card
-                    containerStyle={{ marginHorizontal: 0 }}
-                >
-                    <ListItem
-                        key={'Mural'}
-                        title={'Mural'}
-                        titleStyle={styles.titleStyle}
-                        containerStyle={{ borderBottomWidth: 0 }}
-                        leftIcon={{ 
-                            name: 'chart-timeline', 
-                            type: 'material-community', 
-                            color: colorAppSecondary,
-                            size: 28 
-                        }}
-                        onPress={() => Actions.mural()}
                     />
                 </Card>
                 <Card

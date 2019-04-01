@@ -83,7 +83,7 @@ class MenuGroup extends React.Component {
                         'Sucesso',
                         'Administração removida com sucesso'
                     );
-                    Actions.popTo('mainscreen');
+                    Actions.popTo('_cadastroGrupos');
                 } else {
                     showDropdownAlert(
                         'success',
@@ -159,6 +159,42 @@ class MenuGroup extends React.Component {
                     text: 'Sim', 
                     onPress: () => checkConInfo(() => funExec()) 
                 }
+            ],
+            { cancelable: true }
+        );
+    }
+
+    onPressRemoveGroup = () => {
+        const funExec = () => {
+            const { grupoSelectedKey } = this.props;
+            const dbGroupRef = this.dbFirebaseRef.child(`grupos/${grupoSelectedKey}`);
+    
+            dbGroupRef.remove()
+            .then(() => {
+                showDropdownAlert(
+                    'success', 
+                    'Sucesso', 
+                    'Grupo excluído com sucesso'
+                );
+
+                Actions.popTo('_cadastroGrupos');
+            })
+            .catch(() => showDropdownAlert(
+                'error', 
+                ERROS.groupDelete.erro, 
+                ERROS.groupDelete.mes
+            ));
+        };
+
+        Alert.alert(
+            'Aviso', 
+            'O processo de exclusão do grupo é irreversível, confirma a exclusão ?',
+            [
+                { 
+                    text: 'Sim', 
+                    onPress: () => checkConInfo(() => funExec()) 
+                },
+                { text: 'Cancelar', onPress: () => false }
             ],
             { cancelable: true }
         );
@@ -369,29 +405,32 @@ class MenuGroup extends React.Component {
             <View style={{ marginVertical: 5 }} />
             <View style={styles.viewPrinc}>
                 <View style={{ flex: 1 }}>
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            backgroundColor: 'white',
-                            borderColor: 'rgba(39, 167, 68, 0.8)',
-                            borderWidth: 1,
-                            borderRadius: 5,
-                            margin: 10,
-                            paddingVertical: 10,
-                            paddingHorizontal: 5,
-                            ...Platform.select({
-                                ios: {
-                                    shadowColor: '#000',
-                                    shadowOffset: { width: 0, height: 2 },
-                                    shadowOpacity: 0.5,
-                                    shadowRadius: 2,
-                                },
-                                android: {
-                                    elevation: 2,
-                                },
-                            })
-                        }}
-                    >
+                    <View style={[styles.cardDefault, { borderColor: 'red' }]}>
+                        <ListItem
+                            title='Excluir grupo'
+                            subtitle={
+                                'Ao excluir o grupo, todos os dados do grupo como jogos,' +
+                                ' informativos, participantes e entre outros serão perdidos.'
+                            }
+                            subtitleNumberOfLines={5}
+                            containerStyle={{ borderBottomWidth: 0 }}
+                            rightIcon={(
+                                <View style={{ marginLeft: 5 }}>
+                                    <TouchableOpacity
+                                        onPress={() => this.onPressRemoveGroup()}
+                                    >
+                                        <Icon 
+                                            name='delete' 
+                                            type='material-community' 
+                                            size={30}
+                                            color={'red'}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        />
+                    </View>
+                    <View style={[styles.cardDefault, { flexDirection: 'row' }]}>
                         <View 
                             style={{
                                 flex: 3,
@@ -520,6 +559,26 @@ const styles = StyleSheet.create({
     cardTextUsersBold: {
         fontFamily: 'OpenSans-Bold',
         color: '#43484d'
+    },
+    cardDefault: {
+        backgroundColor: 'white',
+        borderColor: 'rgba(39, 167, 68, 0.8)',
+        borderWidth: 1,
+        borderRadius: 5,
+        margin: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 5,
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.5,
+                shadowRadius: 2,
+            },
+            android: {
+                elevation: 2,
+            },
+        })
     }
 });
 

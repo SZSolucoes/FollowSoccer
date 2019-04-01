@@ -83,6 +83,7 @@ import Preferencias from './components/profile/Preferencias';
 import Modalidades from './components/profile/esportes/Modalidades';
 import EditGroup from './components/grupos/gerenciar/admin/configadmin/EditGroup';
 import MenuGroup from './components/grupos/gerenciar/admin/configadmin/MenuGroup';
+import ParamsGroup from './components/grupos/gerenciar/admin/configadmin/ParamsGroup';
 
 const AnimatedSceneComp = Animated.createAnimatedComponent(AnimatedScene);
 
@@ -833,6 +834,13 @@ class Routes extends React.Component {
                 hideNavBar 
                 component={EditGroup}
                 tabBarLabel={'Editar'}
+                activeTintColor={'white'}
+            />
+            <Scene 
+                key={'configParams'}
+                hideNavBar 
+                component={ParamsGroup}
+                tabBarLabel={'Parâmetros'}
                 activeTintColor={'white'}
             />
         </Scene>

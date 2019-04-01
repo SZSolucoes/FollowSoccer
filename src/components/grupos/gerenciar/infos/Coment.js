@@ -195,7 +195,7 @@ class Coment extends React.Component {
         }
 
         viewComents = newListComents.map((item, index) => {
-            const userImg = item.imgAvatar ? { uri: item.imgAvatar } : null;
+            const userImg = item.imgAvatar ? { uri: item.imgAvatar } : { uri: '' }
             const isMsgUser = item.key && item.key === userLogged.key;
             let timeDiff = '';
             let timeAppend = '';
