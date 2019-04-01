@@ -43,7 +43,8 @@ export const SHARE_INVITE = {
 
 export const GROUP_PARAMS = {
     pontopresenc: '0',
-    pontovitoria: '0'
+    pontovitoria: '0',
+    pontoempate: '0'
 };
 
 //  twitter icon
@@ -318,6 +319,10 @@ export const ERROS = {
     groupDelete: {
         erro: 'Erro #0059',
         mes: 'Ocorreu um erro ao excluir o grupo. Verifique a conexão.'
+    },
+    paramsGroup: {
+        erro: 'Erro #0060',
+        mes: 'Ocorreu um erro ao salvar o parâmetro. Verifique a conexão.'
     }
 };
 

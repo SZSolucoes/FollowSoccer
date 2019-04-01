@@ -11,7 +11,6 @@ import {
 
 import { connect } from 'react-redux';
 import { Icon, FormInput } from 'react-native-elements';
-import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 
 import firebase from '../../../../../utils/Firebase';
@@ -21,7 +20,6 @@ import {
     colorAppSecondary, 
     colorAppForeground
 } from '../../../../../utils/Constantes';
-import Card from '../../../../../tools/elements/Card';
 import { showDropdownAlert, checkConInfo } from '../../../../../utils/SystemEvents';
 import ListItem from '../../../../../tools/elements/ListItem';
 import { normalize } from '../../../../../utils/StrComplex';
@@ -40,7 +38,11 @@ class ParamsGroup extends React.Component {
             pontovitoria: GROUP_PARAMS.pontovitoria,
             pontovitoriaLoading: false,
             pontovitoriaSuccess: false,
-            pontovitoriaError: false
+            pontovitoriaError: false,
+            pontoempate: GROUP_PARAMS.pontoempate,
+            pontoempateLoading: false,
+            pontoempateSuccess: false,
+            pontoempateError: false
         };
     }
 
@@ -52,7 +54,8 @@ class ParamsGroup extends React.Component {
         if (grupoSelected && grupoSelected.key && grupoSelected.parametros) {
             this.setState({
                 pontopresenc: grupoSelected.parametros.pontopresenc || '0',
-                pontovitoria: grupoSelected.parametros.pontovitoria || '0'
+                pontovitoria: grupoSelected.parametros.pontovitoria || '0',
+                pontoempate: grupoSelected.parametros.pontoempate || '0'
             });
         }
     }
@@ -65,17 +68,20 @@ class ParamsGroup extends React.Component {
                 [
                     prevProps.grupoSelected.parametros.pontopresenc || '0',
                     prevProps.grupoSelected.parametros.pontovitoria || '0',
+                    prevProps.grupoSelected.parametros.pontoempate || '0'
                 ],
                 [
                     grupoSelected.parametros.pontopresenc || '0',
                     grupoSelected.parametros.pontovitoria || '0',
+                    grupoSelected.parametros.pontoempate || '0'
                 ]
             );
 
             if (!isEqualGroup) {
                 this.setState({
                     pontopresenc: grupoSelected.parametros.pontopresenc || '0',
-                    pontovitoria: grupoSelected.parametros.pontovitoria || '0'
+                    pontovitoria: grupoSelected.parametros.pontovitoria || '0',
+                    pontoempate: grupoSelected.parametros.pontoempate || '0'
                 });
             }
         }
@@ -102,13 +108,18 @@ class ParamsGroup extends React.Component {
                     pontopresencError: false
                 }), 1000)
             )
-            .catch(() =>
+            .catch(() => {
+                showDropdownAlert(
+                    'error',
+                    ERROS.paramsGroup.erro,
+                    ERROS.paramsGroup.mes
+                );
                 setTimeout(() => this.setState({
                     pontopresencLoading: false,
                     pontopresencSuccess: false,
                     pontopresencError: true
-                }), 1000)
-            );
+                }), 1000);
+            });
         } else if (field === 'pontovitoria') {
             this.setState({
                 pontovitoriaLoading: true,
@@ -126,13 +137,47 @@ class ParamsGroup extends React.Component {
                     pontovitoriaError: false
                 }), 1000)
             )
-            .catch(() =>
+            .catch(() => {
+                showDropdownAlert(
+                    'error',
+                    ERROS.paramsGroup.erro,
+                    ERROS.paramsGroup.mes
+                );
                 setTimeout(() => this.setState({
                     pontovitoriaLoading: false,
                     pontovitoriaSuccess: false,
                     pontovitoriaError: true
+                }), 1000);
+            });
+        } else if (field === 'pontoempate') {
+            this.setState({
+                pontoempateLoading: true,
+                pontoempateSuccess: false,
+                pontoempateError: false
+            });
+
+            grupoParamsRef.update({
+                pontoempate: this.state.pontoempate
+            })
+            .then(() =>
+                setTimeout(() => this.setState({
+                    pontoempateLoading: false,
+                    pontoempateSuccess: true,
+                    pontoempateError: false
                 }), 1000)
-            );
+            )
+            .catch(() => {
+                showDropdownAlert(
+                    'error',
+                    ERROS.paramsGroup.erro,
+                    ERROS.paramsGroup.mes
+                );
+                setTimeout(() => this.setState({
+                    pontoempateLoading: false,
+                    pontoempateSuccess: false,
+                    pontoempateError: true
+                }), 1000);
+            });
         }
     }
 
@@ -149,6 +194,17 @@ class ParamsGroup extends React.Component {
 
             return '0';
         } else if (field === 'pontovitoria') {
+            const newValue = value.replace(/[^0-9]/g, '');
+            if (newValue) {
+                if (newValue.length > 1 && newValue[0] === '0') {
+                    return (newValue.substring(1));
+                } 
+
+                return newValue;
+            }
+
+            return '0';
+        } else if (field === 'pontoempate') {
             const newValue = value.replace(/[^0-9]/g, '');
             if (newValue) {
                 if (newValue.length > 1 && newValue[0] === '0') {
@@ -237,6 +293,42 @@ class ParamsGroup extends React.Component {
                     color={'transparent'} 
                 />
             );
+        } else if (field === 'pontoempate') {
+            if (this.state.pontoempateLoading) {
+                return (
+                    <ActivityIndicator 
+                        size={'small'}
+                        color={colorAppSecondary} 
+                    />
+                );
+            }
+            if (this.state.pontoempateSuccess) {
+                return (
+                    <Icon 
+                        name='check' 
+                        type='material-community' 
+                        size={22} 
+                        color={colorAppSecondary} 
+                    />
+                );
+            }
+            if (this.state.pontoempateError) {
+                return (
+                    <Icon 
+                        name='alert-circle-outline' 
+                        type='material-community' 
+                        size={22}
+                        color={'red'}
+                    />
+                );
+            }
+
+            return (
+                <ActivityIndicator 
+                    size={'small'}
+                    color={'transparent'} 
+                />
+            );
         }
     }
 
@@ -286,7 +378,7 @@ class ParamsGroup extends React.Component {
                                 style={styles.btnSave}
                                 onPress={() => {
                                     Keyboard.dismiss();
-                                    this.onClickSave('pontopresenc');
+                                    checkConInfo(() => this.onClickSave('pontopresenc'));
                                 }}
                             >
                                 <Icon
@@ -335,7 +427,56 @@ class ParamsGroup extends React.Component {
                                 style={styles.btnSave}
                                 onPress={() => {
                                     Keyboard.dismiss();
-                                    this.onClickSave('pontovitoria');
+                                    checkConInfo(() => this.onClickSave('pontovitoria'));
+                                }}
+                            >
+                                <Icon
+                                    name='content-save' 
+                                    type='material-community' 
+                                    size={28} color={colorAppSecondary}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+                <View style={styles.cardGreen}>
+                    <View style={{ marginTop: 5, marginBottom: 15 }}>
+                        <ListItem
+                            title='Pontuação por empate'
+                            subtitle={
+                                'Jogadores que empatam a cada jogo receberão' +
+                                ' a quantidade de pontos informados no campo.'
+                            }
+                            subtitleNumberOfLines={5}
+                            containerStyle={{ borderBottomWidth: 0 }}
+                            rightIcon={this.renderIconFields('pontoempate')}
+                        />
+                        <View>
+                            <FormInput
+                                selectTextOnFocus
+                                autoCorrect={false}
+                                containerStyle={styles.inputContainerWithBtn}
+                                returnKeyType={'next'}
+                                inputStyle={[styles.text, styles.input, { 
+                                    width: this.state.inputWidth 
+                                }]}
+                                value={this.state.pontoempate}
+                                underlineColorAndroid={'transparent'}
+                                multiline
+                                keyboardType={'numeric'}
+                                returnKeyType={'done'}
+                                onChangeText={
+                                    value => this.setState({ 
+                                        pontoempate: 
+                                        this.onValidInputField('pontoempate', value) 
+                                    })
+                                }
+                            />
+                            <TouchableOpacity 
+                                style={styles.btnSave}
+                                onPress={() => {
+                                    Keyboard.dismiss();
+                                    checkConInfo(() => this.onClickSave('pontoempate'));
                                 }}
                             >
                                 <Icon

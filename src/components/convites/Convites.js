@@ -75,7 +75,8 @@ class Convites extends React.Component {
                         jogoNotifCad: 'on',
                         jogoNotifReminder: 'on',
                         enqueteNotif: 'on',
-                        muralNotif: 'on'
+                        muralNotif: 'on',
+                        pontuacao: '0'
                     }
                 }).then(() => true).catch(() => false);
         
