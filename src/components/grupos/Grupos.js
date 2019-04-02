@@ -378,10 +378,13 @@ class Grupos extends React.Component {
 
         let newGroups = _.orderBy(
             grupos, 
-            [dt => Moment(dt.dtcriacao, 'DD-MM-YYYY HH:mm:ss')], 
+            [dt => Moment(
+                dt.dtcriacao, typeof dt.dtcriacao === 'number'
+                ? undefined : 'DD-MM-YYYY HH:mm:ss')
+            ],
             ['desc']
         );
-        
+
         if (filter.trim()) {
             const toLowerSearchValue = filter.trim().toLowerCase();
             newGroups = _.filter(newGroups, ita =>

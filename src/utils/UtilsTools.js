@@ -1,7 +1,11 @@
 import RNFetchBlob from 'rn-fetch-blob';
 import _ from 'lodash';
+import Axios from 'axios';
+import CryptoJS from 'crypto-js';
+import Moment from 'moment';
 
-import { GROUP_PARAMS } from './Constantes';
+import { GROUP_PARAMS, BACKENDHOST } from './Constantes';
+import { cypherKeyBackEnd } from './Firebase';
 
 const glbXMLHttpRequest = global.XMLHttpRequest;
 const glbBlob = global.Blob;
@@ -46,4 +50,42 @@ export const checkGroupKeys = async (grupoSelected, fbDatabaseRef) => {
         }
     }
 };
+
+export const checkResetYearScore = async (grupoSelectedKey, fbDatabaseRef) => {
+    const time = await retServerTime();
+
+    if (time) {
+        //const grupoTimerToReset = 
+        console.log(time);
+    }
+};
+
+export const retServerTime = async (isMoment = false) => (
+    Axios.get(`${BACKENDHOST}getTimerServer`, { timeout: 5000 })
+    .then(res => {
+        try {
+            if (res && res.data && res.data.timer) {
+                const bytes = CryptoJS.AES.decrypt(res.data.timer, cypherKeyBackEnd);
+                if (!bytes) return '';
+    
+                const plaintext = bytes.toString(CryptoJS.enc.Utf8);
+                if (!plaintext) return '';
+    
+                const timestamp = parseInt(plaintext, 10);
+                if (!timestamp) return '';
+    
+                if (isMoment) {
+                    return Moment(timestamp).format('DD/MM/YYYY HH:mm:ss');
+                } 
+                    
+                return timestamp;
+            } 
+    
+            return '';
+        } catch (e) {
+            return '';
+        }
+    })
+    .catch(() => '')
+);
 

@@ -840,7 +840,7 @@ class Routes extends React.Component {
                 key={'configParams'}
                 hideNavBar 
                 component={ParamsGroup}
-                tabBarLabel={'Parâmetros'}
+                tabBarLabel={'Pontos'}
                 activeTintColor={'white'}
             />
         </Scene>

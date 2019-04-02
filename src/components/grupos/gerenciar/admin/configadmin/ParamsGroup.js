@@ -351,7 +351,11 @@ class ParamsGroup extends React.Component {
                             }
                             subtitleNumberOfLines={5}
                             containerStyle={{ borderBottomWidth: 0 }}
-                            rightIcon={this.renderIconFields('pontopresenc')}
+                            rightIcon={
+                                <View style={{ marginLeft: 15 }}>
+                                    {this.renderIconFields('pontopresenc')}
+                                </View>
+                            }
                         />
                         <View>
                             <FormInput
@@ -400,7 +404,11 @@ class ParamsGroup extends React.Component {
                             }
                             subtitleNumberOfLines={5}
                             containerStyle={{ borderBottomWidth: 0 }}
-                            rightIcon={this.renderIconFields('pontovitoria')}
+                            rightIcon={
+                                <View style={{ marginLeft: 15 }}>
+                                    {this.renderIconFields('pontovitoria')}
+                                </View>
+                            }
                         />
                         <View>
                             <FormInput
@@ -449,7 +457,11 @@ class ParamsGroup extends React.Component {
                             }
                             subtitleNumberOfLines={5}
                             containerStyle={{ borderBottomWidth: 0 }}
-                            rightIcon={this.renderIconFields('pontoempate')}
+                            rightIcon={
+                                <View style={{ marginLeft: 15 }}>
+                                    {this.renderIconFields('pontoempate')}
+                                </View>
+                            }
                         />
                         <View>
                             <FormInput

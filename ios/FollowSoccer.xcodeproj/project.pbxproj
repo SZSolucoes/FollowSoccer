@@ -335,6 +335,13 @@
 			remoteGlobalIDString = 9936F32F1F5F2E5B0010BF04;
 			remoteInfo = "privatedata-tvOS";
 		};
+		C01E04DE2253F1AB003682B6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C092DE7C21F8970300D0DF5C /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F632DAC9DE1D95AEF8AAEA9E4F8D22C2;
+			remoteInfo = RNDeviceInfo;
+		};
 		C02353A22249530B00BEF45F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C092DE7C21F8970300D0DF5C /* Pods.xcodeproj */;
@@ -936,6 +943,7 @@
 				C02353A72249530B00BEF45F /* libreact-native-fast-image.a */,
 				C092DEFC21F8A21400D0DF5C /* libreact-native-fcm.a */,
 				C092DEFE21F8A21400D0DF5C /* librn-fetch-blob.a */,
+				C01E04DF2253F1AB003682B6 /* libRNDeviceInfo.a */,
 				C092DF0021F8A21400D0DF5C /* libRNImageCropPicker.a */,
 				C092DF0221F8A21400D0DF5C /* libRNShare.a */,
 				C092DF0421F8A21400D0DF5C /* libRNSVG.a */,
@@ -1342,6 +1350,13 @@
 			fileType = archive.ar;
 			path = "libprivatedata-tvOS.a";
 			remoteRef = C00983A3224BEF0300C64B26 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C01E04DF2253F1AB003682B6 /* libRNDeviceInfo.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNDeviceInfo.a;
+			remoteRef = C01E04DE2253F1AB003682B6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		C02353A32249530B00BEF45F /* libFLAnimatedImage.a */ = {

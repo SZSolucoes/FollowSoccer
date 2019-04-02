@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { 
     Text,
@@ -23,14 +24,15 @@ import { TextInputMask } from 'react-native-masked-text';
 import FastImage from 'react-native-fast-image';
 import ImagePicker from 'react-native-image-crop-picker';
 import RNFetchBlob from 'rn-fetch-blob';
-import Moment from 'moment';
 import _ from 'lodash';
 import b64 from 'base-64';
+import Firebase from '@firebase/app';
 
 import firebase from '../../utils/Firebase';
 import { colorAppForeground, ERROS } from '../../utils/Constantes';
 import { checkConInfo, showDropdownAlert } from '../../utils/SystemEvents';
 import Card from '../../tools/elements/Card';
+import { retServerTime } from '../../utils/UtilsTools';
 
 const optionsEsporte = [
     'Futebol'
@@ -127,11 +129,16 @@ class CreateGroup extends React.Component {
             const dbGruposRef = this.fbDatabaseRef.child('grupos');
             const fbUsuarioRef = this.fbDatabaseRef.child(`usuarios/${userLogged.key}`);
             const fbUsuarioGrupoRef = this.fbDatabaseRef.child(`usuarios/${userLogged.key}/grupos`);
-            const dataAtual = Moment().format('DD/MM/YYYY HH:mm:ss');
             const twofirstKey = userLogged.key.slice(0, 2);
             const twoLastKey = userLogged.key.slice(-2);
             const medianKey = new Date().getTime().toString(36);
             const groupInviteKey = `${twofirstKey}${medianKey}${twoLastKey}`.replace(/=/g, '');
+
+            let dataAtual = await retServerTime();
+
+            if (!dataAtual) {
+                dataAtual = Firebase.database.ServerValue.TIMESTAMP;
+            }
 
             const ret = await dbGruposRef.push({
                 nome,

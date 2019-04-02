@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable max-len */
 import imgShirtWhite from '../assets/imgs/shirtwhite.png';
 import imgShirtBlue from '../assets/imgs/shirtblue.png';
@@ -11,7 +12,7 @@ export const colorAppTertiary = '#8F742E';
 export const colorAppForeground = '#DCE0E4';
 export const colorAppDark = '#2E3238';
 
-export const APP_VERSION = '1.0.0';
+export const APP_VERSION = '1.0.1';
 
 export const BACKENDHOST = 'http://szsolucoes.sytes.net:8014/';
 
@@ -44,7 +45,8 @@ export const SHARE_INVITE = {
 export const GROUP_PARAMS = {
     pontopresenc: '0',
     pontovitoria: '0',
-    pontoempate: '0'
+    pontoempate: '0',
+    timerUpdateScores: '365'
 };
 
 //  twitter icon

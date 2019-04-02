@@ -133,6 +133,8 @@ PODS:
     - React/RCTBlob
   - rn-fetch-blob (0.10.6):
     - React/Core
+  - RNDeviceInfo (1.4.1):
+    - React
   - RNImageCropPicker (0.22.0):
     - QBImagePickerController
     - React/Core
@@ -171,6 +173,7 @@ DEPENDENCIES:
   - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -204,6 +207,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fcm"
   rn-fetch-blob:
     :path: "../node_modules/rn-fetch-blob"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNImageCropPicker:
     :path: "../node_modules/react-native-image-crop-picker"
   RNShare:
@@ -233,6 +238,7 @@ SPEC CHECKSUMS:
   react-native-fast-image: 4170ad074e9de6c428fc4580ecbaacabf74901a6
   react-native-fcm: 7de3ba1108aba709c3d2b4237594554eb5f6f026
   rn-fetch-blob: 76a8f798dae965bbcd146a2438f2e1d381c91ae3
+  RNDeviceInfo: 8a21b2687c7c829362ca0ccc3a8b5380a42dd59f
   RNImageCropPicker: 32ca4b9fef4e1b7b85ba69494242122948117e06
   RNShare: d875e8e37f3e5e8eb7a103ae01e06490af1796f6
   RNSVG: 4834be1d644eb77f0e3f6de851881b83758a3124
@@ -241,6 +247,6 @@ SPEC CHECKSUMS:
   SDWebImage: 3f3f0c02f09798048c47a5ed0a13f17b063572d8
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: fa6323892c2034ced6eb2fd493af5804035e0619
+PODFILE CHECKSUM: 161e0dfe9184f73f8f83a28e87a57565fbf67cbe
 
 COCOAPODS: 1.5.3

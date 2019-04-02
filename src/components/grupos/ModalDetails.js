@@ -62,7 +62,8 @@ export default class ModalDetails extends React.Component {
                             {
                                 Moment(
                                     grupoSelectedToDetails.dtcriacao,
-                                    'DD-MM-YYYY'
+                                    typeof grupoSelectedToDetails.dtcriacao === 'number'
+                                    ? undefined : 'DD-MM-YYYY'
                                 )
                                 .format('DD/MM/YYYY')
                             }

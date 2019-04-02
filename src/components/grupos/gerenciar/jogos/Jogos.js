@@ -40,7 +40,7 @@ import { checkConInfo, showDropdownAlert } from '../../../../utils/SystemEvents'
 import { modificaGrupoSelected, modificaGrupoParticipantes } from '../../GruposActions';
 
 import imgCampoBackground from '../../../../assets/imgs/campojogos.png';
-import { checkGroupKeys } from '../../../../utils/UtilsTools';
+import { checkGroupKeys, checkResetYearScore } from '../../../../utils/UtilsTools';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
@@ -103,6 +103,8 @@ class Jogos extends React.Component {
 
     componentDidMount = () => {
         const { grupoSelectedKey } = this.props;
+
+        checkResetYearScore(grupoSelectedKey, this.fbDatabaseRef);
 
         // LISTENER PARA ATUALIZACAO DO GRUPO
         this.fbGroupSelectedRef = this.fbDatabaseRef
