@@ -166,7 +166,7 @@ class Grupos extends React.Component {
                                     jogoNotifReminder: 'on',
                                     enqueteNotif: 'on',
                                     muralNotif: 'on',
-                                    pontuacao: '0'
+                                    score: '0'
                                 }
                             }).then(() => true).catch(() => false);
     

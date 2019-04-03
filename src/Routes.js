@@ -84,6 +84,7 @@ import Modalidades from './components/profile/esportes/Modalidades';
 import EditGroup from './components/grupos/gerenciar/admin/configadmin/EditGroup';
 import MenuGroup from './components/grupos/gerenciar/admin/configadmin/MenuGroup';
 import ParamsGroup from './components/grupos/gerenciar/admin/configadmin/ParamsGroup';
+import Pontuacao from './components/grupos/gerenciar/plus/pontuacao/Pontuacao';
 
 const AnimatedSceneComp = Animated.createAnimatedComponent(AnimatedScene);
 
@@ -414,7 +415,9 @@ class Routes extends React.Component {
                                             Actions, 
                                             missedPlayers, 
                                             listUsuarios,
-                                            grupoSelected.key
+                                            grupoSelected.key,
+                                            grupoSelected.parametros,
+                                            grupoSelected.participantes
                                         ), [], 500
                                     )
                                 }
@@ -1045,6 +1048,15 @@ class Routes extends React.Component {
                     key={'profileModalidades'}
                     title={'Modalidades'}
                     component={Modalidades}
+                    titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'pontuacao'}
+                    title={'Pontuação'}
+                    component={Pontuacao}
                     titleStyle={styles.title}
                     leftButtonTextStyle={styles.btLeft}
                     backButtonTintColor={'white'}

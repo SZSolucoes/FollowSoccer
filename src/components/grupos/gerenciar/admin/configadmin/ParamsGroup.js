@@ -1,6 +1,10 @@
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable max-len */
 import React from 'react';
 import { 
     View,
+    Text,
+    Alert,
     Keyboard,
     Platform,
     ScrollView,
@@ -12,6 +16,8 @@ import {
 import { connect } from 'react-redux';
 import { Icon, FormInput } from 'react-native-elements';
 import _ from 'lodash';
+import Moment from 'moment';
+import Firebase from '@firebase/app';
 
 import firebase from '../../../../../utils/Firebase';
 import { 
@@ -23,6 +29,7 @@ import {
 import { showDropdownAlert, checkConInfo } from '../../../../../utils/SystemEvents';
 import ListItem from '../../../../../tools/elements/ListItem';
 import { normalize } from '../../../../../utils/StrComplex';
+import { retServerTime } from '../../../../../utils/UtilsTools';
 
 class ParamsGroup extends React.Component {
     constructor(props) {
@@ -31,6 +38,7 @@ class ParamsGroup extends React.Component {
         this.dbFirebaseRef = firebase.database().ref();
         this.state = {
             inputWidth: '99%',
+            today: null,
             pontopresenc: GROUP_PARAMS.pontopresenc,
             pontopresencLoading: false,
             pontopresencSuccess: false,
@@ -42,7 +50,11 @@ class ParamsGroup extends React.Component {
             pontoempate: GROUP_PARAMS.pontoempate,
             pontoempateLoading: false,
             pontoempateSuccess: false,
-            pontoempateError: false
+            pontoempateError: false,
+            scorereset: GROUP_PARAMS.scorereset,
+            scoreresetLoading: false,
+            scoreresetSuccess: false,
+            scoreresetError: false
         };
     }
 
@@ -55,9 +67,16 @@ class ParamsGroup extends React.Component {
             this.setState({
                 pontopresenc: grupoSelected.parametros.pontopresenc || '0',
                 pontovitoria: grupoSelected.parametros.pontovitoria || '0',
-                pontoempate: grupoSelected.parametros.pontoempate || '0'
+                pontoempate: grupoSelected.parametros.pontoempate || '0',
+                scorereset: grupoSelected.parametros.scorereset || '0'
             });
         }
+
+        retServerTime()
+        .then((value) => {
+            if (value) this.setState({ today: value });
+        })
+        .catch(() => false);
     }
 
     componentDidUpdate = (prevProps) => {
@@ -68,12 +87,14 @@ class ParamsGroup extends React.Component {
                 [
                     prevProps.grupoSelected.parametros.pontopresenc || '0',
                     prevProps.grupoSelected.parametros.pontovitoria || '0',
-                    prevProps.grupoSelected.parametros.pontoempate || '0'
+                    prevProps.grupoSelected.parametros.pontoempate || '0',
+                    prevProps.grupoSelected.parametros.scorereset || '0'
                 ],
                 [
                     grupoSelected.parametros.pontopresenc || '0',
                     grupoSelected.parametros.pontovitoria || '0',
-                    grupoSelected.parametros.pontoempate || '0'
+                    grupoSelected.parametros.pontoempate || '0',
+                    grupoSelected.parametros.scorereset || '0'
                 ]
             );
 
@@ -81,7 +102,8 @@ class ParamsGroup extends React.Component {
                 this.setState({
                     pontopresenc: grupoSelected.parametros.pontopresenc || '0',
                     pontovitoria: grupoSelected.parametros.pontovitoria || '0',
-                    pontoempate: grupoSelected.parametros.pontoempate || '0'
+                    pontoempate: grupoSelected.parametros.pontoempate || '0',
+                    scorereset: grupoSelected.parametros.scorereset || '0'
                 });
             }
         }
@@ -178,12 +200,69 @@ class ParamsGroup extends React.Component {
                     pontoempateError: true
                 }), 1000);
             });
+        } else if (field === 'scorereset') {
+            const grupoRef = this.dbFirebaseRef.child(`grupos/${grupoSelectedKey}`);
+
+            this.setState({
+                scoreresetLoading: true,
+                scoreresetSuccess: false,
+                scoreresetError: false
+            });
+
+            const asyncFunExec = async () => {
+                let dataAtual = await retServerTime() || this.state.scorereset;
+                if (!dataAtual) {
+                    dataAtual = Firebase.database.ServerValue.TIMESTAMP;
+                }
+
+                const retA = await grupoRef.update({
+                    dtScoreUpdate: dataAtual
+                }).then(() => true).catch(() => false);
+    
+                if (retA) {
+                    grupoParamsRef.update({
+                        scorereset: this.state.scorereset
+                    })
+                    .then(() =>
+                        setTimeout(() => this.setState({
+                            scoreresetLoading: false,
+                            scoreresetSuccess: true,
+                            scoreresetError: false
+                        }), 1000)
+                    )
+                    .catch(() => {
+                        showDropdownAlert(
+                            'error',
+                            ERROS.paramsGroup.erro,
+                            ERROS.paramsGroup.mes
+                        );
+                        setTimeout(() => this.setState({
+                            scoreresetLoading: false,
+                            scoreresetSuccess: false,
+                            scoreresetError: true
+                        }), 1000);
+                    });
+                } else {
+                    showDropdownAlert(
+                        'error',
+                        ERROS.paramsGroup.erro,
+                        ERROS.paramsGroup.mes
+                    );
+                    setTimeout(() => this.setState({
+                        scoreresetLoading: false,
+                        scoreresetSuccess: false,
+                        scoreresetError: true
+                    }), 1000);
+                }
+            };
+
+            asyncFunExec();
         }
     }
 
     onValidInputField = (field, value) => {
         if (field === 'pontopresenc') {
-            const newValue = value.replace(/[^0-9]/g, '');
+            const newValue = value.substring(0, 5).replace(/[^0-9]/g, '');
             if (newValue) {
                 if (newValue.length > 1 && newValue[0] === '0') {
                     return (newValue.substring(1));
@@ -194,7 +273,7 @@ class ParamsGroup extends React.Component {
 
             return '0';
         } else if (field === 'pontovitoria') {
-            const newValue = value.replace(/[^0-9]/g, '');
+            const newValue = value.substring(0, 5).replace(/[^0-9]/g, '');
             if (newValue) {
                 if (newValue.length > 1 && newValue[0] === '0') {
                     return (newValue.substring(1));
@@ -205,7 +284,18 @@ class ParamsGroup extends React.Component {
 
             return '0';
         } else if (field === 'pontoempate') {
-            const newValue = value.replace(/[^0-9]/g, '');
+            const newValue = value.substring(0, 5).replace(/[^0-9]/g, '');
+            if (newValue) {
+                if (newValue.length > 1 && newValue[0] === '0') {
+                    return (newValue.substring(1));
+                } 
+
+                return newValue;
+            }
+
+            return '0';
+        } else if (field === 'scorereset') {
+            const newValue = value.substring(0, 5).replace(/[^0-9]/g, '');
             if (newValue) {
                 if (newValue.length > 1 && newValue[0] === '0') {
                     return (newValue.substring(1));
@@ -218,6 +308,43 @@ class ParamsGroup extends React.Component {
         }
 
         return value;
+    }
+
+    onResetScores = () => {
+        const asyncFunExec = async () => {
+            const { grupoSelected } = this.props;
+    
+            if (grupoSelected && grupoSelected.participantes) {
+                const listParticip = _.values(grupoSelected.participantes);
+    
+                for (let indexB = 0; indexB < listParticip.length; indexB++) {
+                    const element = listParticip[indexB];
+                    
+                    await this.dbFirebaseRef
+                    .child(`grupos/${grupoSelected.key}/participantes/${element.key}`)
+                    .update({ score: '0' }).then(() => true).catch(() => false);
+                }
+
+                showDropdownAlert(
+                    'success',
+                    'Sucesso',
+                    'A pontuação foi zerada com sucesso'
+                );
+            }
+        };
+
+        Alert.alert(
+            'Aviso', 
+            'A pontuação de todos os participantes será zerada. Deseja continuar ?',
+            [
+                { text: 'Cancelar', onPress: () => false },
+                { 
+                    text: 'Sim', 
+                    onPress: () => checkConInfo(() => asyncFunExec())
+                }
+            ],
+            { cancelable: true }
+        );
     }
 
     renderIconFields = (field) => {
@@ -329,7 +456,89 @@ class ParamsGroup extends React.Component {
                     color={'transparent'} 
                 />
             );
+        } else if (field === 'scorereset') {
+            if (this.state.scoreresetLoading) {
+                return (
+                    <ActivityIndicator 
+                        size={'small'}
+                        color={colorAppSecondary} 
+                    />
+                );
+            }
+            if (this.state.scoreresetSuccess) {
+                return (
+                    <Icon 
+                        name='check' 
+                        type='material-community' 
+                        size={22} 
+                        color={colorAppSecondary} 
+                    />
+                );
+            }
+            if (this.state.scoreresetError) {
+                return (
+                    <Icon 
+                        name='alert-circle-outline' 
+                        type='material-community' 
+                        size={22}
+                        color={'red'}
+                    />
+                );
+            }
+
+            return (
+                <ActivityIndicator 
+                    size={'small'}
+                    color={'transparent'} 
+                />
+            );
         }
+    }
+
+    renderDaysToLeft = () => {
+        let view = false;
+        const { grupoSelected } = this.props;
+        const valid = grupoSelected && 
+        grupoSelected.parametros && 
+        grupoSelected.parametros.scorereset &&
+        grupoSelected.parametros.scorereset !== '0';
+
+
+        if (valid && this.state.today) {
+            const dtLastUpdate = Moment(
+                grupoSelected.dtScoreUpdate,
+                typeof grupoSelected.dtScoreUpdate === 'number'
+                ? undefined : 'DD-MM-YYYY HH:mm:ss'
+            );
+
+            const dtToday = Moment(this.state.today);
+            const dtDiference = dtToday.diff(dtLastUpdate, 'days');
+            const score = parseInt(grupoSelected.parametros.scorereset, 10);
+            const days = Math.abs(score - dtDiference);
+
+            if (days >= 1) {
+                view = (
+                    <View 
+                        style={{
+                            marginHorizontal: 15,
+                            marginVertical: 10
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontFamily: 'OpenSans-SemiBold',
+                                color: 'red',
+                                fontSize: 13
+                            }}
+                        >
+                            {`${days === 1 ? 'Resta' : 'Restam'} ${days} ${days === 1 ? 'dia' : 'dias'}...`}
+                        </Text>
+                    </View>
+                );
+            }
+        }
+
+        return view;
     }
 
     render = () => (
@@ -500,6 +709,81 @@ class ParamsGroup extends React.Component {
                         </View>
                     </View>
                 </View>
+                <View style={styles.cardGreen}>
+                    <View style={{ marginTop: 5, marginBottom: 15 }}>
+                        <ListItem
+                            title='Resetar pontuação'
+                            subtitle={
+                                'Reseta a pontuação de todos os participantes ao' +
+                                ' ultrapassar a quantidade de dias informada' +
+                                ' a partir da alteração do valor.' +
+                                ' Observação: o valor 0 ( zero ) desabilita o parâmetro.'
+                            }
+                            subtitleNumberOfLines={7}
+                            containerStyle={{ borderBottomWidth: 0 }}
+                            rightIcon={
+                                <View style={{ marginLeft: 15 }}>
+                                    {this.renderIconFields('scorereset')}
+                                </View>
+                            }
+                        />
+                        <View>
+                            <FormInput
+                                selectTextOnFocus
+                                autoCorrect={false}
+                                containerStyle={
+                                    [styles.inputContainerWithBtn, { paddingRight: 200 }]
+                                }
+                                returnKeyType={'next'}
+                                inputStyle={[styles.text, styles.input, { 
+                                    width: this.state.inputWidth 
+                                }]}
+                                value={this.state.scorereset}
+                                underlineColorAndroid={'transparent'}
+                                multiline
+                                keyboardType={'numeric'}
+                                returnKeyType={'done'}
+                                onChangeText={
+                                    value => this.setState({ 
+                                        scorereset: 
+                                        this.onValidInputField('scorereset', value) 
+                                    })
+                                }
+                            />
+                            <View style={styles.btnSave}>
+                                <View style={{ marginLeft: 20 }}>
+                                    <TouchableOpacity 
+                                        onPress={() => {
+                                            Keyboard.dismiss();
+                                            checkConInfo(() => this.onClickSave('scorereset'));
+                                        }}
+                                    >
+                                        <Icon
+                                            name='content-save' 
+                                            type='material-community' 
+                                            size={28} color={colorAppSecondary}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={{ marginLeft: 5 }}>
+                                    <TouchableOpacity 
+                                        onPress={() => {
+                                            Keyboard.dismiss();
+                                            checkConInfo(() => this.onResetScores());
+                                        }}
+                                    >
+                                        <Icon
+                                            name='restart' 
+                                            type='material-community' 
+                                            size={28} color={colorAppSecondary}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                        {this.renderDaysToLeft()}
+                    </View>
+                </View>
                 <View style={{ marginVertical: 60 }} />
             </View>
         </ScrollView>
@@ -557,7 +841,8 @@ const styles = StyleSheet.create({
         right: 0, 
         marginHorizontal: 20,
         marginTop: 5,
-        zIndex: 1
+        zIndex: 1,
+        flexDirection: 'row'
     },
     cardGreen: {
         backgroundColor: 'white',

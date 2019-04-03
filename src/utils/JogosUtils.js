@@ -40,7 +40,9 @@ export const doEndGame = async (
     Actions, 
     missedPlayers, 
     listUsuarios,
-    grupoSelectedKey
+    grupoSelectedKey,
+    grupoParametros,
+    listParticipantes
     ) => {
     const dbFirebaseRef = firebase.database().ref();
     const placarCasa = parseInt(jogo.placarCasa, 10);
@@ -96,8 +98,27 @@ export const doEndGame = async (
             const jogadoresVit = _.filter(jogadores, (jogv) => jogv.side === 'casa');
             const jogadoresDer = _.filter(jogadores, (jogd) => jogd.side === 'visit');
             let numJogs = jogadoresVit.length + jogadoresDer.length;
-    
+            
             iFix = 1 / (jogadoresVit.length + jogadoresDer.length);
+
+            const jogadoresPresentes = _.differenceBy(jogo.confirmados, jogadoresVit, 'key');
+
+            updateScores(
+                grupoSelectedKey, 
+                grupoParametros, 
+                jogadoresVit, 
+                'vitoria', 
+                dbFirebaseRef,
+                listParticipantes
+            );
+            updateScores(
+                grupoSelectedKey, 
+                grupoParametros, 
+                jogadoresPresentes, 
+                'presenca', 
+                dbFirebaseRef,
+                listParticipantes
+            );
     
             // Jogadores vitoriosos atualizados primeiro
             jogadoresVit.forEach((jogador) => {
@@ -186,6 +207,25 @@ export const doEndGame = async (
             let numJogs = jogadoresVit.length + jogadoresDer.length;
     
             iFix = 1 / (jogadoresVit.length + jogadoresDer.length);
+
+            const jogadoresPresentes = _.differenceBy(jogo.confirmados, jogadoresVit, 'key');
+
+            updateScores(
+                grupoSelectedKey, 
+                grupoParametros, 
+                jogadoresVit, 
+                'vitoria', 
+                dbFirebaseRef,
+                listParticipantes
+            );
+            updateScores(
+                grupoSelectedKey, 
+                grupoParametros, 
+                jogadoresPresentes, 
+                'presenca', 
+                dbFirebaseRef,
+                listParticipantes
+            );
     
             // Jogadores vitoriosos atualizados primeiro
             jogadoresVit.forEach((jogador) => {
@@ -271,6 +311,25 @@ export const doEndGame = async (
         } else {
             iFix = 1 / jogadores.length;
             let numJogs = jogadores.length;
+
+            const jogadoresPresentes = _.differenceBy(jogo.confirmados, jogadores, 'key');
+
+            updateScores(
+                grupoSelectedKey, 
+                grupoParametros, 
+                jogadores, 
+                'empate', 
+                dbFirebaseRef,
+                listParticipantes
+            );
+            updateScores(
+                grupoSelectedKey, 
+                grupoParametros, 
+                jogadoresPresentes, 
+                'presenca', 
+                dbFirebaseRef,
+                listParticipantes
+            );
     
             jogadores.forEach((jogador) => {
                 dbFirebaseRef.child(`usuarios/${jogador.key}`)
@@ -414,6 +473,40 @@ const updateMissedPlayers = (
                 });
             });  
         });
+    }
+};
+
+const updateScores = (
+    grupoKey, 
+    parametros, 
+    listJogadores, 
+    type, 
+    dbFirebaseRef,
+    listParticipantes
+    ) => {
+    if (listJogadores && listJogadores.length && listParticipantes) {
+        const { pontoempate, pontopresenc, pontovitoria } = parametros;
+        let scoreValue = 0;
+    
+        if (type === 'vitoria') {
+            scoreValue = parseInt(pontovitoria, 10) + parseInt(pontopresenc, 10);
+        } else if (type === 'presenca') {
+            scoreValue = parseInt(pontopresenc, 10);
+        } else if (type === 'empate') {
+            scoreValue = parseInt(pontoempate, 10) + parseInt(pontopresenc, 10);
+        }
+    
+    
+        for (let index = 0; index < listJogadores.length; index++) {
+            const element = listParticipantes[listJogadores[index].key];
+            
+            if (element) {
+                dbFirebaseRef.child(`grupos/${grupoKey}/participantes/${element.key}`)
+                .update({
+                    score: parseInt(element.score, 10) + scoreValue
+                }).then(() => true).catch(() => false);
+            }
+        }
     }
 };
 

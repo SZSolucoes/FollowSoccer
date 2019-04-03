@@ -149,6 +149,7 @@ class CreateGroup extends React.Component {
                 valorindividual,
                 userowner: userLogged.key,
                 dtcriacao: dataAtual,
+                dtScoreUpdate: dataAtual,
                 imgbody: '',
                 groupInviteKey,
                 convites: { push: 'push' },

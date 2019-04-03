@@ -3,6 +3,8 @@ import _ from 'lodash';
 import Axios from 'axios';
 import CryptoJS from 'crypto-js';
 import Moment from 'moment';
+import MomentTZ from 'moment-timezone';
+import DeviceInfo from 'react-native-device-info';
 
 import { GROUP_PARAMS, BACKENDHOST } from './Constantes';
 import { cypherKeyBackEnd } from './Firebase';
@@ -51,13 +53,14 @@ export const checkGroupKeys = async (grupoSelected, fbDatabaseRef) => {
     }
 };
 
-export const checkResetYearScore = async (grupoSelectedKey, fbDatabaseRef) => {
-    const time = await retServerTime();
-
-    if (time) {
-        //const grupoTimerToReset = 
-        console.log(time);
-    }
+export const checkResetYearScore = async (grupoSelectedKey) => {
+    Axios.get(
+        `${BACKENDHOST}checkResetScore`, 
+        { params: { groupKey: grupoSelectedKey }, 
+        timeout: 5000 
+    })
+    .then(() => true)
+    .catch(() => false);
 };
 
 export const retServerTime = async (isMoment = false) => (

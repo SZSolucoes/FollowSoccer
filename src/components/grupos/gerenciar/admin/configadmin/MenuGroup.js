@@ -583,7 +583,6 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-    dropdownAlert: state.SystemEventsReducer.dropdownAlert,
     grupoSelected: state.GruposReducer.grupoSelected,
     grupoSelectedKey: state.GruposReducer.grupoSelectedKey,
     userLogged: state.LoginReducer.userLogged

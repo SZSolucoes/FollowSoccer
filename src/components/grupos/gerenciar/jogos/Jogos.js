@@ -104,7 +104,7 @@ class Jogos extends React.Component {
     componentDidMount = () => {
         const { grupoSelectedKey } = this.props;
 
-        checkResetYearScore(grupoSelectedKey, this.fbDatabaseRef);
+        checkResetYearScore(grupoSelectedKey);
 
         // LISTENER PARA ATUALIZACAO DO GRUPO
         this.fbGroupSelectedRef = this.fbDatabaseRef

@@ -46,7 +46,7 @@ export const GROUP_PARAMS = {
     pontopresenc: '0',
     pontovitoria: '0',
     pontoempate: '0',
-    timerUpdateScores: '365'
+    scorereset: '0'
 };
 
 //  twitter icon

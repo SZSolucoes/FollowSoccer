@@ -177,6 +177,23 @@ class Plus extends React.Component {
                     containerStyle={{ marginHorizontal: 0 }}
                 >
                     <ListItem
+                        key={'Pontuação'}
+                        title={'Pontuação'}
+                        titleStyle={styles.titleStyle}
+                        containerStyle={{ borderBottomWidth: 0 }}
+                        leftIcon={{ 
+                            name: 'gamepad-variant', 
+                            type: 'material-community', 
+                            color: colorAppSecondary,
+                            size: 28 
+                        }}
+                        onPress={() => Actions.pontuacao()}
+                    />
+                </Card>
+                <Card
+                    containerStyle={{ marginHorizontal: 0 }}
+                >
+                    <ListItem
                         key={'Financeiro'}
                         title={'Financeiro'}
                         titleStyle={styles.titleStyle}
