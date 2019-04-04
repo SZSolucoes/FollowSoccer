@@ -1152,7 +1152,7 @@ const styles = StyleSheet.create({
     },
     title: {
         color: 'white',
-        fontSize: 16,
+        fontSize: 18,
         textAlign: 'center',
         fontFamily: 'OpenSans-Regular'
     },

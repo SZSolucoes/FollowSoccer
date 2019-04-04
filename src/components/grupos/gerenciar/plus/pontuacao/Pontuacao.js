@@ -26,7 +26,7 @@ class Pontuacao extends React.Component {
             participantes = _.orderBy(
                 participantes, 
                 [(it => parseInt(it.score || 0, 10)), 'nome'], 
-                ['desc', 'desc']
+                ['desc', 'asc']
             );
     
             return (

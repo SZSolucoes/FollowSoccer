@@ -2,8 +2,10 @@ import React from 'react';
 import { 
     View,
     Alert,
+    Image,
     ScrollView, 
-    StyleSheet
+    StyleSheet,
+    TouchableOpacity
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -18,6 +20,9 @@ import Card from '../../../../tools/elements/Card';
 import { showDropdownAlert, checkConInfo } from '../../../../utils/SystemEvents';
 import firebase from '../../../../utils/Firebase';
 import { store } from '../../../../App';
+
+import imgFinishFlag from '../../../../assets/imgs/finishflag.png';
+import { finishScoreGroup } from '../../../../utils/UtilsTools';
 
 class Plus extends React.Component {
     constructor(props) {
@@ -146,6 +151,53 @@ class Plus extends React.Component {
         }
     }
 
+    onPressFinishScore = () => {
+        const asyncFunExec = async () => {
+            if (this.props.grupoSelectedKey) {
+                const ret = await finishScoreGroup(this.props.grupoSelectedKey);
+
+                if (ret) {
+                    showDropdownAlert(
+                        'success',
+                        'Sucesso',
+                        'Histórico de pontuação salvo com sucesso.'
+                    );
+                } else {
+                    showDropdownAlert(
+                        'error',
+                        ERROS.pontuacaoFinish.erro,
+                        ERROS.pontuacaoFinish.mes
+                    );
+                }
+            } else {
+                showDropdownAlert(
+                    'error',
+                    ERROS.pontuacaoFinish.erro,
+                    ERROS.pontuacaoFinish.mes
+                );
+            }
+        };
+
+        Alert.alert(
+            'Aviso',
+            'Ao finalizar o período de pontuação o mesmo será gravado em histórico' +
+            ' e a pontuação será zerada para todos os jogadores participantes do grupo.' +
+            ' Deseja continuar ?',
+            [
+                {
+                    text: 'Sim',
+                    onPress: () => checkConInfo(() => asyncFunExec())
+                },
+                {
+                    text: 'Cancelar',
+                    onPress: () => false,
+                },
+            ],
+          { cancelable: true },
+        );
+        
+    }
+
     render = () => {
         let enqueteProps = {};
 
@@ -154,6 +206,47 @@ class Plus extends React.Component {
             this.props.enqueteProps.badge.value) {
             enqueteProps = { ...this.props.enqueteProps };
         }
+
+        let rightViewPontuacao = () => (<View />);
+
+        if (this.props.grupoSelected && this.props.grupoSelected.key) {
+            const admins = this.props.grupoSelected.groupAdmins ? 
+            _.values(this.props.grupoSelected.groupAdmins) : [];
+
+            if (
+                (this.props.userLogged.key === this.props.grupoSelected.userowner) ||
+                (_.findIndex(
+                    admins, 
+                    itf => itf.key === this.props.userLogged.key
+                ) !== -1)
+            ) {
+                rightViewPontuacao = (
+                    <View 
+                        style={{
+                            flexDirection: 'row',
+                            marginHorizontal: 5,
+                            paddingHorizontal: 10,
+                            justifyContent: 'space-between'
+                        }}
+                    >
+                        <TouchableOpacity
+                            onPress={() => this.onPressFinishScore()}
+                        >
+                            <Image
+                                source={imgFinishFlag}
+                                style={{ 
+                                    width: 20, 
+                                    height: 25, 
+                                    tintColor: 'white',
+                                    marginHorizontal: 5
+                                }}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                );
+            }
+        }
+
         return (
             <ScrollView contentContainerStyle={styles.viewPrinc}>
                 <Card
@@ -187,7 +280,9 @@ class Plus extends React.Component {
                             color: colorAppSecondary,
                             size: 28 
                         }}
-                        onPress={() => Actions.pontuacao()}
+                        onPress={() => Actions.pontuacao({
+                            right: rightViewPontuacao
+                        })}
                     />
                 </Card>
                 <Card

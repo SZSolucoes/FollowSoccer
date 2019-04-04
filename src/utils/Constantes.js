@@ -325,6 +325,10 @@ export const ERROS = {
     paramsGroup: {
         erro: 'Erro #0060',
         mes: 'Ocorreu um erro ao salvar o parâmetro. Verifique a conexão.'
+    },
+    pontuacaoFinish: {
+        erro: 'Erro #0060',
+        mes: 'Ocorreu um erro ao salvar o histórico de pontuação. Verifique a conexão.'
     }
 };
 

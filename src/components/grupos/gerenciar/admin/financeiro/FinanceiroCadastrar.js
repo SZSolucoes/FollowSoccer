@@ -267,9 +267,7 @@ class FinanceiroCadastrar extends React.Component {
                                 style={{ 
                                     height: 50, 
                                     width: '105%', 
-                                    marginLeft: -4,
-                                    fontSize: 14,
-                                    fontFamily: 'OpenSans-Regular'
+                                    marginLeft: -4
                                 }}
                                 onValueChange={(value) => this.setState({ tipoOpe: value })}
                             >

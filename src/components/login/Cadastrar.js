@@ -303,7 +303,7 @@ class Cadastrar extends React.Component {
                             this.setState({ nomeForm: this.onValidField(value, 'nomeForm') })
                         }
                         underlineColorAndroid={'transparent'}
-                        onSubmitEditing={() => this.inputDate.onPressDate()}
+                        onSubmitEditing={() => checkConInfo(() => this.onPressConfirmar())}
                     />
                     <Button
                         small

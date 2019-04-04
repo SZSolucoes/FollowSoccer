@@ -92,3 +92,16 @@ export const retServerTime = async (isMoment = false) => (
     .catch(() => '')
 );
 
+export const finishScoreGroup = async (grupoSelectedKey) => (
+    Axios.post(
+        `${BACKENDHOST}finishScoreGroup`,
+        {
+            groupKey: CryptoJS.AES.encrypt(grupoSelectedKey, cypherKeyBackEnd).toString() 
+        },
+        { 
+            timeout: 10000 
+        })
+    .then((res) => res && res.data && res.data.success === 'true')
+    .catch(() => false)
+);
+

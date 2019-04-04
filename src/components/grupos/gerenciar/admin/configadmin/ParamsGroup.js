@@ -712,11 +712,10 @@ class ParamsGroup extends React.Component {
                 <View style={styles.cardGreen}>
                     <View style={{ marginTop: 5, marginBottom: 15 }}>
                         <ListItem
-                            title='Gravar e resetar o histórico de pontuação'
+                            title='Histórico de pontuação automático'
                             subtitle={
                                 'Grava em histórico e reseta a pontuação de todos os participantes ao' +
-                                ' ultrapassar a quantidade de dias informada' +
-                                ' a partir da alteração do valor.' +
+                                ' ultrapassar a quantidade de dias informada.' +
                                 ' Observação: o valor 0 ( zero ) desabilita o parâmetro.'
                             }
                             subtitleNumberOfLines={7}
