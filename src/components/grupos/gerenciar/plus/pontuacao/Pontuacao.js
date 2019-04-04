@@ -3,11 +3,11 @@ import React from 'react';
 import {
     View,
     Text,
+    Image,
     Platform,
     StyleSheet,
     ScrollView,
 } from 'react-native';
-import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
@@ -16,6 +16,8 @@ import { normalize } from '../../../../../utils/StrComplex';
 import ListItem from '../../../../../tools/elements/ListItem';
 import { retrieveUpdUserGroup } from '../../../../../utils/UserUtils';
 import Card from '../../../../../tools/elements/Card';
+
+import imgCrown from '../../../../../assets/imgs/kingcrown.png';
 
 class Pontuacao extends React.Component {
     renderParticipantes = (listParticipantes) => {
@@ -89,6 +91,9 @@ class Pontuacao extends React.Component {
                                         marginHorizontal: 5,
                                         marginVertical: 10
                                     }}
+                                    wrapperStyle={{
+                                        overflow: 'visible'
+                                    }}
                                 >
                                     <ListItem
                                         avatar={imgAvt}
@@ -98,9 +103,25 @@ class Pontuacao extends React.Component {
                                         }}
                                         subtitle={posicao}
                                         subtitleStyle={{ color: 'red' }}
+                                        titleContainerStyle={{ marginLeft: 10 }}
+                                        subtitleContainerStyle={{ marginLeft: 10 }}
                                         containerStyle={{
                                             borderBottomWidth: 0
                                         }}
+                                        leftIcon={(
+                                            <View
+                                                style={{ marginRight: 8 }}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        fontFamily: 'OpenSans-Bold',
+                                                        fontSize: 16
+                                                    }}
+                                                >
+                                                    {`${index + 1}º`}
+                                                </Text>
+                                            </View>
+                                        )}
                                         rightIcon={(
                                             <View
                                                 style={{
@@ -129,6 +150,20 @@ class Pontuacao extends React.Component {
                                             </View>
                                         )}
                                     />
+                                    {
+                                        index === 0 &&
+                                        (<View 
+                                            style={{
+                                                position: 'absolute',
+                                                top: -5,
+                                                left: 0,
+                                                marginLeft: 35,
+                                                zIndex: 500
+                                            }}
+                                        >
+                                            <Image source={imgCrown} style={{ width: 28, height: 18 }} />
+                                        </View>)
+                                    }
                                 </Card>
                             );
                         })

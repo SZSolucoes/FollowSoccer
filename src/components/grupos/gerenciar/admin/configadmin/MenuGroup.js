@@ -3,15 +3,17 @@ import {
     View,
     Text,
     Alert,
+    Keyboard,
     Platform,
     Clipboard,
     ScrollView,
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    ActivityIndicator
 } from 'react-native';
 
 import { connect } from 'react-redux';
-import { Icon, Divider } from 'react-native-elements';
+import { Icon, Divider, FormInput } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 
@@ -28,6 +30,16 @@ class MenuGroup extends React.Component {
         super(props);
 
         this.dbFirebaseRef = firebase.database().ref();
+
+        this.state = {
+            inputWidth: '99%',
+            scores: {},
+            loading: {}
+        };
+    }
+
+    componentDidMount = () => {
+        setTimeout(() => this.setState({ inputWidth: 'auto' }), 100);
     }
 
     onAddAdmin = (user) => {
@@ -65,6 +77,57 @@ class MenuGroup extends React.Component {
             ],
             { cancelable: true }
         );
+    }
+
+    onClickSave = (participante) => {
+        const { grupoSelectedKey } = this.props;
+        const participanteRef = this.dbFirebaseRef
+        .child(`grupos/${grupoSelectedKey}/participantes/${participante.key}`);
+        const score = this.state.scores[participante.key] || participante.score;
+
+        this.setState({
+            loading: {
+                ...this.state.loading,
+                [participante.key]: {
+                    loading: true,
+                    loadingSuccess: false,
+                    loadingError: false
+                }
+            }
+        });
+
+        participanteRef.update({
+            score
+        })
+        .then(() =>
+            setTimeout(() => this.setState({
+                loading: {
+                    ...this.state.loading,
+                    [participante.key]: {
+                        loading: false,
+                        loadingSuccess: true,
+                        loadingError: false
+                    }
+                }
+            }), 1000)
+        )
+        .catch(() => {
+            showDropdownAlert(
+                'error',
+                ERROS.paramsGroup.erro,
+                ERROS.paramsGroup.mes
+            );
+            setTimeout(() => this.setState({
+                loading: {
+                    ...this.state.loading,
+                    [participante.key]: {
+                        loading: false,
+                        loadingSuccess: false,
+                        loadingError: true
+                    }
+                }
+            }), 1000);
+        });
     }
 
     onRemoveAdmin = (user) => {
@@ -200,6 +263,19 @@ class MenuGroup extends React.Component {
         );
     }
 
+    onValidInputField = (value) => {
+        const newValue = value.substring(0, 5).replace(/[^0-9]/g, '');
+        if (newValue) {
+            if (newValue.length > 1 && newValue[0] === '0') {
+                return (newValue.substring(1));
+            } 
+
+            return newValue;
+        }
+
+        return '0';
+    }
+
     renderAdminsBtn = (user, grupoSelected, isAdmin) => {
         let view = (<View />);
 
@@ -240,6 +316,48 @@ class MenuGroup extends React.Component {
         }
 
         return view;
+    }
+
+    renderIconFields = (participante) => {
+        if (this.state.loading[participante.key]) {
+            const loadingObj = this.state.loading[participante.key];
+
+            if (loadingObj.loading) {
+                return (
+                    <ActivityIndicator 
+                        size={'small'}
+                        color={colorAppSecondary} 
+                    />
+                );
+            }
+            if (loadingObj.loadingSuccess) {
+                return (
+                    <Icon 
+                        name='check' 
+                        type='material-community' 
+                        size={22} 
+                        color={colorAppSecondary} 
+                    />
+                );
+            }
+            if (loadingObj.loadingError) {
+                return (
+                    <Icon 
+                        name='alert-circle-outline' 
+                        type='material-community' 
+                        size={22}
+                        color={'red'}
+                    />
+                );
+            }
+        }
+
+        return (
+            <ActivityIndicator 
+                size={'small'}
+                color={'transparent'} 
+            />
+        ); 
     }
 
     renderAdmins = (participantes, admins, grupoSelected) => {
@@ -385,6 +503,67 @@ class MenuGroup extends React.Component {
                                         >
                                             {estado || 'não informado'}
                                         </Text>
+                                    </View>
+                                    <View 
+                                        style={{ 
+                                            flexDirection: 'row',
+                                            alignItems: 'flex-end'
+                                        }}
+                                    >
+                                        <View style={{ paddingBottom: 6 }}>
+                                            <Text 
+                                                style={{
+                                                    fontFamily: 'OpenSans-Bold',
+                                                    color: colorAppSecondary
+                                                }}
+                                            >
+                                                Pontos
+                                            </Text>
+                                        </View>
+                                        <FormInput
+                                            selectTextOnFocus
+                                            autoCorrect={false}
+                                            containerStyle={
+                                                [
+                                                    styles.inputContainerWithBtn, 
+                                                    { paddingRight: 200 }
+                                                ]
+                                            }
+                                            returnKeyType={'next'}
+                                            inputStyle={[styles.text, styles.input]}
+                                            value={this.state.scores[ita.key] || ita.score}
+                                            underlineColorAndroid={'transparent'}
+                                            multiline
+                                            keyboardType={'numeric'}
+                                            returnKeyType={'done'}
+                                            onChangeText={value => this.setState({
+                                                scores: {
+                                                    ...this.state.scores,
+                                                    [ita.key]: this.onValidInputField(value) 
+                                                }
+                                            })}
+                                        />
+                                        <View
+                                            style={styles.btnSave}
+                                        >
+                                            <View style={{ marginLeft: 20 }}>
+                                                {this.renderIconFields(ita)}
+                                            </View>
+                                            <View style={{ marginLeft: 5 }}>
+                                                <TouchableOpacity
+                                                    onPress={() => {
+                                                        Keyboard.dismiss();
+                                                        checkConInfo(() => this.onClickSave(ita));
+                                                    }}
+                                                >
+                                                    <Icon
+                                                        name='content-save' 
+                                                        type='material-community' 
+                                                        size={28} color={colorAppSecondary}
+                                                    />
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
                                     </View>
                                 </View>
                             </Card>
@@ -545,8 +724,7 @@ const styles = StyleSheet.create({
         height: Platform.OS === 'android' ? 45 : 40,
     },
     input: {
-        paddingBottom: 0, 
-        width: null,
+        paddingBottom: 0,
         color: 'black',
         height: 35
     },
@@ -559,6 +737,21 @@ const styles = StyleSheet.create({
     cardTextUsersBold: {
         fontFamily: 'OpenSans-Bold',
         color: '#43484d'
+    },
+    inputContainerWithBtn: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#9E9E9E',
+        height: Platform.OS === 'android' ? 45 : 40,
+        paddingRight: 30
+    },
+    btnSave: { 
+        position: 'absolute', 
+        right: 0, 
+        marginHorizontal: 5,
+        paddingBottom: 5,
+        zIndex: 1,
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     cardDefault: {
         backgroundColor: 'white',

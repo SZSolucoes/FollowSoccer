@@ -85,6 +85,7 @@ import EditGroup from './components/grupos/gerenciar/admin/configadmin/EditGroup
 import MenuGroup from './components/grupos/gerenciar/admin/configadmin/MenuGroup';
 import ParamsGroup from './components/grupos/gerenciar/admin/configadmin/ParamsGroup';
 import Pontuacao from './components/grupos/gerenciar/plus/pontuacao/Pontuacao';
+import PontuacaoHistorico from './components/grupos/gerenciar/plus/pontuacao/PontuacaoHistorico';
 
 const AnimatedSceneComp = Animated.createAnimatedComponent(AnimatedScene);
 
@@ -501,7 +502,7 @@ class Routes extends React.Component {
             lazy={false}
             swipeEnabled
             title={'Grupo'} 
-            titleStyle={styles.title}
+            titleStyle={styles.titlesmall}
             leftButtonTextStyle={styles.btLeft}
             backButtonTintColor={'white'}
             showLabel={false}
@@ -994,7 +995,7 @@ class Routes extends React.Component {
                     key={'profileEnquetesHistorico'}
                     title={'Histórico de Enquetes'}
                     component={ProfileEnquetesHistorico}
-                    titleStyle={styles.title}
+                    titleStyle={styles.titlesmall}
                     leftButtonTextStyle={styles.btLeft}
                     backButtonTintColor={'white'}
                     //initial
@@ -1012,7 +1013,7 @@ class Routes extends React.Component {
                     key={'analisejogadores'}
                     title={'Histórico de Faltas'}
                     component={AnaliseJogadores}
-                    titleStyle={styles.title}
+                    titleStyle={styles.titlesmall}
                     leftButtonTextStyle={styles.btLeft}
                     backButtonTintColor={'white'}
                     //initial
@@ -1021,7 +1022,7 @@ class Routes extends React.Component {
                     key={'historico'}
                     title={'Histórico de Jogos'} 
                     component={Historico}
-                    titleStyle={styles.title}
+                    titleStyle={styles.titlesmall}
                     leftButtonTextStyle={styles.btLeft}
                     backButtonTintColor={'white'}
                     //initial
@@ -1058,6 +1059,15 @@ class Routes extends React.Component {
                     title={'Pontuação'}
                     component={Pontuacao}
                     titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'pontuacaoHistorico'}
+                    title={'Histórico de Pontuação'}
+                    component={PontuacaoHistorico}
+                    titleStyle={styles.titlesmall}
                     leftButtonTextStyle={styles.btLeft}
                     backButtonTintColor={'white'}
                     //initial
@@ -1142,7 +1152,19 @@ const styles = StyleSheet.create({
     },
     title: {
         color: 'white',
-        fontSize: 18,
+        fontSize: 16,
+        textAlign: 'center',
+        fontFamily: 'OpenSans-Regular'
+    },
+    titlesmall: {
+        color: 'white',
+        fontSize: normalize(14),
+        textAlign: 'center',
+        fontFamily: 'OpenSans-Regular'
+    },
+    titlevsmall: {
+        color: 'white',
+        fontSize: normalize(12),
         textAlign: 'center',
         fontFamily: 'OpenSans-Regular'
     },

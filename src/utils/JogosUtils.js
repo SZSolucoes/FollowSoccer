@@ -109,7 +109,8 @@ export const doEndGame = async (
                 jogadoresVit, 
                 'vitoria', 
                 dbFirebaseRef,
-                listParticipantes
+                listParticipantes,
+                missedPlayers
             );
             updateScores(
                 grupoSelectedKey, 
@@ -117,7 +118,8 @@ export const doEndGame = async (
                 jogadoresPresentes, 
                 'presenca', 
                 dbFirebaseRef,
-                listParticipantes
+                listParticipantes,
+                missedPlayers
             );
     
             // Jogadores vitoriosos atualizados primeiro
@@ -216,7 +218,8 @@ export const doEndGame = async (
                 jogadoresVit, 
                 'vitoria', 
                 dbFirebaseRef,
-                listParticipantes
+                listParticipantes,
+                missedPlayers
             );
             updateScores(
                 grupoSelectedKey, 
@@ -224,7 +227,8 @@ export const doEndGame = async (
                 jogadoresPresentes, 
                 'presenca', 
                 dbFirebaseRef,
-                listParticipantes
+                listParticipantes,
+                missedPlayers
             );
     
             // Jogadores vitoriosos atualizados primeiro
@@ -320,7 +324,8 @@ export const doEndGame = async (
                 jogadores, 
                 'empate', 
                 dbFirebaseRef,
-                listParticipantes
+                listParticipantes,
+                missedPlayers
             );
             updateScores(
                 grupoSelectedKey, 
@@ -328,7 +333,8 @@ export const doEndGame = async (
                 jogadoresPresentes, 
                 'presenca', 
                 dbFirebaseRef,
-                listParticipantes
+                listParticipantes,
+                missedPlayers
             );
     
             jogadores.forEach((jogador) => {
@@ -482,7 +488,8 @@ const updateScores = (
     listJogadores, 
     type, 
     dbFirebaseRef,
-    listParticipantes
+    listParticipantes,
+    missedPlayers = []
     ) => {
     if (listJogadores && listJogadores.length && listParticipantes) {
         const { pontoempate, pontopresenc, pontovitoria } = parametros;
@@ -500,10 +507,10 @@ const updateScores = (
         for (let index = 0; index < listJogadores.length; index++) {
             const element = listParticipantes[listJogadores[index].key];
             
-            if (element) {
+            if (element && !missedPlayers.includes(listJogadores[index].key)) {
                 dbFirebaseRef.child(`grupos/${grupoKey}/participantes/${element.key}`)
                 .update({
-                    score: parseInt(element.score, 10) + scoreValue
+                    score: (parseInt(element.score, 10) + scoreValue).toString()
                 }).then(() => true).catch(() => false);
             }
         }

@@ -294,6 +294,25 @@ class Plus extends React.Component {
                     containerStyle={{ marginHorizontal: 0 }}
                 >
                     <ListItem
+                        key={'Histórico de Pontuação'}
+                        title={'Histórico de Pontuação'}
+                        titleStyle={styles.titleStyle}
+                        containerStyle={{ borderBottomWidth: 0 }}
+                        leftIcon={{ 
+                            name: 'counter', 
+                            type: 'material-community', 
+                            color: colorAppSecondary,
+                            size: 28 
+                        }}
+                        onPress={
+                            () => Actions.pontuacaoHistorico()
+                        }
+                    />
+                </Card>
+                <Card
+                    containerStyle={{ marginHorizontal: 0 }}
+                >
+                    <ListItem
                         key={'Notificações'}
                         title={'Notificações'}
                         titleStyle={styles.titleStyle}

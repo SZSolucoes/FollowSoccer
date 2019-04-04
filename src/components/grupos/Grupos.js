@@ -565,7 +565,8 @@ class Grupos extends React.Component {
                                     this.props.modificaGrupoSelectedKey(item.key);
                                     this.removeFbListeners();
                                     setTimeout(() => Actions.gerenciarGrupo({
-                                        right: rightView
+                                        right: rightView,
+                                        title: item.nome.trim()
                                     }), 200);
                                     setTimeout(() => this.setState({ groups: [] }), 1000);
                                 }}

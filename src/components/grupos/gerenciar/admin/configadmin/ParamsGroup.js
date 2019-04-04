@@ -335,7 +335,7 @@ class ParamsGroup extends React.Component {
 
         Alert.alert(
             'Aviso', 
-            'A pontuação de todos os participantes será zerada. Deseja continuar ?',
+            'A pontuação de todos os participantes será zerada sem gravar histórico. Deseja continuar ?',
             [
                 { text: 'Cancelar', onPress: () => false },
                 { 
@@ -712,9 +712,9 @@ class ParamsGroup extends React.Component {
                 <View style={styles.cardGreen}>
                     <View style={{ marginTop: 5, marginBottom: 15 }}>
                         <ListItem
-                            title='Resetar pontuação'
+                            title='Gravar e resetar o histórico de pontuação'
                             subtitle={
-                                'Reseta a pontuação de todos os participantes ao' +
+                                'Grava em histórico e reseta a pontuação de todos os participantes ao' +
                                 ' ultrapassar a quantidade de dias informada' +
                                 ' a partir da alteração do valor.' +
                                 ' Observação: o valor 0 ( zero ) desabilita o parâmetro.'
