@@ -66,16 +66,16 @@ class ModalCodeGroupInput extends React.Component {
                                 <Text style={styles.btn_modal_left}>
                                     {this.props.cancelText}
                                 </Text>
-                                </TouchableOpacity>
-                                    <View style={styles.divider_btn} />
-                                <TouchableOpacity  
-                                    style={styles.touch_modal}
-                                    onPress={() => {
-                                        this.props.submitInput(this.state.input);
-                                        this.setState({ input: '' });
-                                        this.props.closeDialog();
-                                    }}
-                                >
+                            </TouchableOpacity>
+                            <View style={styles.divider_btn} />
+                            <TouchableOpacity  
+                                style={styles.touch_modal}
+                                onPress={() => {
+                                    this.props.submitInput(this.state.input);
+                                    this.setState({ input: '' });
+                                    this.props.closeDialog();
+                                }}
+                            >
                                 <Text style={styles.btn_modal_right}>
                                     {this.props.submitText}
                                 </Text>

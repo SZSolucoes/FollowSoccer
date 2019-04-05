@@ -154,7 +154,17 @@ class Plus extends React.Component {
     onPressFinishScore = () => {
         const asyncFunExec = async () => {
             if (this.props.grupoSelectedKey) {
+                store.dispatch({
+                    type: 'modifica_showloadingendscore_grupos',
+                    payload: true
+                });
+
                 const ret = await finishScoreGroup(this.props.grupoSelectedKey);
+
+                store.dispatch({
+                    type: 'modifica_showloadingendscore_grupos',
+                    payload: false
+                });
 
                 if (ret) {
                     showDropdownAlert(
@@ -181,7 +191,7 @@ class Plus extends React.Component {
         Alert.alert(
             'Aviso',
             'Ao finalizar o período de pontuação o mesmo será gravado em histórico' +
-            ' e a pontuação será zerada para todos os jogadores participantes do grupo.' +
+            ' e a pontuação será zerada para todos os participantes do grupo.' +
             ' Deseja continuar ?',
             [
                 {
@@ -195,7 +205,6 @@ class Plus extends React.Component {
             ],
           { cancelable: true },
         );
-        
     }
 
     render = () => {

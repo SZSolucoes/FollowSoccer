@@ -9,6 +9,7 @@ import {
     ScrollView,
 } from 'react-native';
 import { connect } from 'react-redux';
+import { ProgressDialog } from 'react-native-simple-dialogs';
 import _ from 'lodash';
 
 import { colorAppForeground, colorAppPrimary } from '../../../../../utils/Constantes';
@@ -157,7 +158,7 @@ class Pontuacao extends React.Component {
                                                 position: 'absolute',
                                                 top: -5,
                                                 left: 0,
-                                                marginLeft: 35,
+                                                marginLeft: 36,
                                                 zIndex: 500
                                             }}
                                         >
@@ -302,6 +303,16 @@ class Pontuacao extends React.Component {
                     </View>
                 </View>
                 <View style={{ marginVertical: 60 }} />
+                <ProgressDialog
+                    visible={this.props.showLoadingEndScore || false}
+                    title="Gravando dados"
+                    message="Por favor, aguarde..."
+                    messageStyle={{
+                        fontSize: 16
+                    }}
+                    activityIndicatorColor={colorAppPrimary}
+                    activityIndicatorSize={'large'}
+                />
             </View>
         </ScrollView>
     )
@@ -373,6 +384,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => ({
     grupoSelected: state.GruposReducer.grupoSelected,
     grupoSelectedKey: state.GruposReducer.grupoSelectedKey,
+    showLoadingEndScore: state.GruposReducer.showLoadingEndScore,
     userLogged: state.LoginReducer.userLogged
 });
 

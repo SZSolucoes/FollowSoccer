@@ -2,7 +2,8 @@ const INITIAL_STATE = {
     grupoSelected: {},
     grupoSelectedKey: '',
     gruposListener: () => false,
-    grupoParticipantes: []
+    grupoParticipantes: [],
+    showLoadingEndScore: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -27,13 +28,19 @@ export default (state = INITIAL_STATE, action) => {
                 ...state, 
                 grupoParticipantes: [...action.payload]
             };
+        case 'modifica_showloadingendscore_grupos':
+            return { 
+                ...state, 
+                showLoadingEndScore: action.payload
+            };
         case 'modifica_clean_grupos':
             return {
                 ...state,
                 grupoSelected: {},
                 grupoSelectedKey: '',
                 gruposListener: () => false,
-                grupoParticipantes: []
+                grupoParticipantes: [],
+                showLoadingEndScore: false
             };
         default:
             return state;

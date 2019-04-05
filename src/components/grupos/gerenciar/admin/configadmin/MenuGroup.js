@@ -529,7 +529,6 @@ class MenuGroup extends React.Component {
                                                     { paddingRight: 200 }
                                                 ]
                                             }
-                                            returnKeyType={'next'}
                                             inputStyle={[styles.text, styles.input]}
                                             value={this.state.scores[ita.key] || ita.score}
                                             underlineColorAndroid={'transparent'}
@@ -542,6 +541,10 @@ class MenuGroup extends React.Component {
                                                     [ita.key]: this.onValidInputField(value) 
                                                 }
                                             })}
+                                            onSubmitEditing={() => {
+                                                Keyboard.dismiss();
+                                                checkConInfo(() => this.onClickSave(ita));
+                                            }}
                                         />
                                         <View
                                             style={styles.btnSave}
@@ -692,7 +695,7 @@ class MenuGroup extends React.Component {
                         }
                     </View>
                 </View>
-                <View style={{ marginVertical: 60 }} />
+                <View style={{ marginVertical: 160 }} />
             </View>
         </ScrollView>
     )
@@ -740,6 +743,7 @@ const styles = StyleSheet.create({
     },
     inputContainerWithBtn: {
         borderBottomWidth: 1,
+        justifyContent: 'flex-end',
         borderBottomColor: '#9E9E9E',
         height: Platform.OS === 'android' ? 45 : 40,
         paddingRight: 30

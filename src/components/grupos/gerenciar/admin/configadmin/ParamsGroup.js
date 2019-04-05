@@ -561,7 +561,7 @@ class ParamsGroup extends React.Component {
                             subtitleNumberOfLines={5}
                             containerStyle={{ borderBottomWidth: 0 }}
                             rightIcon={
-                                <View style={{ marginLeft: 15 }}>
+                                <View style={{ marginLeft: 20 }}>
                                     {this.renderIconFields('pontopresenc')}
                                 </View>
                             }
@@ -571,7 +571,6 @@ class ParamsGroup extends React.Component {
                                 selectTextOnFocus
                                 autoCorrect={false}
                                 containerStyle={styles.inputContainerWithBtn}
-                                returnKeyType={'next'}
                                 inputStyle={[styles.text, styles.input, { 
                                     width: this.state.inputWidth 
                                 }]}
@@ -586,6 +585,10 @@ class ParamsGroup extends React.Component {
                                         this.onValidInputField('pontopresenc', value) 
                                     })
                                 }
+                                onSubmitEditing={() => {
+                                    Keyboard.dismiss();
+                                    checkConInfo(() => this.onClickSave('pontopresenc'));
+                                }}
                             />
                             <TouchableOpacity 
                                 style={styles.btnSave}
@@ -614,7 +617,7 @@ class ParamsGroup extends React.Component {
                             subtitleNumberOfLines={5}
                             containerStyle={{ borderBottomWidth: 0 }}
                             rightIcon={
-                                <View style={{ marginLeft: 15 }}>
+                                <View style={{ marginLeft: 20 }}>
                                     {this.renderIconFields('pontovitoria')}
                                 </View>
                             }
@@ -624,7 +627,6 @@ class ParamsGroup extends React.Component {
                                 selectTextOnFocus
                                 autoCorrect={false}
                                 containerStyle={styles.inputContainerWithBtn}
-                                returnKeyType={'next'}
                                 inputStyle={[styles.text, styles.input, { 
                                     width: this.state.inputWidth 
                                 }]}
@@ -639,6 +641,10 @@ class ParamsGroup extends React.Component {
                                         this.onValidInputField('pontovitoria', value) 
                                     })
                                 }
+                                onSubmitEditing={() => {
+                                    Keyboard.dismiss();
+                                    checkConInfo(() => this.onClickSave('pontovitoria'));
+                                }}
                             />
                             <TouchableOpacity 
                                 style={styles.btnSave}
@@ -667,7 +673,7 @@ class ParamsGroup extends React.Component {
                             subtitleNumberOfLines={5}
                             containerStyle={{ borderBottomWidth: 0 }}
                             rightIcon={
-                                <View style={{ marginLeft: 15 }}>
+                                <View style={{ marginLeft: 20 }}>
                                     {this.renderIconFields('pontoempate')}
                                 </View>
                             }
@@ -677,7 +683,6 @@ class ParamsGroup extends React.Component {
                                 selectTextOnFocus
                                 autoCorrect={false}
                                 containerStyle={styles.inputContainerWithBtn}
-                                returnKeyType={'next'}
                                 inputStyle={[styles.text, styles.input, { 
                                     width: this.state.inputWidth 
                                 }]}
@@ -692,6 +697,10 @@ class ParamsGroup extends React.Component {
                                         this.onValidInputField('pontoempate', value) 
                                     })
                                 }
+                                onSubmitEditing={() => {
+                                    Keyboard.dismiss();
+                                    checkConInfo(() => this.onClickSave('pontoempate'));
+                                }}
                             />
                             <TouchableOpacity 
                                 style={styles.btnSave}
@@ -721,7 +730,7 @@ class ParamsGroup extends React.Component {
                             subtitleNumberOfLines={7}
                             containerStyle={{ borderBottomWidth: 0 }}
                             rightIcon={
-                                <View style={{ marginLeft: 15 }}>
+                                <View style={{ marginLeft: 20 }}>
                                     {this.renderIconFields('scorereset')}
                                 </View>
                             }
@@ -733,7 +742,6 @@ class ParamsGroup extends React.Component {
                                 containerStyle={
                                     [styles.inputContainerWithBtn, { paddingRight: 200 }]
                                 }
-                                returnKeyType={'next'}
                                 inputStyle={[styles.text, styles.input, { 
                                     width: this.state.inputWidth 
                                 }]}
@@ -748,6 +756,10 @@ class ParamsGroup extends React.Component {
                                         this.onValidInputField('scorereset', value) 
                                     })
                                 }
+                                onSubmitEditing={() => {
+                                    Keyboard.dismiss();
+                                    checkConInfo(() => this.onClickSave('scorereset'));
+                                }}
                             />
                             <View style={styles.btnSave}>
                                 <View style={{ marginLeft: 20 }}>
@@ -783,7 +795,7 @@ class ParamsGroup extends React.Component {
                         {this.renderDaysToLeft()}
                     </View>
                 </View>
-                <View style={{ marginVertical: 60 }} />
+                <View style={{ marginVertical: 160 }} />
             </View>
         </ScrollView>
     )

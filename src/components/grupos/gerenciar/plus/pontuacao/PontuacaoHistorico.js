@@ -258,7 +258,7 @@ class PontuacaoHistorico extends React.Component {
                                                     position: 'absolute',
                                                     top: -5,
                                                     left: 0,
-                                                    marginLeft: 35,
+                                                    marginLeft: 36,
                                                     zIndex: 500
                                                 }}
                                             >

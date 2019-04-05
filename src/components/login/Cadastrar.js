@@ -295,7 +295,7 @@ class Cadastrar extends React.Component {
                         selectTextOnFocus
                         ref={(ref) => { this.inputNomeForm = ref; }}
                         containerStyle={styles.inputContainer}
-                        returnKeyType={'next'}
+                        returnKeyType={'done'}
                         inputStyle={[styles.text, styles.input]}
                         value={this.state.nomeForm}
                         onChangeText={

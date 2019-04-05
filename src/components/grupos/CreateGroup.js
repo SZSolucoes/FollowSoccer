@@ -161,7 +161,8 @@ class CreateGroup extends React.Component {
                     jogoNotifCad: 'on',
                     jogoNotifReminder: 'on',
                     enqueteNotif: 'on',
-                    muralNotif: 'on'
+                    muralNotif: 'on',
+                    score: '0'
                 } }
             })
             .catch(() => false);
