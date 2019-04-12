@@ -120,7 +120,7 @@ class JogoEdit extends React.Component {
             visitshirt
         } = this.state;
 
-        const { keyItem, imgJogoUri, grupoSelected } = this.props;
+        const { keyItem, imgJogoUri, grupoSelected, grupoSelectedKey } = this.props;
         const b64File = this.b64Str;
         const contentTp = this.contentType;
         let dataStr = '';
@@ -180,11 +180,11 @@ class JogoEdit extends React.Component {
             const fileName = b64.encode(new Date().getTime().toString());
             const imgExt = contentTp.slice(contentTp.indexOf('/') + 1);
             const imgRef = storageRef
-            .child(`grupos/${grupoSelected.key}/jogos/${fileName}.${imgExt}`);
+            .child(`grupos/${grupoSelectedKey}/jogos/${fileName}.${imgExt}`);
             const dbJogosRef = keyItem ? 
             databaseRef.child(
-                `grupos/${grupoSelected.key}/jogos/${keyItem}`
-            ) : databaseRef.child(`grupos/${grupoSelected.key}/jogos`);
+                `grupos/${grupoSelectedKey}/jogos/${keyItem}`
+            ) : databaseRef.child(`grupos/${grupoSelectedKey}/jogos`);
 
             Blob.build(b64File, { type: `${contentTp};BASE64` })
                 .then((blob) => { 
@@ -257,7 +257,10 @@ class JogoEdit extends React.Component {
                             'Edição realizada com sucesso'
                         );    
                     } else {
-                        sendCadJogoPushNotifForAll(titulo, grupoSelected);
+                        if (grupoSelected) {
+                            sendCadJogoPushNotifForAll(titulo, grupoSelected);
+                        }
+                        
                         showDropdownAlert(
                             'success', 
                             'Sucesso', 
@@ -286,9 +289,9 @@ class JogoEdit extends React.Component {
         } else {
             const databaseRef = this.fbDatabaseRef;
             const dbJogosRef = keyItem ? 
-            databaseRef.child(`grupos/${grupoSelected.key}/jogos/${keyItem}`) 
+            databaseRef.child(`grupos/${grupoSelectedKey}/jogos/${keyItem}`) 
             : 
-            databaseRef.child(`grupos/${grupoSelected.key}/jogos`);
+            databaseRef.child(`grupos/${grupoSelectedKey}/jogos`);
 
             if (keyItem) {
                 dbJogosRef.update({
@@ -736,7 +739,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => ({
     conInfo: state.LoginReducer.conInfo,
-    grupoSelected: state.GruposReducer.grupoSelected
+    grupoSelected: state.GruposReducer.grupoSelected,
+    grupoSelectedKey: state.GruposReducer.grupoSelectedKey
 });
 
 export default connect(mapStateToProps, {}, null, { forwardRef: true })(JogoEdit);

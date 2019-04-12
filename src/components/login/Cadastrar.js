@@ -198,7 +198,6 @@ class Cadastrar extends React.Component {
                 break;
             case 'email':
                 newValue = value.length <= 100 ? value : value.slice(0, 100);
-                newValue = newValue.replace(/[^a-zA-Z0-9@.]/g, '');
                 break;
             case 'senha':
                 newValue = value.length <= 20 ? value : value.slice(0, 20);

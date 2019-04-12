@@ -98,7 +98,9 @@ class Login extends React.Component {
             );
         }
         return (
-            <Text style={styles.txtMenu}>Entrar</Text>
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={styles.txtMenu}>Entrar</Text>
+            </View>
         );
     }
 
@@ -366,7 +368,6 @@ const styles = StyleSheet.create({
     },
     txtMenu: {
         fontSize: normalize(16),
-        padding: 5,
         color: 'white',
         fontFamily: 'OpenSans-Bold'
     }

@@ -3,8 +3,6 @@ import _ from 'lodash';
 import Axios from 'axios';
 import CryptoJS from 'crypto-js';
 import Moment from 'moment';
-import MomentTZ from 'moment-timezone';
-import DeviceInfo from 'react-native-device-info';
 
 import { GROUP_PARAMS, BACKENDHOST } from './Constantes';
 import { cypherKeyBackEnd } from './Firebase';

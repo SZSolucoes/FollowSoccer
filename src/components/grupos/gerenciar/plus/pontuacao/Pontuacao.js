@@ -21,7 +21,10 @@ import Card from '../../../../../tools/elements/Card';
 import imgCrown from '../../../../../assets/imgs/kingcrown.png';
 
 class Pontuacao extends React.Component {
-    renderParticipantes = (listParticipantes) => {
+    renderParticipantes = () => {
+        const listParticipantes = this.props.grupoSelected ? 
+        this.props.grupoSelected.participantes : [];
+
         if (listParticipantes) {
             let participantes = _.values(listParticipantes);
             participantes = _.orderBy(
@@ -295,11 +298,7 @@ class Pontuacao extends React.Component {
                             })
                         }}
                     >
-                        {
-                            this.renderParticipantes(
-                                this.props.grupoSelected.participantes
-                            )
-                        }
+                        {this.renderParticipantes()}
                     </View>
                 </View>
                 <View style={{ marginVertical: 60 }} />
