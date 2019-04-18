@@ -76,17 +76,25 @@ export const sendCadJogoPushNotifForAll = (jogo, grupo) => {
 };
 
 export const sendReminderJogoPushNotifForAll = async (jogo, grupo) => { 
-    const message = `O jogo (${jogo}) está chegando. Aproveite e confirme sua presença o quanto antes.`;
+    const message = `O jogo (${jogo.titulo}) está chegando. Aproveite e confirme sua presença o quanto antes.`;
     const participantesKeys = [];
     const participantes = _.filter(
         grupo.participantes,
         itc => itc.jogoNotifReminder && itc.jogoNotifReminder === 'on'
     );
 
+    const totalConfirmed = _.uniqBy([
+        ..._.filter(jogo.ausentes, (jg) => !jg.push),
+        ..._.filter(jogo.confirmados, (jg) => !jg.push)
+    ], 'key');
+
     for (let index = 0; index < participantes.length; index++) {
         const user = participantes[index];
         
-        if (typeof user === 'object' && user.key) participantesKeys.push(user.key);
+        if (typeof user === 'object' && user.key) {
+            const notConfirmed = _.findIndex(totalConfirmed, ita => ita.key === user.key) === -1;
+            if (notConfirmed) participantesKeys.push(user.key);
+        }
     }
 
     if (!(participantesKeys.length > 0)) return;
