@@ -65,8 +65,8 @@ import Convites from './components/convites/Convites';
 import Info from './components/grupos/gerenciar/admin/informativos/Info';
 import MuralCadastrar from './components/grupos/gerenciar/admin/mural/MuralCadastrar';
 import MuralEditar from './components/grupos/gerenciar/admin/mural/MuralEditar';
-import FinanceiroCadastrar from './components/grupos/gerenciar/admin/financeiro/FinanceiroCadastrar';
-import FinanceiroEditar from './components/grupos/gerenciar/admin/financeiro/FinanceiroEditar';
+import FinanceiroCadastrar from './components/grupos/gerenciar/admin/financeiro/grupo/FinanceiroCadastrar';
+import FinanceiroEditar from './components/grupos/gerenciar/admin/financeiro/grupo/FinanceiroEditar';
 import EnqueteCadastrar from './components/grupos/gerenciar/admin/enquetes/EnqueteCadastrar';
 import EnqueteEditar from './components/grupos/gerenciar/admin/enquetes/EnqueteEditar';
 import EditPerfil from './components/profile/EditPerfil';
@@ -86,6 +86,9 @@ import MenuGroup from './components/grupos/gerenciar/admin/configadmin/MenuGroup
 import ParamsGroup from './components/grupos/gerenciar/admin/configadmin/ParamsGroup';
 import Pontuacao from './components/grupos/gerenciar/plus/pontuacao/Pontuacao';
 import PontuacaoHistorico from './components/grupos/gerenciar/plus/pontuacao/PontuacaoHistorico';
+import FinanceiroMenu from './components/grupos/gerenciar/admin/financeiro/FinanceiroMenu';
+import FinanceiroJogadores from './components/grupos/gerenciar/admin/financeiro/jogadores/FinanceiroJogadores';
+import FinanceiroPlayersView from './components/grupos/gerenciar/plus/financeiro/FinanceiroPlayersView';
 
 const AnimatedSceneComp = Animated.createAnimatedComponent(AnimatedScene);
 
@@ -196,7 +199,7 @@ class Routes extends React.Component {
         }
     
         if ('|_financeiroCadastrar|_financeiroEditar|'.includes(Actions.currentScene)) {
-            Actions.popTo('ownerMenuAdmin');
+            Actions.popTo('adminFinanceiroMenu');
             return true;
         }
     
@@ -709,8 +712,8 @@ class Routes extends React.Component {
             tabBarPosition={'top'}
             lazy={false}
             swipeEnabled
-            title={'Financeiro'} 
-            titleStyle={styles.title}
+            title={'Financeiro - Grupo'} 
+            titleStyle={styles.titlesmall}
             leftButtonTextStyle={styles.btLeft}
             backButtonTintColor={'white'}
             tabBarStyle={{ backgroundColor: colorAppSecondary }}
@@ -1002,9 +1005,9 @@ class Routes extends React.Component {
                 />
                 <Scene 
                     key={'profileFinanceiro'}
-                    title={'Financeiro'}
+                    title={'Financeiro - Grupo'}
                     component={GrupoFinanceiro}
-                    titleStyle={styles.title}
+                    titleStyle={styles.titlesmall}
                     leftButtonTextStyle={styles.btLeft}
                     backButtonTintColor={'white'}
                     //initial
@@ -1067,6 +1070,33 @@ class Routes extends React.Component {
                     key={'pontuacaoHistorico'}
                     title={'Histórico de Pontuação'}
                     component={PontuacaoHistorico}
+                    titleStyle={styles.titlesmall}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'adminFinanceiroMenu'}
+                    title={'Financeiro'}
+                    component={FinanceiroMenu}
+                    titleStyle={styles.title}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'adminFinanceiroJogadores'}
+                    title={'Financeiro - Jogadores'}
+                    component={FinanceiroJogadores}
+                    titleStyle={styles.titlesmall}
+                    leftButtonTextStyle={styles.btLeft}
+                    backButtonTintColor={'white'}
+                    //initial
+                />
+                <Scene 
+                    key={'plusFinanceiroJogadores'}
+                    title={'Financeiro - Jogadores'}
+                    component={FinanceiroPlayersView}
                     titleStyle={styles.titlesmall}
                     leftButtonTextStyle={styles.btLeft}
                     backButtonTintColor={'white'}

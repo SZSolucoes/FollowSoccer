@@ -11,6 +11,7 @@ export const colorAppSecondary = '#27A744';
 export const colorAppTertiary = '#8F742E';
 export const colorAppForeground = '#DCE0E4';
 export const colorAppDark = '#2E3238';
+export const colorAppField = '#008200';
 
 export const APP_VERSION = '1.0.3';
 

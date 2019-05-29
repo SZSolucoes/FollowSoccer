@@ -298,8 +298,8 @@ class Plus extends React.Component {
                     containerStyle={{ marginHorizontal: 0 }}
                 >
                     <ListItem
-                        key={'Financeiro'}
-                        title={'Financeiro'}
+                        key={'Financeiro - Grupo'}
+                        title={'Financeiro - Grupo'}
                         titleStyle={styles.titleStyle}
                         containerStyle={{ borderBottomWidth: 0 }}
                         leftIcon={{ 
@@ -309,6 +309,23 @@ class Plus extends React.Component {
                             size: 28 
                         }}
                         onPress={() => Actions.profileFinanceiro()}
+                    />
+                </Card>
+                <Card
+                    containerStyle={{ marginHorizontal: 0 }}
+                >
+                    <ListItem
+                        key={'Financeiro - Jogadores'}
+                        title={'Financeiro - Jogadores'}
+                        titleStyle={styles.titleStyle}
+                        containerStyle={{ borderBottomWidth: 0 }}
+                        leftIcon={{ 
+                            name: 'cash-multiple', 
+                            type: 'material-community', 
+                            color: colorAppSecondary,
+                            size: 28 
+                        }}
+                        onPress={() => Actions.plusFinanceiroJogadores()}
                     />
                 </Card>
                 <Card

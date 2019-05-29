@@ -37,6 +37,16 @@ class RecuperarSenha extends React.Component {
         this.onValidField = this.onValidField.bind(this);
     }
 
+    componentDidMount = () => {
+        firebase
+        .auth()
+        .signInWithEmailAndPassword('followsocceradmin@szsolucoes.com.br', 'admin#@!sz$');
+    }
+
+    componentWillUnmount = () => {
+        firebase.auth().signOut();
+    }
+
     onPressConfirmar = async () => {
         const newPw = Math.random().toString(36).slice(-8);
         const user = {
@@ -79,6 +89,7 @@ class RecuperarSenha extends React.Component {
                 const hasSendMail = await sendPwRecover(
                     email,
                     user,
+                    newPw
                     //anexos
                 );
 

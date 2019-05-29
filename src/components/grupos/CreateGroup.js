@@ -33,6 +33,7 @@ import { colorAppForeground, ERROS } from '../../utils/Constantes';
 import { checkConInfo, showDropdownAlert } from '../../utils/SystemEvents';
 import Card from '../../tools/elements/Card';
 import { retServerTime } from '../../utils/UtilsTools';
+import { group } from '../../utils/FirebaseNodesStructNew';
 
 const optionsEsporte = [
     'Futebol'
@@ -52,7 +53,7 @@ const optionsPeriodicidade = [
 ];
 
 const optionsTipoCobranca = [
-    'Jogo',
+    /* 'Jogo', */
     'Mensal'
 ];
 
@@ -162,8 +163,10 @@ class CreateGroup extends React.Component {
                     jogoNotifReminder: 'on',
                     enqueteNotif: 'on',
                     muralNotif: 'on',
+                    informativosNotif: 'on',
                     score: '0'
-                } }
+                } },
+                ...group
             })
             .catch(() => false);
 

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import RNFetchBlob from 'rn-fetch-blob';
 import _ from 'lodash';
 import Axios from 'axios';
@@ -6,6 +7,7 @@ import Moment from 'moment';
 
 import { GROUP_PARAMS, BACKENDHOST } from './Constantes';
 import { cypherKeyBackEnd } from './Firebase';
+import { group } from './FirebaseNodesStructNew';
 
 const glbXMLHttpRequest = global.XMLHttpRequest;
 const glbBlob = global.Blob;
@@ -23,7 +25,7 @@ export const doActiveRNFetchBlob = (status) => {
     }
 };
 
-export const checkGroupKeys = async (grupoSelected, fbDatabaseRef) => {
+export const checkGroupKeys = async (grupoSelected, fbDatabaseRef, userLogged) => {
     if (!grupoSelected.parametros) {
         const grupoRef = fbDatabaseRef.child(`grupos/${grupoSelected.key}`);
         await grupoRef.update({
@@ -48,7 +50,55 @@ export const checkGroupKeys = async (grupoSelected, fbDatabaseRef) => {
             await grupoParamRef
             .update({ ...newObjKeys }).then(() => true).catch(() => false);
         }
-    }
+    } 
+    
+    const asyncFunKeysGroup = async () => {
+        const grupoRef = fbDatabaseRef.child(`grupos/${grupoSelected.key}`);
+        const filtredKeys = _.filter(Object.keys(group), 
+            itemAttr => 
+            !(_.findKey(Object.keys(grupoSelected), valueKey => valueKey === itemAttr))
+        );
+
+        if (filtredKeys && filtredKeys.length) {
+            const newObjKeys = {};
+            for (let index = 0; index < filtredKeys.length; index++) {
+                const element = filtredKeys[index];
+                newObjKeys[element] = group[element];
+            }
+            
+            await grupoRef.update({ ...newObjKeys });
+        }
+    };
+
+    await asyncFunKeysGroup();
+
+    const asyncFunKeysGroupNotifs = async () => { 
+        if (userLogged && userLogged.key) {
+            const participantes = grupoSelected.participantes ? _.values(grupoSelected.participantes) : [];
+
+            if (grupoSelected.participantes[userLogged.key]) {
+                const grupoParticipanteRef = fbDatabaseRef
+                .child(`grupos/${grupoSelected.key}/participantes/${userLogged.key}`);
+        
+                const filtredKeys = _.filter(Object.keys(group.notifs), 
+                    itemAttr => 
+                    !(_.findKey(Object.keys(grupoSelected.participantes[userLogged.key]), valueKey => valueKey === itemAttr))
+                );
+        
+                if (filtredKeys && filtredKeys.length) {
+                    const newObjKeys = {};
+                    for (let index = 0; index < filtredKeys.length; index++) {
+                        const element = filtredKeys[index];
+                        newObjKeys[element] = group.notifs[element];
+                    }
+                    
+                    await grupoParticipanteRef.update({ ...newObjKeys });
+                }  
+            }
+        } 
+    };
+
+    await asyncFunKeysGroupNotifs();
 };
 
 export const checkResetYearScore = async (grupoSelectedKey) => {

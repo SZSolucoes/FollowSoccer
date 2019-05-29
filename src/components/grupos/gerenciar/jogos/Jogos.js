@@ -102,7 +102,7 @@ class Jogos extends React.Component {
     }
 
     componentDidMount = () => {
-        const { grupoSelectedKey } = this.props;
+        const { grupoSelectedKey, userLogged } = this.props;
 
         checkResetYearScore(grupoSelectedKey);
 
@@ -120,7 +120,7 @@ class Jogos extends React.Component {
                     this.props.modificaGrupoSelected(grupoSelected);
                     this.onInitializeListeners(grupoSelected);
 
-                    checkGroupKeys(grupoSelected, this.fbDatabaseRef);
+                    checkGroupKeys(grupoSelected, this.fbDatabaseRef, userLogged);
 
                     return;
                 }

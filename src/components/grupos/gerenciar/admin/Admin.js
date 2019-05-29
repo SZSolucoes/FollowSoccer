@@ -78,9 +78,7 @@ class Admin extends React.Component {
                     <TouchableOpacity 
                         style={{ flex: 1 }} 
                         onPress={
-                            () => Actions.financeiroAdmin(
-                                { onBack: () => Actions.popTo('ownerMenuAdmin') }
-                            )
+                            () => Actions.adminFinanceiroMenu()
                         }
                     >
                         <Card 

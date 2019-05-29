@@ -1,6 +1,8 @@
+/* eslint-disable max-len */
 import React from 'react';
 import { 
-    View, 
+    View,
+    ScrollView,
     StyleSheet
 } from 'react-native';
 
@@ -51,6 +53,12 @@ class Notifications extends React.Component {
             } else {
                 this.updateDbNode(participante, grupoSelected, 'muralNotif', 'on');
             }
+        } else if (notifType === 'notifinformativos') {
+            if (participante.informativosNotif === 'on') {
+                this.updateDbNode(participante, grupoSelected, 'informativosNotif', 'off');
+            } else {
+                this.updateDbNode(participante, grupoSelected, 'informativosNotif', 'on');
+            }
         }
     };
 
@@ -78,82 +86,106 @@ class Notifications extends React.Component {
         if (!participante) return false;
 
         return (
-            <View style={styles.viewPrinc}>
-                <List>
-                    <ListItem
-                        disabled={this.state.disabled}
-                        title='Novo Jogo'
-                        subtitle={'Receber notificações quando um novo jogo for criado.'}
-                        subtitleNumberOfLines={5}
-                        rightIcon={(
-                            <CheckBox
-                                title={participante.jogoNotifCad === 'on' ? 'Ativo  ' : 'Inativo'}
-                                checked={participante.jogoNotifCad === 'on'}
-                                onPress={() => !this.state.disabled &&
-                                    checkConInfo(this.onPressCheck, ['notifcad'])
-                                }
-                            />
-                        )}
-                    />
-                </List>
-                <List>
-                    <ListItem
-                        disabled={this.state.disabled}
-                        title='Confirmação de Presença'
-                        subtitle={
-                            'Receber notificações para confirmação de presença em jogos.'
-                        }
-                        subtitleNumberOfLines={5}
-                        rightIcon={(
-                            <CheckBox
-                                title={
-                                    participante.jogoNotifReminder === 'on' ? 'Ativo  ' : 'Inativo'
-                                }
-                                checked={participante.jogoNotifReminder === 'on'}
-                                onPress={() => !this.state.disabled &&
-                                    checkConInfo(this.onPressCheck, ['notifreminder'])
-                                }
-                            />
-                        )}
-                    />
-                </List>
-                <List>
-                    <ListItem
-                        disabled={this.state.disabled}
-                        title='Enquetes'
-                        subtitle={'Receber notificações quando uma enquete for criada.'}
-                        subtitleNumberOfLines={5}
-                        rightIcon={(
-                            <CheckBox
-                                title={participante.enqueteNotif === 'on' ? 'Ativo  ' : 'Inativo'}
-                                checked={participante.enqueteNotif === 'on'}
-                                onPress={() => !this.state.disabled &&
-                                    checkConInfo(this.onPressCheck, ['notifenquete'])
-                                }
-                            />
-                        )}
-                    />
-                </List>
-                <List>
-                    <ListItem
-                        disabled={this.state.disabled}
-                        title='Mural'
-                        subtitle={
-                            'Receber notificações quando uma publicação no mural for realizada.'
-                        }
-                        subtitleNumberOfLines={5}
-                        rightIcon={(
-                            <CheckBox
-                                title={participante.muralNotif === 'on' ? 'Ativo  ' : 'Inativo'}
-                                checked={participante.muralNotif === 'on'}
-                                onPress={() => !this.state.disabled &&
-                                    checkConInfo(this.onPressCheck, ['notifmural'])
-                                }
-                            />
-                        )}
-                    />
-                </List>
-            </View>
+            <ScrollView>
+                <View style={styles.viewPrinc}>
+                    <List>
+                        <ListItem
+                            disabled={this.state.disabled}
+                            title='Novo Jogo'
+                            subtitle={'Receber notificações quando um novo jogo for criado.'}
+                            subtitleNumberOfLines={5}
+                            rightIcon={(
+                                <CheckBox
+                                    title={participante.jogoNotifCad === 'on' ? 'Ativo  ' : 'Inativo'}
+                                    checked={participante.jogoNotifCad === 'on'}
+                                    onPress={() => !this.state.disabled &&
+                                        checkConInfo(this.onPressCheck, ['notifcad'])
+                                    }
+                                />
+                            )}
+                        />
+                    </List>
+                    <List>
+                        <ListItem
+                            disabled={this.state.disabled}
+                            title='Confirmação de Presença'
+                            subtitle={
+                                'Receber notificações para confirmação de presença em jogos.'
+                            }
+                            subtitleNumberOfLines={5}
+                            rightIcon={(
+                                <CheckBox
+                                    title={
+                                        participante.jogoNotifReminder === 'on' ? 'Ativo  ' : 'Inativo'
+                                    }
+                                    checked={participante.jogoNotifReminder === 'on'}
+                                    onPress={() => !this.state.disabled &&
+                                        checkConInfo(this.onPressCheck, ['notifreminder'])
+                                    }
+                                />
+                            )}
+                        />
+                    </List>
+                    <List>
+                        <ListItem
+                            disabled={this.state.disabled}
+                            title='Enquetes'
+                            subtitle={'Receber notificações quando uma enquete for criada.'}
+                            subtitleNumberOfLines={5}
+                            rightIcon={(
+                                <CheckBox
+                                    title={participante.enqueteNotif === 'on' ? 'Ativo  ' : 'Inativo'}
+                                    checked={participante.enqueteNotif === 'on'}
+                                    onPress={() => !this.state.disabled &&
+                                        checkConInfo(this.onPressCheck, ['notifenquete'])
+                                    }
+                                />
+                            )}
+                        />
+                    </List>
+                    <List>
+                        <ListItem
+                            disabled={this.state.disabled}
+                            title='Mural'
+                            subtitle={
+                                'Receber notificações quando uma publicação no mural for realizada.'
+                            }
+                            subtitleNumberOfLines={5}
+                            rightIcon={(
+                                <CheckBox
+                                    title={participante.muralNotif === 'on' ? 'Ativo  ' : 'Inativo'}
+                                    checked={participante.muralNotif === 'on'}
+                                    onPress={() => !this.state.disabled &&
+                                        checkConInfo(this.onPressCheck, ['notifmural'])
+                                    }
+                                />
+                            )}
+                        />
+                    </List>
+                    <List>
+                        <ListItem
+                            disabled={this.state.disabled}
+                            title='Informativos'
+                            subtitle={
+                                'Receber notificações quando um informativo for publicado.'
+                            }
+                            subtitleNumberOfLines={5}
+                            rightIcon={(
+                                <CheckBox
+                                    title={
+                                        participante.informativosNotif === 'on' ? 'Ativo  ' : 'Inativo'
+                                    }
+                                    checked={participante.informativosNotif === 'on'}
+                                    onPress={() => !this.state.disabled &&
+                                        checkConInfo(this.onPressCheck, ['notifinformativos'])
+                                    }
+                                />
+                            )}
+                        />
+                    </List>
+                </View>
+                <View style={{ marginVertical: 25 }} />
+            </ScrollView>
         );
     }
         

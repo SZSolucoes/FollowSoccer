@@ -14,7 +14,7 @@ import GerenciarReducer from './components/grupos/gerenciar/admin/gerenciar/Gere
 import ImagensJogosReducer from './components/grupos/gerenciar/admin/gerenciar/ImagensJogosReducer';
 import SearchBarReducer from './tools/searchbar/SearchBarReducer';
 import InfoReducer from './components/grupos/gerenciar/admin/informativos/InfoReducer';
-import FinanceiroReducer from './components/grupos/gerenciar/admin/financeiro/FinanceiroReducer';
+import FinanceiroReducer from './components/grupos/gerenciar/admin/financeiro/grupo/FinanceiroReducer';
 import EnquetesReducer from './components/grupos/gerenciar/admin/enquetes/EnquetesReducer';
 import AnaliseJogadoresReducer from './components/grupos/gerenciar/plus/jogadores/AnaliseJogadoresReducer';
 import HistoricoReducer from './components/grupos/gerenciar/plus/historico/HistoricoReducer';

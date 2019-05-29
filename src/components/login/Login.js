@@ -167,8 +167,9 @@ class Login extends React.Component {
                                         style={[styles.input, { marginLeft: 55 }]}
                                         secureTextEntry={this.props.hidePw}
                                         underlineColorAndroid={'transparent'}
-                                        onChangeText={password => 
-                                            this.props.modifyPassword(password)}
+                                        onChangeText={
+                                            password => this.props.modifyPassword(password.trim())
+                                        }
                                         value={this.props.password}
                                         onSubmitEditing={() => this.onPressEnterBtn()}
                                     />
