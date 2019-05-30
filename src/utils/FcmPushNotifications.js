@@ -203,7 +203,7 @@ export const sendEnquetePushNotifForTopic = (grupo) => {
                     to: k,
                     notification: {
                         title: `Grupo "${grupo.nome}"`,
-                        body: 'Nova enquete disponível. Aproveite e já confirme o seu voto.',
+                        body: '[Enquetes] Nova enquete disponível. Aproveite e já confirme o seu voto.',
                         show_in_foreground: true,
                         targetScreen: 'enquetes'
                     }, 
@@ -276,7 +276,7 @@ export const sendMuralPushNotifForTopic = (grupo) => {
                     to: k,
                     notification: {
                         title: `Grupo "${grupo.nome}"`,
-                        body: 'Foi realizada uma nova publicação no mural.',
+                        body: '[ Mural ] Nova publicação realizada.',
                         show_in_foreground: true,
                         targetScreen: 'mural'
                     }, 
@@ -349,7 +349,7 @@ export const sendInformativosPushNotifForTopic = (grupo) => {
                     to: k,
                     notification: {
                         title: `Grupo "${grupo.nome}"`,
-                        body: 'Foi realizada uma nova publicação em informativos.',
+                        body: '[ Informativos ] Nova publicação realizada.',
                         show_in_foreground: true,
                         targetScreen: 'informativos'
                     }, 

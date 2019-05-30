@@ -34,6 +34,7 @@ import { colorAppF, colorAppS, ERROS } from '../../../../../utils/Constantes';
 import { doActiveRNFetchBlob } from '../../../../../utils/UtilsTools';
 import { checkConInfo, showDropdownAlert } from '../../../../../utils/SystemEvents';
 import Card from '../../../../../tools/elements/Card';
+import { sendInformativosPushNotifForTopic } from '../../../../../utils/FcmPushNotifications';
 
 class InfoEdit extends React.Component {
     constructor(props) {
@@ -301,8 +302,12 @@ class InfoEdit extends React.Component {
                         showDropdownAlert(
                             'success',
                             'Sucesso',
-                            'Cadastro realizado com sucesso'
+                            'Informativo publicado com sucesso'
                         );
+
+                        this.clearFields();
+
+                        sendInformativosPushNotifForTopic(grupoSelected);
                     }  
                 }, 500);
             }, 2000);
@@ -327,6 +332,7 @@ class InfoEdit extends React.Component {
                         'Sucesso',
                         'Edição realizada com sucesso'
                     );
+
                     onPressBack(true);
                 })
                 .catch(() => {
@@ -356,9 +362,12 @@ class InfoEdit extends React.Component {
                     showDropdownAlert(
                         'success',
                         'Sucesso',
-                        'Cadastro realizado com sucesso'
+                        'Informativo publicado com sucesso'
                     );
+
                     this.clearFields();
+
+                    sendInformativosPushNotifForTopic(grupoSelected);
                 })
                 .catch(() => {
                     this.setState({ loading: false, isTitValid: false });

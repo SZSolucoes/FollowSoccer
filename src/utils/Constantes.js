@@ -13,7 +13,7 @@ export const colorAppForeground = '#DCE0E4';
 export const colorAppDark = '#2E3238';
 export const colorAppField = '#008200';
 
-export const APP_VERSION = '1.0.3';
+export const APP_VERSION = '1.0.8';
 
 export const BACKENDHOST = 'http://szsolucoes.sytes.net:8014/';
 
@@ -229,7 +229,7 @@ export const ERROS = {
     },
     informativosCad: {
         erro: 'Erro #0038',
-        mes: 'Ocorreu um erro ao cadastrar o informativo. Verifique a conexão.'
+        mes: 'Ocorreu um erro ao publicar o informativo. Verifique a conexão.'
     },
     muralCad: {
         erro: 'Erro #0039',

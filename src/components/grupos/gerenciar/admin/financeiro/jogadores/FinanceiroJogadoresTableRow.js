@@ -126,7 +126,7 @@ export default class FinanceiroJogadoresTableRow extends PureComponent {
                         marginVertical: 5
                     }}
                 >
-                    <View style={{ width: this.props.width + 900 }}>
+                    <View style={{ width: this.props.width + 1000 }}>
                         {this.renderHeader()}
                         <View
                             style={styles.row} 
@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
     monthCell: {
         flex: 1.5,
         ...headerAndCells,
-        height: 55,
+        height: 85,
         alignItems: 'center',
         justifyContent: 'center',
         paddingVertical: 15

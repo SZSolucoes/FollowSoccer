@@ -197,10 +197,10 @@ class FinanceiroJogadoresTable extends Component {
                     alignItems: 'center'
                 }}
             >
-                <View style={{ flex: 0.5 }} />
+                <View style={{ flex: 0.7 }} />
                 <View 
                     style={{ 
-                        flex: 2.5, 
+                        flex: 2.3, 
                         alignItems: 'center', 
                         justifyContent: 'center', 
                         padding: 5
@@ -333,6 +333,9 @@ class FinanceiroJogadoresTable extends Component {
                     }}
                     keyExtractor={this.keyExtractor}
                     renderItem={this.renderItem}
+                    ListFooterComponent={(
+                        <View style={{ marginBottom: 50 }} />
+                    )}
                 />
             </ScrollView>
             <View style={{ marginVertical: 25 }} />

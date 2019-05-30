@@ -89,10 +89,10 @@ class FinanceiroPlayersView extends React.Component {
                     alignItems: 'center'
                 }}
             >
-                <View style={{ flex: 0.5 }} />
+                <View style={{ flex: 0.7 }} />
                 <View 
                     style={{ 
-                        flex: 2.5, 
+                        flex: 2.3, 
                         alignItems: 'center', 
                         justifyContent: 'center', 
                         padding: 5
@@ -408,62 +408,62 @@ class FinanceiroPlayersView extends React.Component {
                 yearTypeNode[player.key].jan ? 
                 `R$ ${parseFloat(Math.round(yearTypeNode[player.key].jan * 100) / 100).toFixed(2)}`
                 : 
-                '';
+                ' ';
                 const fev = hasPlayerCob && 
                 yearTypeNode[player.key].fev ? 
                 `R$ ${parseFloat(Math.round(yearTypeNode[player.key].fev * 100) / 100).toFixed(2)}`
                 : 
-                '';
+                ' ';
                 const mar = hasPlayerCob && 
                 yearTypeNode[player.key].mar ? 
                 `R$ ${parseFloat(Math.round(yearTypeNode[player.key].mar * 100) / 100).toFixed(2)}`
                 : 
-                '';
+                ' ';
                 const abr = hasPlayerCob && 
                 yearTypeNode[player.key].abr ? 
                 `R$ ${parseFloat(Math.round(yearTypeNode[player.key].abr * 100) / 100).toFixed(2)}`
                 : 
-                '';
+                ' ';
                 const mai = hasPlayerCob && 
                 yearTypeNode[player.key].mai ? 
                 `R$ ${parseFloat(Math.round(yearTypeNode[player.key].mai * 100) / 100).toFixed(2)}`
                 : 
-                '';
+                ' ';
                 const jun = hasPlayerCob && 
                 yearTypeNode[player.key].jun ? 
                 `R$ ${parseFloat(Math.round(yearTypeNode[player.key].jun * 100) / 100).toFixed(2)}`
                 : 
-                '';
+                ' ';
                 const jul = hasPlayerCob && 
                 yearTypeNode[player.key].jul ? 
                 `R$ ${parseFloat(Math.round(yearTypeNode[player.key].jul * 100) / 100).toFixed(2)}`
                 : 
-                '';
+                ' ';
                 const ago = hasPlayerCob && 
                 yearTypeNode[player.key].ago ? 
                 `R$ ${parseFloat(Math.round(yearTypeNode[player.key].ago * 100) / 100).toFixed(2)}`
                 : 
-                '';
+                ' ';
                 const set = hasPlayerCob && 
                 yearTypeNode[player.key].set ? 
                 `R$ ${parseFloat(Math.round(yearTypeNode[player.key].set * 100) / 100).toFixed(2)}`
                 : 
-                '';
+                ' ';
                 const out = hasPlayerCob && 
                 yearTypeNode[player.key].out ? 
                 `R$ ${parseFloat(Math.round(yearTypeNode[player.key].out * 100) / 100).toFixed(2)}`
                 : 
-                '';
+                ' ';
                 const nov = hasPlayerCob && 
                 yearTypeNode[player.key].nov ? 
                 `R$ ${parseFloat(Math.round(yearTypeNode[player.key].nov * 100) / 100).toFixed(2)}`
                 : 
-                '';
+                ' ';
                 const dez = hasPlayerCob && 
                 yearTypeNode[player.key].dez ? 
                 `R$ ${parseFloat(Math.round(yearTypeNode[player.key].dez * 100) / 100).toFixed(2)}`
                 : 
-                '';
+                ' ';
                 const total = `R$ ${parseFloat(Math.round(playerTotal * 100) / 100).toFixed(2)}`;
 
                 parsedArray.push(
@@ -480,31 +480,35 @@ class FinanceiroPlayersView extends React.Component {
     render = () => (
         <View style={{ flex: 1 }}>
             {this.renderYearBar()}
-            <ScrollView>
-                <View style={{ flexDirection: 'row', padding: 5 }}>
-                    <View style={{ flex: 4 }}>
-                        <View style={[styles.rowAndHeaderTable, { backgroundColor: '#0099E8', borderRightWidth: 0.5, borderRightColor: 'white' }]}>
-                            <Text style={styles.textHeader}> 
-                                Jogador
-                            </Text>
+            <View>
+                <ScrollView>
+                    <View style={{ flexDirection: 'row', padding: 5 }}>
+                        <View style={{ flex: 4 }}>
+                            <View style={[styles.rowAndHeaderTable, { backgroundColor: '#0099E8', borderRightWidth: 0.5, borderRightColor: 'white' }]}>
+                                <Text style={styles.textHeader}> 
+                                    Jogador
+                                </Text>
+                            </View>
+                        </View>
+                        <View style={{ flex: 5 }}>
+                            <ScrollView 
+                                horizontal
+                                ref={ref => (this.scrollHeaderRef = ref)} 
+                                disableScrollViewPanResponder={false}
+                                scrollEnabled={false}
+                                bounces={false}
+                                showsHorizontalScrollIndicator={false}
+                            >
+                                <View style={{ width: this.state.width + 1600 }}>
+                                    <View>
+                                        {this.renderHeader()}
+                                    </View>
+                                </View>
+                            </ScrollView>
                         </View>
                     </View>
-                    <View style={{ flex: 5 }}>
-                        <ScrollView 
-                            horizontal
-                            ref={ref => (this.scrollHeaderRef = ref)} 
-                            disableScrollViewPanResponder={false}
-                            scrollEnabled={false}
-                        >
-                            <View style={{ width: this.state.width + 1600 }}>
-                                <View>
-                                    {this.renderHeader()}
-                                </View>
-                            </View>
-                        </ScrollView>
-                    </View>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </View>
             <ScrollView>
                 <View style={{ flexDirection: 'row', padding: 5 }}>
                     <View style={{ flex: 4 }}>
@@ -513,6 +517,8 @@ class FinanceiroPlayersView extends React.Component {
                     <View style={{ flex: 5 }}>
                         <ScrollView 
                             horizontal
+                            bounces={false}
+                            scrollEventThrottle={1}
                             onScroll={(event) => this.scrollHeaderRef.scrollTo({ x: event.nativeEvent.contentOffset.x, animated: false })}
                         >
                             <View style={{ width: this.state.width + 1600 }}>
