@@ -152,8 +152,7 @@ class FinanceiroPlayersView extends React.Component {
         </View>
     )
 
-    renderTotal = (group, year) => {
-        const listPlayers = group.participantes ? _.values(group.participantes) : [];
+    renderTotal = (group, listPlayers, year) => {
         const yearNode = group.cobranca && group.cobranca[year] ? group.cobranca[year] : null;
         const yearTypeNode = yearNode && yearNode[group.tipocobranca] ? yearNode[group.tipocobranca] : null;
         let playerTotal = 0;
@@ -199,10 +198,10 @@ class FinanceiroPlayersView extends React.Component {
                     })
                 }}
             >
-                <Text style={{ color: 'white', fontSize: 14, fontFamily: 'OpenSans-Bold' }}>
+                <Text numberOfLines={1} style={{ color: 'white', fontSize: 14, fontFamily: 'OpenSans-Bold' }}>
                     {'Total arrecadado: '}
                 </Text>
-                <Text style={{ color: 'white', fontSize: 14, fontFamily: 'OpenSans-SemiBold' }}>
+                <Text numberOfLines={1} style={{ color: 'white', fontSize: 14, fontFamily: 'OpenSans-SemiBold' }}>
                     R$ {parseFloat(Math.round(playerTotal * 100) / 100).toFixed(2)}
                 </Text>
             </View>
@@ -213,67 +212,67 @@ class FinanceiroPlayersView extends React.Component {
         const headerView = (
             <View style={styles.header}>
                 <View style={[styles.monthHeader, { borderLeftWidth: 0 }]}>
-                    <Text style={styles.textHeader}> 
+                    <Text numberOfLines={1} style={styles.textHeader}> 
                         Janeiro
                     </Text>
                 </View>
                 <View style={styles.monthHeader}>
-                    <Text style={styles.textHeader}> 
+                    <Text numberOfLines={1} style={styles.textHeader}> 
                         Fevereiro
                     </Text>
                 </View>
                 <View style={styles.monthHeader}>
-                    <Text style={styles.textHeader}> 
+                    <Text numberOfLines={1} style={styles.textHeader}> 
                         Março
                     </Text>
                 </View>
                 <View style={styles.monthHeader}>
-                    <Text style={styles.textHeader}> 
+                    <Text numberOfLines={1} style={styles.textHeader}> 
                         Abril
                     </Text>
                 </View>
                 <View style={styles.monthHeader}>
-                    <Text style={styles.textHeader}> 
+                    <Text numberOfLines={1} style={styles.textHeader}> 
                         Maio
                     </Text>
                 </View>
                 <View style={styles.monthHeader}>
-                    <Text style={styles.textHeader}> 
+                    <Text numberOfLines={1} style={styles.textHeader}> 
                         Junho
                     </Text>
                 </View>
                 <View style={styles.monthHeader}>
-                    <Text style={styles.textHeader}> 
+                    <Text numberOfLines={1} style={styles.textHeader}> 
                         Julho
                     </Text>
                 </View>
                 <View style={styles.monthHeader}>
-                    <Text style={styles.textHeader}> 
+                    <Text numberOfLines={1} style={styles.textHeader}> 
                         Agosto
                     </Text>
                 </View>
                 <View style={styles.monthHeader}>
-                    <Text style={styles.textHeader}> 
+                    <Text numberOfLines={1} style={styles.textHeader}> 
                         Setembro
                     </Text>
                 </View>
                 <View style={styles.monthHeader}>
-                    <Text style={styles.textHeader}> 
+                    <Text numberOfLines={1} style={styles.textHeader}> 
                         Outubro
                     </Text>
                 </View>
                 <View style={styles.monthHeader}>
-                    <Text style={styles.textHeader}> 
+                    <Text numberOfLines={1} style={styles.textHeader}> 
                         Novembro
                     </Text>
                 </View>
                 <View style={styles.monthHeader}>
-                    <Text style={styles.textHeader}> 
+                    <Text numberOfLines={1} style={styles.textHeader}> 
                         Dezembro
                     </Text>
                 </View>
                 <View style={[styles.monthHeader, { backgroundColor: '#8F742E' }]}>
-                    <Text style={styles.textHeader}> 
+                    <Text numberOfLines={1} style={styles.textHeader}> 
                         Total
                     </Text>
                 </View>
@@ -289,67 +288,67 @@ class FinanceiroPlayersView extends React.Component {
             <View key={key}>
                 <View style={styles.header}>
                     <View style={[styles.monthRow, { ...color }]}>
-                        <Text style={styles.textRow}> 
+                        <Text numberOfLines={1} style={styles.textRow}> 
                             {params.jan}
                         </Text>
                     </View>
                     <View style={[styles.monthRow, { ...color }]}>
-                        <Text style={styles.textRow}> 
+                        <Text numberOfLines={1} style={styles.textRow}> 
                             {params.fev}
                         </Text>
                     </View>
                     <View style={[styles.monthRow, { ...color }]}>
-                        <Text style={styles.textRow}> 
+                        <Text numberOfLines={1} style={styles.textRow}> 
                             {params.mar}
                         </Text>
                     </View>
                     <View style={[styles.monthRow, { ...color }]}>
-                        <Text style={styles.textRow}> 
+                        <Text numberOfLines={1} style={styles.textRow}> 
                             {params.abr}
                         </Text>
                     </View>
                     <View style={[styles.monthRow, { ...color }]}>
-                        <Text style={styles.textRow}> 
+                        <Text numberOfLines={1} style={styles.textRow}> 
                             {params.mai}
                         </Text>
                     </View>
                     <View style={[styles.monthRow, { ...color }]}>
-                        <Text style={styles.textRow}> 
+                        <Text numberOfLines={1} style={styles.textRow}> 
                             {params.jun}
                         </Text>
                     </View>
                     <View style={[styles.monthRow, { ...color }]}>
-                        <Text style={styles.textRow}> 
+                        <Text numberOfLines={1} style={styles.textRow}> 
                             {params.jul}
                         </Text>
                     </View>
                     <View style={[styles.monthRow, { ...color }]}>
-                        <Text style={styles.textRow}> 
+                        <Text numberOfLines={1} style={styles.textRow}> 
                             {params.ago}
                         </Text>
                     </View>
                     <View style={[styles.monthRow, { ...color }]}>
-                        <Text style={styles.textRow}> 
+                        <Text numberOfLines={1} style={styles.textRow}> 
                             {params.set}
                         </Text>
                     </View>
                     <View style={[styles.monthRow, { ...color }]}>
-                        <Text style={styles.textRow}> 
+                        <Text numberOfLines={1} style={styles.textRow}> 
                             {params.out}
                         </Text>
                     </View>
                     <View style={[styles.monthRow, { ...color }]}>
-                        <Text style={styles.textRow}> 
+                        <Text numberOfLines={1} style={styles.textRow}> 
                             {params.nov}
                         </Text>
                     </View>
                     <View style={[styles.monthRow, { ...color }]}>
-                        <Text style={styles.textRow}> 
+                        <Text numberOfLines={1} style={styles.textRow}> 
                             {params.dez}
                         </Text>
                     </View>
                     <View style={[styles.monthRow, { ...color }]}>
-                        <Text style={styles.textRow}> 
+                        <Text numberOfLines={1} style={styles.textRow}> 
                             {params.total}
                         </Text>
                     </View>
@@ -360,33 +359,22 @@ class FinanceiroPlayersView extends React.Component {
         return rowView;
     };
 
-    renderPlayerNames = (group) => {
-        const listPlayers = group.participantes ? _.values(group.participantes) : [];
+    renderPlayerNames = (listPlayers) => 
+        _.map(listPlayers, (value, indexKey) => (
+            <View 
+                key={`player${indexKey}`} 
+                style={[
+                    styles.rowAndHeaderTable, 
+                    { ...indexKey % 2 !== 0 ? { backgroundColor: '#BCE774' } : {} }
+                ]}
+            >
+                <Text numberOfLines={1} style={styles.rowCells}> 
+                    {value.nome}
+                </Text>
+            </View>
+    ))
 
-        return _.map(listPlayers, (value, indexKey) => {
-            const nome = retrieveUpdUserGroup(
-                value.key, 
-                'nome', 
-                value
-            );
-            return (
-                <View 
-                    key={`player${indexKey}`} 
-                    style={[
-                        styles.rowAndHeaderTable, 
-                        { ...indexKey % 2 !== 0 ? { backgroundColor: '#BCE774' } : {} }
-                    ]}
-                >
-                    <Text style={styles.rowCells}> 
-                        {nome}
-                    </Text>
-                </View>
-            );
-        });
-    }
-
-    renderPlayerMonths = (group, year) => {
-        const listPlayers = group.participantes ? _.values(group.participantes) : [];
+    renderPlayerMonths = (group, listPlayers, year) => {
         const yearNode = group.cobranca && group.cobranca[year] ? group.cobranca[year] : null;
         const yearTypeNode = yearNode && yearNode[group.tipocobranca] ? yearNode[group.tipocobranca] : null;
         const parsedArray = [];
@@ -477,62 +465,86 @@ class FinanceiroPlayersView extends React.Component {
         return parsedArray;
     }
 
-    render = () => (
-        <View style={{ flex: 1 }}>
-            {this.renderYearBar()}
-            <View>
+    render = () => {
+        const { grupoSelected } = this.props;
+        let listUsuarios = grupoSelected.participantes ? _.values(grupoSelected.participantes) : [];
+        listUsuarios = _.map(listUsuarios, (itemA) => {
+            const updatedImg = retrieveUpdUserGroup(
+                itemA.key, 
+                'imgAvatar', 
+                itemA
+            );
+            const imgAvatar = updatedImg ? 
+            { uri: updatedImg } : { uri: '' };
+    
+            const nome = retrieveUpdUserGroup(
+                itemA.key, 
+                'nome', 
+                itemA
+            );
+
+            return { ...itemA, imgAvatar, nome };
+        });
+
+        listUsuarios = _.orderBy(listUsuarios, ['nome'], ['asc']);
+
+        return (
+            <View style={{ flex: 1 }}>
+                {this.renderYearBar()}
+                <View>
+                    <ScrollView>
+                        <View style={{ flexDirection: 'row', padding: 5 }}>
+                            <View style={{ flex: 5 }}>
+                                <View style={[styles.rowAndHeaderTable, { backgroundColor: '#0099E8', borderRightWidth: 0.5, borderRightColor: 'white' }]}>
+                                    <Text numberOfLines={1} style={styles.textHeader}> 
+                                        Jogador
+                                    </Text>
+                                </View>
+                            </View>
+                            <View style={{ flex: 5 }}>
+                                <ScrollView 
+                                    horizontal
+                                    ref={ref => (this.scrollHeaderRef = ref)} 
+                                    disableScrollViewPanResponder={false}
+                                    scrollEnabled={false}
+                                    bounces={false}
+                                    showsHorizontalScrollIndicator={false}
+                                >
+                                    <View style={{ width: this.state.width + 1600 }}>
+                                        <View>
+                                            {this.renderHeader()}
+                                        </View>
+                                    </View>
+                                </ScrollView>
+                            </View>
+                        </View>
+                    </ScrollView>
+                </View>
                 <ScrollView>
                     <View style={{ flexDirection: 'row', padding: 5 }}>
-                        <View style={{ flex: 4 }}>
-                            <View style={[styles.rowAndHeaderTable, { backgroundColor: '#0099E8', borderRightWidth: 0.5, borderRightColor: 'white' }]}>
-                                <Text style={styles.textHeader}> 
-                                    Jogador
-                                </Text>
-                            </View>
+                        <View style={{ flex: 5 }}>
+                            {this.renderPlayerNames(listUsuarios)}
                         </View>
                         <View style={{ flex: 5 }}>
                             <ScrollView 
                                 horizontal
-                                ref={ref => (this.scrollHeaderRef = ref)} 
-                                disableScrollViewPanResponder={false}
-                                scrollEnabled={false}
                                 bounces={false}
-                                showsHorizontalScrollIndicator={false}
+                                scrollEventThrottle={1}
+                                onScroll={(event) => this.scrollHeaderRef.scrollTo({ x: event.nativeEvent.contentOffset.x, animated: false })}
                             >
                                 <View style={{ width: this.state.width + 1600 }}>
-                                    <View>
-                                        {this.renderHeader()}
-                                    </View>
+                                    {this.renderPlayerMonths(grupoSelected, listUsuarios, this.state.yearNumber)}
                                 </View>
                             </ScrollView>
                         </View>
                     </View>
+                    <View style={{ marginVertical: 25 }} />
                 </ScrollView>
-            </View>
-            <ScrollView>
-                <View style={{ flexDirection: 'row', padding: 5 }}>
-                    <View style={{ flex: 4 }}>
-                        {this.renderPlayerNames(this.props.grupoSelected)}
-                    </View>
-                    <View style={{ flex: 5 }}>
-                        <ScrollView 
-                            horizontal
-                            bounces={false}
-                            scrollEventThrottle={1}
-                            onScroll={(event) => this.scrollHeaderRef.scrollTo({ x: event.nativeEvent.contentOffset.x, animated: false })}
-                        >
-                            <View style={{ width: this.state.width + 1600 }}>
-                                {this.renderPlayerMonths(this.props.grupoSelected, this.state.yearNumber)}
-                            </View>
-                        </ScrollView>
-                    </View>
-                </View>
                 <View style={{ marginVertical: 25 }} />
-            </ScrollView>
-            <View style={{ marginVertical: 25 }} />
-            {this.renderTotal(this.props.grupoSelected, this.state.yearNumber)}
-        </View>
-    )
+                {this.renderTotal(grupoSelected, listUsuarios, this.state.yearNumber)}
+            </View>
+        );
+    }
 }
 
 const headerAndCells = {

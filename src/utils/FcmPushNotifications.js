@@ -54,7 +54,7 @@ export const sendCadJogoPushNotifForAll = (jogo, grupo) => {
                     to: k,
                     notification: {
                         title: `Grupo "${grupo.nome}"`,
-                        body: `Jogo (${jogo}) foi criado. Aproveite e já confirme a sua presença.`,
+                        body: `Jogo (${jogo}) foi criado. Aproveite e já confirme a sua presença`,
                         show_in_foreground: true
                     }, 
                     data: {
@@ -76,7 +76,7 @@ export const sendCadJogoPushNotifForAll = (jogo, grupo) => {
 };
 
 export const sendReminderJogoPushNotifForAll = async (jogo, grupo) => { 
-    const message = `O jogo (${jogo.titulo}) está chegando. Aproveite e confirme sua presença o quanto antes.`;
+    const message = `O jogo (${jogo.titulo}) está chegando. Aproveite e confirme sua presença o quanto antes`;
     const participantesKeys = [];
     const participantes = _.filter(
         grupo.participantes,
@@ -203,7 +203,7 @@ export const sendEnquetePushNotifForTopic = (grupo) => {
                     to: k,
                     notification: {
                         title: `Grupo "${grupo.nome}"`,
-                        body: '[Enquetes] Nova enquete disponível. Aproveite e já confirme o seu voto.',
+                        body: '[Enquetes] Nova enquete disponível. Aproveite e já confirme o seu voto',
                         show_in_foreground: true,
                         targetScreen: 'enquetes'
                     }, 
@@ -276,7 +276,7 @@ export const sendMuralPushNotifForTopic = (grupo) => {
                     to: k,
                     notification: {
                         title: `Grupo "${grupo.nome}"`,
-                        body: '[ Mural ] Nova publicação realizada.',
+                        body: '[ Mural ] Nova publicação realizada',
                         show_in_foreground: true,
                         targetScreen: 'mural'
                     }, 
@@ -349,7 +349,7 @@ export const sendInformativosPushNotifForTopic = (grupo) => {
                     to: k,
                     notification: {
                         title: `Grupo "${grupo.nome}"`,
-                        body: '[ Informativos ] Nova publicação realizada.',
+                        body: '[ Informativos ] Nova publicação realizada',
                         show_in_foreground: true,
                         targetScreen: 'informativos'
                     }, 

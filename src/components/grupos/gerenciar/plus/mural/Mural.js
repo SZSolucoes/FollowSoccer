@@ -21,6 +21,7 @@ import { normalize } from '../../../../../utils/StrComplex';
 import { colorAppTertiary } from '../../../../../utils/Constantes';
 import imgMural from '../../../../../assets/imgs/mural.png';
 import firebase from '../../../../../utils/Firebase';
+import { isPortrait } from '../../../../../utils/Screen';
 
 const textAll = 'Todo o Período';
 
@@ -37,10 +38,12 @@ class Mural extends React.Component {
 
         this.calendarDims = {
             width: Dimensions.get('window').width,
-            height: Dimensions.get('window').width
+            height: Dimensions.get('window').height
         };
         this.isCalendarOpened = false;
         this.isAnimating = false;
+
+        this.isPortrait = isPortrait();
 
         this.today = {
             moment: Moment(new Date(), 'DD-MM-YYYY'), 
@@ -60,6 +63,8 @@ class Mural extends React.Component {
         const { grupoSelected } = this.props;
 
         Dimensions.addEventListener('change', this.onChangeDimensions);
+
+        this.isPortrait = isPortrait();
 
         if (grupoSelected && grupoSelected.key) {
             this.firebaseDBMural = this.firebaseDB.child(`grupos/${grupoSelected.key}/mural`);
@@ -104,22 +109,23 @@ class Mural extends React.Component {
 
     onChangeDimensions = ({ window }) => {
         this.calendarDims.width = window.width;
-        this.calendarDims.height = window.width;
+        this.calendarDims.height = window.height;
+
+        this.isPortrait = isPortrait();
 
         if (this.isCalendarOpened) this.onPressDateBtn(true);
     }
 
     onPressDateBtn = (showCalendar = false, brokeAnim = false) => {
         if (!this.isAnimating || brokeAnim) {
-            this.isAnimating = true;
-
-            if (showCalendar) {
+            if (showCalendar && this.isPortrait) {
                 if (!this.isCalendarOpened) {
                     this.animCalendarWidth.setValue(0);
                     this.animCalendarHeight.setValue(0);
                     this.animCalendarTranslateX.setValue(0);
                 }
         
+                this.isAnimating = true;
                 Animated.parallel([
                     Animated.spring(
                         this.animCalendarWidth,
@@ -137,7 +143,8 @@ class Mural extends React.Component {
                     this.isCalendarOpened = true;
                     this.isAnimating = false;
                 });
-            } else {
+            } if (this.isCalendarOpened) {
+                this.isAnimating = true;
                 Animated.parallel([
                     Animated.spring(
                         this.animCalendarWidth,

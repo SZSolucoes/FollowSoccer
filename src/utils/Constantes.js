@@ -330,6 +330,18 @@ export const ERROS = {
     pontuacaoFinish: {
         erro: 'Erro #0060',
         mes: 'Ocorreu um erro ao salvar o histórico de pontuação. Verifique a conexão.'
+    },
+    ausentesConfirmAdmin: {
+        erro: 'Erro #0061',
+        mes: 'Falha ao confirmar ausência. Verifique a conexão.'
+    },
+    ausentesRemoveAdmin: {
+        erro: 'Erro #0062',
+        mes: 'Falha ao remover jogador ausente. Verifique a conexão.'
+    },
+    financeiroAllPag: {
+        erro: 'Erro #0063',
+        mes: 'Falha ao realizar os pagamentos. Verifique a conexão.'
     }
 };
 

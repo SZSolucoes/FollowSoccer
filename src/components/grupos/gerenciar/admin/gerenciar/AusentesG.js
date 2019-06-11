@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React from 'react';
 import { 
     View,
@@ -56,6 +57,50 @@ class AusentesG extends React.Component {
 
     componentWillUnmount = () => {
         if (this.fbJogoRef) this.fbJogoRef.off();
+    }
+
+    onPressConfirmA = (jogo, user) => {
+        const { grupoSelected } = this.props;
+        const funExec = () => {
+            const newAusentesList = jogo.ausentes ? 
+            [...jogo.ausentes] : [];
+            const dataAtual = Moment().format('YYYY-MM-DD HH:mm:ss');
+    
+            newAusentesList.push({
+                key: user.key,
+                imgAvatar: user.imgAvatar,
+                nome: user.nome,
+                horaConfirm: dataAtual
+            });
+    
+            this.fbDatabaseRef.child(`grupos/${grupoSelected.key}/jogos/${jogo.key}`).update({
+                ausentes: newAusentesList
+            })
+            .then(() => showDropdownAlert(
+                'info',
+                'Ausência confirmada',
+                ''
+            ))
+            .catch(() => showDropdownAlert(
+                'error',
+                ERROS.ausentesConfirmAdmin.erro,
+                ERROS.ausentesConfirmAdmin.mes
+            ));
+        };
+
+        Alert.alert(
+            'Aviso', 
+            `Deseja confirmar a ausência do jogador "${user.nome}" ?`,
+            [
+                { text: 'Cancelar', onPress: () => false },
+                { 
+                    text: 'Sim', 
+                    onPress: () => checkConInfo(
+                    () => funExec())
+                }
+            ],
+            { cancelable: true }
+        );
     }
 
     onPressConfirmP = (jogo, user) => {
@@ -133,24 +178,117 @@ class AusentesG extends React.Component {
         }
     }
 
-    renderRightConfirm = (jogo, userKey) => (
-        <TouchableOpacity
-            onPress={() => this.onPressConfirmP(jogo, userKey)}
-        >
-            <View
-                style={{
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}
+    onRemoveAusente = (jogo, item) => {
+        const { grupoSelected } = this.props;
+        const asyncFunExec = async () => {
+            const dbFirebaseRef = firebase.database().ref().child(`grupos/${grupoSelected.key}/jogos/${jogo.key}`);
+            dbFirebaseRef.once('value', snap => {
+                if (snap) {
+                    const snapVal = snap.val();
+                    if (snapVal) {
+                        const ausentes = snapVal.ausentes;
+
+                        if (ausentes instanceof Array && ausentes.length) {
+                            const filtredNewAusentes = _.filter(
+                                ausentes, ita => ita.push || (ita.key && (ita.key !== item.key))
+                            );
+                            dbFirebaseRef.update({
+                                ausentes: filtredNewAusentes
+                            })
+                            .then(() => showDropdownAlert(
+                                'info',
+                                'Ausência removida',
+                                ''
+                            ))
+                            .catch(
+                                () => showDropdownAlert(
+                                    'error',
+                                    ERROS.ausentesRemoveAdmin.erro,
+                                    ERROS.ausentesRemoveAdmin.mes
+                                )
+                            );
+
+                            return;
+                        }
+                    }
+                }
+
+                showDropdownAlert(
+                    'error',
+                    ERROS.ausentesRemoveAdmin.erro,
+                    ERROS.ausentesRemoveAdmin.mes
+                );
+                return;
+            }, 
+                () => showDropdownAlert(
+                    'error',
+                    ERROS.ausentesRemoveAdmin.erro,
+                    ERROS.ausentesRemoveAdmin.mes
+                )
+            );
+        };
+
+        Alert.alert(
+            'Aviso',
+            `Confirma a remoção do jogador\n( ${item.nome} ) da lista de ausentes ?`,
+            [
+                { 
+                    text: 'Cancelar', 
+                    onPress: () => true, 
+                    style: 'cancel' 
+                },
+                { 
+                    text: 'Sim', 
+                    onPress: () => checkConInfo(
+                        () => asyncFunExec()
+                    )
+                }
+            ]
+        );
+    }
+
+    renderRightConfirm = (jogo, userKey, type = '') => (
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            { 
+                type === 'pendentes' && (
+                    <TouchableOpacity
+                        onPress={() => this.onPressConfirmA(jogo, userKey)}
+                    >
+                        <View
+                            style={{
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                        >
+                            <Icon 
+                                name='wallet-travel'
+                                type='material-community'
+                                size={26} 
+                            />
+                        </View>
+                    </TouchableOpacity>
+                )
+            }
+            <View style={{ marginLeft: 10 }} />
+            <TouchableOpacity
+                onPress={() => this.onPressConfirmP(jogo, userKey)}
             >
-                <Icon 
-                    name='account-convert'
-                    type='material-community'
-                    size={28} 
-                />
-            </View>
-        </TouchableOpacity>
+                <View
+                    style={{
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
+                >
+                    <Icon 
+                        name='account-convert'
+                        type='material-community'
+                        size={28} 
+                    />
+                </View>
+            </TouchableOpacity>
+        </View>
     )
 
     render = () => {
@@ -252,7 +390,8 @@ class AusentesG extends React.Component {
                                                         'posicao', 
                                                         item
                                                     )}
-                                                    rightIcon={this.renderRightConfirm(jogo, item)}
+                                                    onLongPress={() => this.onRemoveAusente(jogo, item)}
+                                                    rightIcon={this.renderRightConfirm(jogo, item, 'ausentes')}
                                                 />
                                             );
                                         })
@@ -323,7 +462,7 @@ class AusentesG extends React.Component {
                                                         'posicao', 
                                                         item
                                                     )}
-                                                    rightIcon={this.renderRightConfirm(jogo, item)}
+                                                    rightIcon={this.renderRightConfirm(jogo, item, 'pendentes')}
                                                 />
                                             );
                                         })

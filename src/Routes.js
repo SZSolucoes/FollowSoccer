@@ -1091,6 +1091,14 @@ class Routes extends React.Component {
                     titleStyle={styles.titlesmall}
                     leftButtonTextStyle={styles.btLeft}
                     backButtonTintColor={'white'}
+                    renderRightButton={
+                        () => 
+                        <SearchBar 
+                            inputPlaceHolder={'Filtrar jogador...'}
+                            iconName={'filter-outline'}
+                            iconNameWithValue={'filter'}
+                        />
+                    }
                     //initial
                 />
                 <Scene 

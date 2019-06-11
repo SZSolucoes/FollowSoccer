@@ -87,10 +87,10 @@ class Cadastrar extends React.Component {
             const newUser = {
                 ...usuarioAttr,
                 userDisabled: 'false',
-                email,
-                senha,
-                nome,
-                nomeForm,
+                email: email.trim(),
+                senha: senha.trim(),
+                nome: nome.trim(),
+                nomeForm: nomeForm.trim(),
                 dataCadastro: dataAtual
             };
             dbUsuariosRef.set({ ...newUser })
@@ -125,10 +125,10 @@ class Cadastrar extends React.Component {
                             const newUser = {
                                 ...usuarioAttr,
                                 userDisabled: 'false',
-                                email,
-                                senha,
-                                nome,
-                                nomeForm,
+                                email: email.trim(),
+                                senha: senha.trim(),
+                                nome: nome.trim(),
+                                nomeForm: nomeForm.trim(),
                                 dataCadastro: dataAtual
                             };
                             dbUsuariosRef.set({ ...newUser })
