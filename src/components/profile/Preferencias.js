@@ -52,7 +52,7 @@ class Preferencias extends React.Component {
                     <ListItem
                         title='Login automático'
                         subtitle={
-                            'Salvar usuário e senha para entrada automática.'
+                            'Salvar e-mail e senha para entrada automática.'
                         }
                         subtitleNumberOfLines={5}
                         rightIcon={(

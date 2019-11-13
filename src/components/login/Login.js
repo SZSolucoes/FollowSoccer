@@ -66,7 +66,7 @@ class Login extends React.Component {
             showDropdownAlert(
                 'warn', 
                 'Aviso', 
-                'É necessário informar usuário e senha válidos'
+                'É necessário informar e-mail e senha válidos'
             );
         }
     }

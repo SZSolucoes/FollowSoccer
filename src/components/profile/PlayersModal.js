@@ -232,7 +232,7 @@ class PlayersModal extends React.Component {
                                                 this.props.modificaFilterModalLoad(true);
                                             }}
                                             onClear={() => this.props.modificaFilterModalStr('')}
-                                            placeholder='Buscar usuário...' 
+                                            placeholder='Buscar jogador...' 
                                         />
                                         <ScrollView
                                             style={{ height: '72%' }}

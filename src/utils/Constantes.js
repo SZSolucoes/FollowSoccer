@@ -13,7 +13,7 @@ export const colorAppForeground = '#DCE0E4';
 export const colorAppDark = '#2E3238';
 export const colorAppField = '#008200';
 
-export const APP_VERSION = '1.0.8';
+export const APP_VERSION = '1.0.9';
 
 export const BACKENDHOST = 'http://szsolucoes.sytes.net:8014/';
 

@@ -193,9 +193,9 @@ class FinanceiroJogadoresTable extends Component {
         let message = '';
 
         if (this.props.searchValue.trim()) {
-            message = `Confirma o pagamento referente a "${monthName}" de "${yearNumber}" para todos os usuários filtrados ?`;
+            message = `Confirma o pagamento referente a "${monthName}" de "${yearNumber}" para todos os jogadores filtrados ?`;
         } else {
-            message = `Confirma o pagamento referente a "${monthName}" de "${yearNumber}" para todos os usuários ?`;
+            message = `Confirma o pagamento referente a "${monthName}" de "${yearNumber}" para todos os jogadores ?`;
         }
 
         const funExec = () => {
@@ -537,10 +537,9 @@ class FinanceiroJogadoresTable extends Component {
                     />
                     <Button 
                         small
-                        loading={this.state.loadingPag}
                         disabled={this.state.loadingPag}
                         loadingProps={{ size: 'large', color: 'rgba(111, 202, 186, 1)' }}
-                        title={this.state.loadingPag ? ' ' : 'Cancelar'} 
+                        title={'Cancelar'} 
                         buttonStyle={{ width: '100%', marginTop: 10 }}
                         onPress={() => this.onPressDateBtn(false)}
                     />
