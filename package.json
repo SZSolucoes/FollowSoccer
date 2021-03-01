@@ -46,7 +46,7 @@
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "rn-fetch-blob": "^0.10.15",
-    "three": "^0.100.0"
+    "three": "^0.125.0"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",
