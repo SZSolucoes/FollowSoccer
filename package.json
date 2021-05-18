@@ -22,7 +22,7 @@
     "react-native-device-info": "^1.4.1",
     "react-native-dropdownalert": "^3.9.1",
     "react-native-elements": "^0.19.1",
-    "react-native-fast-image": "^5.2.0",
+    "react-native-fast-image": "^8.3.0",
     "react-native-fcm": "^16.2.4",
     "react-native-floating-action": "^1.14.1",
     "react-native-html-parser": "0.0.5",
